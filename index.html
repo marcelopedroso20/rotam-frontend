@@ -4,6 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ROTAM • Ocorrências</title>
+
+  <!-- Manifest PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Registro do Service Worker -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker registrado!"))
+        .catch(err => console.error("Erro ao registrar Service Worker", err));
+    }
+  </script>
+
   <style>
     :root{
       --bg:#0b0c10; --card:#15171c; --muted:#9aa3af; --text:#e5e7eb; --acc:#7c3aed; --acc2:#22c55e; --danger:#ef4444;
@@ -303,8 +316,8 @@
   els.form.addEventListener('submit', create);
   els.reset.addEventListener('click', resetForm);
   els.refresh.addEventListener('click', getAll);
-  window.removeItem = removeItem;       // expõe para o onclick
-  window.promptStatus = promptStatus;   // expõe para o onclick
+  window.removeItem = removeItem;
+  window.promptStatus = promptStatus;
   getAll();
 </script>
 </body>
