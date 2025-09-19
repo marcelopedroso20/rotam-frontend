@@ -8,6 +8,11 @@
   <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json">
 
+  <!-- Ícones -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="theme-color" content="#7c3aed">
+
   <!-- Registro do Service Worker -->
   <script>
     if ("serviceWorker" in navigator) {
@@ -179,7 +184,6 @@
     }
   };
 
-  // data de hoje no campo occurred_at
   els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
 
   async function getAll(){
@@ -231,8 +235,6 @@
   async function create(e){
     e.preventDefault();
     const f = els.fields;
-
-    // tenta converter o campo "involved" para JSON
     let involved = [];
     if(f.involved.value.trim()){
       try{ involved = JSON.parse(f.involved.value.trim()); }catch{ alert('Campo "envolvidos" deve ser um JSON válido.'); return; }
