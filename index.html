@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ROTAM • Ocorrências</title>
 
-  <!-- Favicon -->
-  <link rel="icon" href="assets/favicon.png">
-
   <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json">
 
@@ -21,41 +18,137 @@
   </script>
 
   <style>
-    :root{
-      --bg:#0b0c10; --card:#15171c; --muted:#9aa3af; --text:#e5e7eb; --acc:#7c3aed; --acc2:#22c55e; --danger:#ef4444;
-      --br:14px;
+    :root {
+      --bg: #0b0c10;
+      --card: #15171c;
+      --muted: #9aa3af;
+      --text: #e5e7eb;
+      --acc: #7c3aed;
+      --acc2: #22c55e;
+      --danger: #ef4444;
+      --br: 14px;
     }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
-    .wrap{max-width:1100px;margin:auto;padding:28px}
-    header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-    header h1{font-size:22px;margin:0}
-    .card{background:var(--card);border-radius:var(--br);padding:18px;box-shadow:0 6px 24px rgba(0,0,0,.24)}
-    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
-    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
-    input,select,textarea{
-      width:100%;padding:10px 12px;border-radius:10px;border:1px solid #262833;background:#101116;color:var(--text);
-      outline:none
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
     }
-    textarea{min-height:84px;resize:vertical}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    button{
-      border:0;padding:10px 14px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;transition:.15s transform ease;
-      background:var(--acc)
+    .wrap {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
-    button:hover{transform:translateY(-1px)}
-    .ghost{background:#30323a}
-    .good{background:var(--acc2)}
-    .danger{background:var(--danger)}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{padding:12px;border-bottom:1px solid #262833;vertical-align:top}
-    th{color:#b9c0c9;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-    .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:#20222a;font-size:12px}
-    .muted{color:var(--muted)}
-    .right{display:flex;justify-content:flex-end;gap:8px}
-    .empty{padding:18px;border:1px dashed #2b2e36;border-radius:12px;text-align:center;color:var(--muted)}
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    header h1 {
+      font-size: 22px;
+      margin: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 0.35fr 0.65fr;
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card);
+      border-radius: var(--br);
+      padding: 18px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.24);
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 10px 0 6px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #262833;
+      background: #101116;
+      color: var(--text);
+      outline: none;
+    }
+    textarea { min-height: 84px; resize: vertical; }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    button {
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s transform ease;
+      background: var(--acc);
+    }
+    button:hover { transform: translateY(-1px); }
+    .ghost { background: #30323a; }
+    .good { background: var(--acc2); }
+    .danger { background: var(--danger); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #262833;
+      vertical-align: top;
+    }
+    th {
+      color: #b9c0c9;
+      text-align: left;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #20222a;
+      font-size: 12px;
+    }
+    .muted { color: var(--muted); }
+    .right {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .empty {
+      padding: 18px;
+      border: 1px dashed #2b2e36;
+      border-radius: 12px;
+      text-align: center;
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
