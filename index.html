@@ -8,7 +8,7 @@
   <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json">
 
-  <!-- Registro do Service Worker -->
+  <!-- Service Worker -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js")
@@ -28,7 +28,7 @@
       --danger: #ef4444;
       --br: 14px;
     }
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       margin: 0;
       background: var(--bg);
@@ -38,11 +38,11 @@
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
-      padding: 20px;
+      padding: 30px;
     }
     .wrap {
       width: 100%;
-      max-width: 1200px;
+      max-width: 1300px;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -54,22 +54,22 @@
       margin-bottom: 10px;
     }
     header h1 {
-      font-size: 22px;
+      font-size: 24px;
       margin: 0;
     }
     .grid {
       display: grid;
-      grid-template-columns: 0.35fr 0.65fr;
-      gap: 20px;
+      grid-template-columns: 0.4fr 0.6fr;
+      gap: 24px;
     }
-    @media (max-width: 900px) {
+    @media (max-width: 1000px) {
       .grid { grid-template-columns: 1fr; }
     }
     .card {
       background: var(--card);
       border-radius: var(--br);
-      padding: 18px;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.24);
+      padding: 20px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
     }
     label {
       display: block;
@@ -228,7 +228,7 @@
         <label>Descrição</label>
         <textarea id="description" placeholder="Relato resumido..."></textarea>
 
-        <label class="muted">Opcional: envolvidos (JSON) – ex: [{"nome":"João","papel":"vítima"}]</label>
+        <label class="muted">Opcional: envolvidos (JSON)</label>
         <textarea id="involved" placeholder='[{"nome":"João","papel":"vítima"}]'></textarea>
 
         <div class="actions">
@@ -275,7 +275,6 @@
     }
   };
 
-  // data de hoje no campo occurred_at
   els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
 
   async function getAll(){
@@ -327,13 +326,10 @@
   async function create(e){
     e.preventDefault();
     const f = els.fields;
-
-    // tenta converter o campo "involved" para JSON
     let involved = [];
     if(f.involved.value.trim()){
-      try{ involved = JSON.parse(f.involved.value.trim()); }catch{ alert('Campo "envolvidos" deve ser um JSON válido.'); return; }
+      try{ involved = JSON.parse(f.involved.value.trim()); }catch{ alert('Campo "envolvidos" inválido.'); return; }
     }
-
     const body = {
       reporter_id: numOrNull(f.reporter_id.value),
       reporter_name: emptyToNull(f.reporter_name.value),
@@ -352,7 +348,6 @@
       attachments: [],
       status: f.status.value || 'Aberto'
     };
-
     try{
       const r = await fetch(`${API}/occurrences`, {
         method:'POST', headers:{'Content-Type':'application/json'},
@@ -371,7 +366,7 @@
   }
 
   async function promptStatus(id, oldStatus){
-    const novo = prompt(`Novo status para #${id} (atual: ${oldStatus || '—'})`, oldStatus || 'Em andamento');
+    const novo = prompt(`Novo status para #${id}`, oldStatus || 'Em andamento');
     if(novo===null) return;
     try{
       const r = await fetch(`${API}/occurrences/${id}`, {
