@@ -5,10 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ROTAM • Ocorrências</title>
 
+  <!-- Favicon -->
+  <link rel="icon" href="assets/favicon.png">
+
   <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json">
 
-  <!-- Service Worker -->
+  <!-- Registro do Service Worker -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js")
@@ -19,75 +22,49 @@
 
   <style>
     :root{
-      --bg:#0b0c10; 
-      --card:#15171c; 
-      --muted:#9aa3af; 
-      --text:#e5e7eb; 
-      --acc:#7c3aed; 
-      --acc2:#22c55e; 
-      --danger:#ef4444;
-      --warning:#eab308;
-      --success:#16a34a;
+      --bg:#0b0c10; --card:#15171c; --muted:#9aa3af; --text:#e5e7eb; --acc:#7c3aed; --acc2:#22c55e; --danger:#ef4444;
       --br:14px;
     }
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
-
-    /* Cabeçalho */
-    header{
-      display:flex;justify-content:space-between;align-items:center;
-      padding:16px 28px;background:#111318;border-bottom:2px solid #222;
-      position:sticky;top:0;z-index:10;
-    }
-    header h1{margin:0;font-size:20px;display:flex;align-items:center;gap:10px}
-    header img{height:32px;border-radius:50%}
-
-    /* Conteúdo */
-    .wrap{max-width:1200px;margin:auto;padding:28px}
+    .wrap{max-width:1100px;margin:auto;padding:28px}
+    header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    header h1{font-size:22px;margin:0}
     .card{background:var(--card);border-radius:var(--br);padding:18px;box-shadow:0 6px 24px rgba(0,0,0,.24)}
-    .grid{display:grid;grid-template-columns:1fr 2fr;gap:18px}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
     @media (max-width:900px){.grid{grid-template-columns:1fr}}
-
-    /* Form */
     label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
     input,select,textarea{
-      width:100%;padding:10px 12px;border-radius:10px;border:1px solid #262833;
-      background:#101116;color:var(--text);outline:none
+      width:100%;padding:10px 12px;border-radius:10px;border:1px solid #262833;background:#101116;color:var(--text);
+      outline:none
     }
     textarea{min-height:84px;resize:vertical}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
     button{
-      border:0;padding:10px 14px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;
-      transition:.15s transform ease;
+      border:0;padding:10px 14px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;transition:.15s transform ease;
+      background:var(--acc)
     }
     button:hover{transform:translateY(-1px)}
-    .good{background:var(--acc2)}
     .ghost{background:#30323a}
+    .good{background:var(--acc2)}
     .danger{background:var(--danger)}
-
-    /* Tabela */
     table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{padding:12px;border-bottom:1px solid #262833;vertical-align:middle}
+    th,td{padding:12px;border-bottom:1px solid #262833;vertical-align:top}
     th{color:#b9c0c9;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-    tr:nth-child(even){background:#1d1f25}
-    .pill{
-      display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600
-    }
-    .status-aberto{background:var(--danger);color:#fff}
-    .status-andamento{background:var(--warning);color:#000}
-    .status-encerrado{background:var(--success);color:#fff}
-    .right{display:flex;gap:6px;justify-content:flex-end}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:#20222a;font-size:12px}
+    .muted{color:var(--muted)}
+    .right{display:flex;justify-content:flex-end;gap:8px}
     .empty{padding:18px;border:1px dashed #2b2e36;border-radius:12px;text-align:center;color:var(--muted)}
   </style>
 </head>
 <body>
-<header>
-  <h1>🚓 ROTAM • Ocorrências</h1>
-  <span class="muted">Sistema de Registro</span>
-</header>
-
 <div class="wrap">
+  <header>
+    <h1>🚓 ROTAM • Ocorrências</h1>
+    <span class="muted">Frontend simples</span>
+  </header>
+
   <div class="grid">
     <!-- Formulário -->
     <section class="card">
@@ -95,11 +72,11 @@
       <form id="form">
         <div class="row">
           <div>
-            <label>ID do agente</label>
+            <label>ID do agente (reporter_id)</label>
             <input id="reporter_id" type="number" placeholder="Ex: 1006" />
           </div>
           <div>
-            <label>Nome do agente</label>
+            <label>Nome do agente (reporter_name)</label>
             <input id="reporter_name" placeholder="Ex: Agente Silva" />
           </div>
         </div>
@@ -131,7 +108,7 @@
 
         <div class="row">
           <div>
-            <label>Data do fato</label>
+            <label>Data do fato (occurred_at)</label>
             <input id="occurred_at" type="date" />
           </div>
           <div>
@@ -158,7 +135,7 @@
         <label>Descrição</label>
         <textarea id="description" placeholder="Relato resumido..."></textarea>
 
-        <label class="muted">Envolvidos (JSON) – ex: [{"nome":"João","papel":"vítima"}]</label>
+        <label class="muted">Opcional: envolvidos (JSON) – ex: [{"nome":"João","papel":"vítima"}]</label>
         <textarea id="involved" placeholder='[{"nome":"João","papel":"vítima"}]'></textarea>
 
         <div class="actions">
@@ -174,6 +151,7 @@
         <h3 style="margin:0">Ocorrências</h3>
         <button class="ghost" id="refresh">Recarregar</button>
       </div>
+
       <div id="list"></div>
     </section>
   </div>
@@ -204,6 +182,7 @@
     }
   };
 
+  // data de hoje no campo occurred_at
   els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
 
   async function getAll(){
@@ -217,20 +196,13 @@
       }
       renderTable(data);
     }catch(e){
-      els.list.innerHTML = `<div class="empty">Erro: ${e.message}</div>`;
+      els.list.innerHTML = `<div class="empty">Erro ao carregar: ${e.message}</div>`;
     }
   }
 
   function renderTable(rows){
     const toCell = v => (v===null||v===undefined||v==='') ? '<span class="muted">—</span>' : String(v);
-    const badge = status => {
-      if(status==="Aberto") return `<span class="pill status-aberto">Aberto</span>`;
-      if(status==="Em andamento") return `<span class="pill status-andamento">Em andamento</span>`;
-      if(status==="Encerrado") return `<span class="pill status-encerrado">Encerrado</span>`;
-      return `<span class="pill">${status}</span>`;
-    };
-
-    els.list.innerHTML = `
+    const html = `
       <table>
         <thead>
           <tr>
@@ -247,24 +219,28 @@
               <td>${toCell((o.occurred_at||'').slice(0,10))}</td>
               <td>${toCell(o.occurred_location)}</td>
               <td>${toCell(o.occurrence_type)}</td>
-              <td>${badge(o.status)}</td>
+              <td><span class="pill">${toCell(o.status)}</span></td>
               <td class="right">
-                <button class="ghost" onclick="promptStatus(${o.id}, '${o.status||''}')">✏️</button>
-                <button class="danger" onclick="removeItem(${o.id})">🗑️</button>
+                <button class="ghost" onclick="promptStatus(${o.id}, '${o.status||''}')">Status</button>
+                <button class="danger" onclick="removeItem(${o.id})">Excluir</button>
               </td>
             </tr>
           `).join('')}
         </tbody>
       </table>`;
+    els.list.innerHTML = html;
   }
 
   async function create(e){
     e.preventDefault();
     const f = els.fields;
+
+    // tenta converter o campo "involved" para JSON
     let involved = [];
     if(f.involved.value.trim()){
-      try{ involved = JSON.parse(f.involved.value.trim()); }catch{ alert('Campo "envolvidos" inválido.'); return; }
+      try{ involved = JSON.parse(f.involved.value.trim()); }catch{ alert('Campo "envolvidos" deve ser um JSON válido.'); return; }
     }
+
     const body = {
       reporter_id: numOrNull(f.reporter_id.value),
       reporter_name: emptyToNull(f.reporter_name.value),
@@ -283,37 +259,54 @@
       attachments: [],
       status: f.status.value || 'Aberto'
     };
+
     try{
       const r = await fetch(`${API}/occurrences`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify(body)
       });
-      if(!r.ok) throw new Error((await r.json()).error || r.statusText);
-      resetForm(); await getAll();
+      if(!r.ok){
+        const err = await r.json().catch(()=>({}));
+        throw new Error(err.detail || err.error || r.statusText);
+      }
+      resetForm();
+      await getAll();
       alert('Ocorrência criada com sucesso!');
-    }catch(e){ alert('Erro ao criar: ' + e.message); }
+    }catch(e){
+      alert('Erro ao criar: ' + e.message);
+    }
   }
 
   async function promptStatus(id, oldStatus){
-    const novo = prompt(`Novo status para #${id}`, oldStatus || 'Em andamento');
+    const novo = prompt(`Novo status para #${id} (atual: ${oldStatus || '—'})`, oldStatus || 'Em andamento');
     if(novo===null) return;
     try{
       const r = await fetch(`${API}/occurrences/${id}`, {
         method:'PUT', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ status: novo })
       });
-      if(!r.ok) throw new Error((await r.json()).error || r.statusText);
+      if(!r.ok){
+        const err = await r.json().catch(()=>({}));
+        throw new Error(err.detail || err.error || r.statusText);
+      }
       await getAll();
-    }catch(e){ alert('Erro ao atualizar: ' + e.message); }
+    }catch(e){
+      alert('Erro ao atualizar: ' + e.message);
+    }
   }
 
   async function removeItem(id){
     if(!confirm(`Excluir ocorrência #${id}?`)) return;
     try{
       const r = await fetch(`${API}/occurrences/${id}`, { method:'DELETE' });
-      if(!r.ok) throw new Error((await r.json()).error || r.statusText);
+      if(!r.ok){
+        const err = await r.json().catch(()=>({}));
+        throw new Error(err.detail || err.error || r.statusText);
+      }
       await getAll();
-    }catch(e){ alert('Erro ao excluir: ' + e.message); }
+    }catch(e){
+      alert('Erro ao excluir: ' + e.message);
+    }
   }
 
   function resetForm(){
@@ -321,7 +314,7 @@
     els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
   }
   function emptyToNull(v){ v = (v||'').trim(); return v ? v : null; }
-  function numOrNull(v){ const n = Number((v||'').trim()); return Number.isFinite(n) ? n : null; }
+  function numOrNull(v){ const n = Number((v||'').trim()); return Number.isFinite(n) && (v||'').trim()!=='' ? n : null; }
 
   els.form.addEventListener('submit', create);
   els.reset.addEventListener('click', resetForm);
