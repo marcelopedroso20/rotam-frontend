@@ -5,8 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ROTAM • Ocorrências</title>
 
+  <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json">
 
+  <!-- Ícone -->
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+
+  <!-- Registro do Service Worker -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js")
@@ -17,125 +22,46 @@
 
   <style>
     :root {
-      --bg: #0b0c10;
-      --card: #15171c;
-      --muted: #9aa3af;
-      --text: #e5e7eb;
-      --acc: #7c3aed;
-      --acc2: #22c55e;
-      --danger: #ef4444;
-      --br: 14px;
+      --bg:#0b0c10; --card:#15171c; --muted:#9aa3af; --text:#e5e7eb;
+      --acc:#7c3aed; --acc2:#22c55e; --danger:#ef4444; --br:14px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      padding: 30px;
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
+    .wrap{max-width:1200px;margin:auto;padding:28px}
+    header{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+    header h1{font-size:24px;margin:0}
+    .card{background:var(--card);border-radius:var(--br);padding:20px;box-shadow:0 6px 24px rgba(0,0,0,.24)}
+    .grid{display:grid;grid-template-columns:1fr 2fr;gap:22px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
+    input,select,textarea{
+      width:100%;padding:10px 12px;border-radius:10px;border:1px solid #262833;background:#101116;color:var(--text);
+      outline:none
     }
-    .wrap {
-      width: 100%;
-      max-width: 1300px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    textarea{min-height:84px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    button{
+      border:0;padding:10px 14px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;transition:.15s transform ease;
+      background:var(--acc)
     }
-    header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 10px;
-    }
-    header h1 { font-size: 24px; margin: 0; }
-    .grid {
-      display: grid;
-      grid-template-columns: 0.4fr 0.6fr;
-      gap: 24px;
-    }
-    @media (max-width: 1000px) {
-      .grid { grid-template-columns: 1fr; }
-    }
-    .card {
-      background: var(--card);
-      border-radius: var(--br);
-      padding: 20px;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
-    }
-    label {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      margin: 10px 0 6px;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #262833;
-      background: #101116;
-      color: var(--text);
-      outline: none;
-    }
-    textarea { min-height: 84px; resize: vertical; }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-    button {
-      border: 0;
-      padding: 10px 14px;
-      border-radius: 10px;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.15s transform ease;
-      background: var(--acc);
-    }
-    button:hover { transform: translateY(-1px); }
-    .ghost { background: #30323a; }
-    .good { background: var(--acc2); }
-    .danger { background: var(--danger); }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td {
-      padding: 12px;
-      border-bottom: 1px solid #262833;
-      vertical-align: top;
-    }
-    th {
-      color: #b9c0c9;
-      text-align: left;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .pill {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: #20222a;
-      font-size: 12px;
-    }
-    .muted { color: var(--muted); }
-    .right { display: flex; justify-content: flex-end; gap: 8px; }
-    .empty {
-      padding: 18px;
-      border: 1px dashed #2b2e36;
-      border-radius: 12px;
-      text-align: center;
-      color: var(--muted);
-    }
+    button:hover{transform:translateY(-1px)}
+    .ghost{background:#30323a}
+    .good{background:var(--acc2)}
+    .danger{background:var(--danger)}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:12px;border-bottom:1px solid #262833;vertical-align:top}
+    th{color:#b9c0c9;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:#20222a;font-size:12px}
+    .muted{color:var(--muted)}
+    .right{display:flex;justify-content:flex-end;gap:8px}
+    .empty{padding:18px;border:1px dashed #2b2e36;border-radius:12px;text-align:center;color:var(--muted)}
   </style>
 </head>
 <body>
 <div class="wrap">
   <header>
+    <img src="assets/icon-192.png" alt="Logo ROTAM" style="width:32px;height:32px">
     <h1>🚓 ROTAM • Ocorrências</h1>
     <span class="muted">Frontend simples</span>
   </header>
@@ -147,29 +73,29 @@
       <form id="form">
         <div class="row">
           <div>
-            <label>ID do agente (reporter_id)</label>
+            <label>ID do agente</label>
             <input id="reporter_id" type="number" placeholder="Ex: 1006" />
           </div>
           <div>
-            <label>Nome do agente (reporter_name)</label>
+            <label>Nome do agente</label>
             <input id="reporter_name" placeholder="Ex: Agente Silva" />
           </div>
         </div>
 
         <div class="row">
           <div>
-            <label>Comunicante (nome)</label>
+            <label>Comunicante</label>
             <input id="comunicante_nome" placeholder="Ex: Maria Santos" />
           </div>
           <div>
-            <label>Comunicante RG</label>
+            <label>RG</label>
             <input id="comunicante_rg" placeholder="Ex: 1234567" />
           </div>
         </div>
 
         <div class="row">
           <div>
-            <label>Comunicante CPF</label>
+            <label>CPF</label>
             <input id="comunicante_cpf" placeholder="Somente números" />
           </div>
           <div>
@@ -183,7 +109,7 @@
 
         <div class="row">
           <div>
-            <label>Data do fato (occurred_at)</label>
+            <label>Data do fato</label>
             <input id="occurred_at" type="date" />
           </div>
           <div>
@@ -194,7 +120,7 @@
 
         <div class="row">
           <div>
-            <label>Tipo de ocorrência</label>
+            <label>Tipo</label>
             <input id="occurrence_type" placeholder="Ex: Furto" />
           </div>
           <div>
@@ -210,7 +136,7 @@
         <label>Descrição</label>
         <textarea id="description" placeholder="Relato resumido..."></textarea>
 
-        <label class="muted">Opcional: envolvidos (JSON)</label>
+        <label class="muted">Envolvidos (JSON) – ex: [{"nome":"João","papel":"vítima"}]</label>
         <textarea id="involved" placeholder='[{"nome":"João","papel":"vítima"}]'></textarea>
 
         <div class="actions">
@@ -226,7 +152,6 @@
         <h3 style="margin:0">Ocorrências</h3>
         <button class="ghost" id="refresh">Recarregar</button>
       </div>
-
       <div id="list"></div>
     </section>
   </div>
@@ -257,6 +182,7 @@
     }
   };
 
+  // Data de hoje no campo occurred_at
   els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
 
   async function getAll(){
@@ -308,10 +234,13 @@
   async function create(e){
     e.preventDefault();
     const f = els.fields;
+
     let involved = [];
     if(f.involved.value.trim()){
-      try{ involved = JSON.parse(f.involved.value.trim()); }catch{ alert('Campo "envolvidos" inválido.'); return; }
+      try{ involved = JSON.parse(f.involved.value.trim()); }
+      catch{ alert('Campo "envolvidos" deve ser um JSON válido.'); return; }
     }
+
     const body = {
       reporter_id: numOrNull(f.reporter_id.value),
       reporter_name: emptyToNull(f.reporter_name.value),
@@ -330,6 +259,7 @@
       attachments: [],
       status: f.status.value || 'Aberto'
     };
+
     try{
       const r = await fetch(`${API}/occurrences`, {
         method:'POST', headers:{'Content-Type':'application/json'},
@@ -339,7 +269,7 @@
         const err = await r.json().catch(()=>({}));
         throw new Error(err.detail || err.error || r.statusText);
       }
-      resetForm(); // <<< CORRIGIDO AQUI
+      resetForm(); // <<< Correto agora
       await getAll();
       alert('Ocorrência criada com sucesso!');
     }catch(e){
@@ -348,7 +278,7 @@
   }
 
   async function promptStatus(id, oldStatus){
-    const novo = prompt(`Novo status para #${id}`, oldStatus || 'Em andamento');
+    const novo = prompt(`Novo status para #${id} (atual: ${oldStatus || '—'})`, oldStatus || 'Em andamento');
     if(novo===null) return;
     try{
       const r = await fetch(`${API}/occurrences/${id}`, {
@@ -380,7 +310,7 @@
   }
 
   function resetForm(){
-    els.form.reset();  // << o reset tem que estar dentro dessa função
+    els.form.reset();  
     els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
   }
 
@@ -392,6 +322,7 @@
   els.refresh.addEventListener('click', getAll);
   window.removeItem = removeItem;
   window.promptStatus = promptStatus;
+
   getAll();
 </script>
 </body>
