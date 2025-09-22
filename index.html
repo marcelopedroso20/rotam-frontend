@@ -5,10 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ROTAM • Ocorrências</title>
 
-  <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json">
 
-  <!-- Service Worker -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js")
@@ -53,10 +51,7 @@
       gap: 14px;
       margin-bottom: 10px;
     }
-    header h1 {
-      font-size: 24px;
-      margin: 0;
-    }
+    header h1 { font-size: 24px; margin: 0; }
     .grid {
       display: grid;
       grid-template-columns: 0.4fr 0.6fr;
@@ -92,12 +87,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
-    .actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
     button {
       border: 0;
       padding: 10px 14px;
@@ -112,11 +102,7 @@
     .ghost { background: #30323a; }
     .good { background: var(--acc2); }
     .danger { background: var(--danger); }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td {
       padding: 12px;
       border-bottom: 1px solid #262833;
@@ -137,11 +123,7 @@
       font-size: 12px;
     }
     .muted { color: var(--muted); }
-    .right {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-    }
+    .right { display: flex; justify-content: flex-end; gap: 8px; }
     .empty {
       padding: 18px;
       border: 1px dashed #2b2e36;
@@ -357,7 +339,7 @@
         const err = await r.json().catch(()=>({}));
         throw new Error(err.detail || err.error || r.statusText);
       }
-      resetForm();
+      resetForm(); // <<< CORRIGIDO AQUI
       await getAll();
       alert('Ocorrência criada com sucesso!');
     }catch(e){
@@ -398,9 +380,10 @@
   }
 
   function resetForm(){
-    els.form.reset();
+    els.form.reset();  // << o reset tem que estar dentro dessa função
     els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
   }
+
   function emptyToNull(v){ v = (v||'').trim(); return v ? v : null; }
   function numOrNull(v){ const n = Number((v||'').trim()); return Number.isFinite(n) && (v||'').trim()!=='' ? n : null; }
 
