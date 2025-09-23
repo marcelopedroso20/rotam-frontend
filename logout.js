@@ -1,4 +1,5 @@
+// logout.js
 function logout() {
-  localStorage.removeItem("token"); // remove token salvo
-  window.location.href = "login.html"; // redireciona para login
+  localStorage.removeItem("token"); // apaga o token salvo
+  window.location.href = "login.html"; // volta para tela de login
 }
