@@ -5,22 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ROTAM • Ocorrências</title>
 
-  <!-- Proteção: só acessa se estiver logado -->
+  <!-- Proteção: só entra logado -->
   <script>
-    if (!localStorage.getItem("token")) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       window.location.href = "login.html";
-    }
-  </script>
-
-  <!-- Manifest PWA -->
-  <link rel="manifest" href="manifest.json">
-
-  <!-- Registro do Service Worker -->
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js")
-        .then(() => console.log("Service Worker registrado!"))
-        .catch(err => console.error("Erro ao registrar Service Worker", err));
     }
   </script>
 
@@ -32,9 +21,8 @@
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
     .wrap{max-width:1100px;margin:auto;padding:28px}
-    header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
     header h1{font-size:22px;margin:0}
-    header button{margin-left:auto;background:#ef4444;color:white;padding:6px 12px;border:none;border-radius:6px;cursor:pointer}
     .card{background:var(--card);border-radius:var(--br);padding:18px;box-shadow:0 6px 24px rgba(0,0,0,.24)}
     .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
     @media (max-width:900px){.grid{grid-template-columns:1fr}}
@@ -67,8 +55,7 @@
 <div class="wrap">
   <header>
     <h1>🚓 ROTAM • Ocorrências</h1>
-    <span class="muted">Frontend seguro</span>
-    <button onclick="logout()">Sair</button>
+    <button onclick="logout()" style="float:right;">Sair</button>
   </header>
 
   <div class="grid">
@@ -78,29 +65,27 @@
       <form id="form">
         <div class="row">
           <div>
-            <label>ID do agente (reporter_id)</label>
+            <label>ID do agente</label>
             <input id="reporter_id" type="number" placeholder="Ex: 1006" />
           </div>
           <div>
-            <label>Nome do agente (reporter_name)</label>
+            <label>Nome do agente</label>
             <input id="reporter_name" placeholder="Ex: Agente Silva" />
           </div>
         </div>
-
         <div class="row">
           <div>
             <label>Comunicante (nome)</label>
             <input id="comunicante_nome" placeholder="Ex: Maria Santos" />
           </div>
           <div>
-            <label>Comunicante RG</label>
+            <label>RG</label>
             <input id="comunicante_rg" placeholder="Ex: 1234567" />
           </div>
         </div>
-
         <div class="row">
           <div>
-            <label>Comunicante CPF</label>
+            <label>CPF</label>
             <input id="comunicante_cpf" placeholder="Somente números" />
           </div>
           <div>
@@ -108,13 +93,12 @@
             <input id="comunicante_telefone" placeholder="(65) 99999-0000" />
           </div>
         </div>
-
         <label>Endereço</label>
         <input id="comunicante_endereco" placeholder="Rua, número" />
 
         <div class="row">
           <div>
-            <label>Data do fato (occurred_at)</label>
+            <label>Data do fato</label>
             <input id="occurred_at" type="date" />
           </div>
           <div>
@@ -122,7 +106,6 @@
             <input id="occurred_location" placeholder="Ex: Praça Central" />
           </div>
         </div>
-
         <div class="row">
           <div>
             <label>Tipo de ocorrência</label>
@@ -137,11 +120,9 @@
             </select>
           </div>
         </div>
-
         <label>Descrição</label>
         <textarea id="description" placeholder="Relato resumido..."></textarea>
-
-        <label class="muted">Opcional: envolvidos (JSON) – ex: [{"nome":"João","papel":"vítima"}]</label>
+        <label class="muted">Envolvidos (JSON)</label>
         <textarea id="involved" placeholder='[{"nome":"João","papel":"vítima"}]'></textarea>
 
         <div class="actions">
@@ -157,37 +138,35 @@
         <h3 style="margin:0">Ocorrências</h3>
         <button class="ghost" id="refresh">Recarregar</button>
       </div>
-
       <div id="list"></div>
     </section>
   </div>
 </div>
 
-<script src="logout.js"></script>
 <script>
-  const API = 'https://rotam-backend-production.up.railway.app';
+  const API = "https://rotam-backend-production.up.railway.app";
   const token = localStorage.getItem("token");
 
   const els = {
-    form: document.getElementById('form'),
-    reset: document.getElementById('reset'),
-    refresh: document.getElementById('refresh'),
-    list: document.getElementById('list'),
+    form: document.getElementById("form"),
+    reset: document.getElementById("reset"),
+    refresh: document.getElementById("refresh"),
+    list: document.getElementById("list"),
     fields: {
-      reporter_id: document.getElementById('reporter_id'),
-      reporter_name: document.getElementById('reporter_name'),
-      comunicante_nome: document.getElementById('comunicante_nome'),
-      comunicante_rg: document.getElementById('comunicante_rg'),
-      comunicante_cpf: document.getElementById('comunicante_cpf'),
-      comunicante_endereco: document.getElementById('comunicante_endereco'),
-      comunicante_telefone: document.getElementById('comunicante_telefone'),
-      occurred_at: document.getElementById('occurred_at'),
-      occurred_location: document.getElementById('occurred_location'),
-      occurrence_type: document.getElementById('occurrence_type'),
-      description: document.getElementById('description'),
-      involved: document.getElementById('involved'),
-      status: document.getElementById('status'),
-    }
+      reporter_id: document.getElementById("reporter_id"),
+      reporter_name: document.getElementById("reporter_name"),
+      comunicante_nome: document.getElementById("comunicante_nome"),
+      comunicante_rg: document.getElementById("comunicante_rg"),
+      comunicante_cpf: document.getElementById("comunicante_cpf"),
+      comunicante_endereco: document.getElementById("comunicante_endereco"),
+      comunicante_telefone: document.getElementById("comunicante_telefone"),
+      occurred_at: document.getElementById("occurred_at"),
+      occurred_location: document.getElementById("occurred_location"),
+      occurrence_type: document.getElementById("occurrence_type"),
+      description: document.getElementById("description"),
+      involved: document.getElementById("involved"),
+      status: document.getElementById("status"),
+    },
   };
 
   els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
@@ -196,7 +175,7 @@
     els.list.innerHTML = '<div class="empty">Carregando...</div>';
     try{
       const r = await fetch(`${API}/occurrences`, {
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       const data = await r.json();
       if(!Array.isArray(data) || data.length === 0){
@@ -205,7 +184,7 @@
       }
       renderTable(data);
     }catch(e){
-      els.list.innerHTML = `<div class="empty">Erro ao carregar: ${e.message}</div>`;
+      els.list.innerHTML = `<div class="empty">Erro: ${e.message}</div>`;
     }
   }
 
@@ -243,103 +222,78 @@
   async function create(e){
     e.preventDefault();
     const f = els.fields;
-
     let involved = [];
     if(f.involved.value.trim()){
-      try{ involved = JSON.parse(f.involved.value.trim()); }catch{ alert('Campo "envolvidos" deve ser um JSON válido.'); return; }
+      try{ involved = JSON.parse(f.involved.value.trim()); }
+      catch{ alert('Campo "envolvidos" inválido.'); return; }
     }
-
     const body = {
-      reporter_id: numOrNull(f.reporter_id.value),
-      reporter_name: emptyToNull(f.reporter_name.value),
-      comunicante_nome: emptyToNull(f.comunicante_nome.value),
-      comunicante_rg: emptyToNull(f.comunicante_rg.value),
-      comunicante_cpf: emptyToNull(f.comunicante_cpf.value),
-      comunicante_endereco: emptyToNull(f.comunicante_endereco.value),
-      comunicante_telefone: emptyToNull(f.comunicante_telefone.value),
-      occurred_at: emptyToNull(f.occurred_at.value),
-      occurred_location: emptyToNull(f.occurred_location.value),
-      occurrence_type: emptyToNull(f.occurrence_type.value),
-      description: emptyToNull(f.description.value),
+      reporter_id: f.reporter_id.value || null,
+      reporter_name: f.reporter_name.value || null,
+      comunicante_nome: f.comunicante_nome.value || null,
+      comunicante_rg: f.comunicante_rg.value || null,
+      comunicante_cpf: f.comunicante_cpf.value || null,
+      comunicante_endereco: f.comunicante_endereco.value || null,
+      comunicante_telefone: f.comunicante_telefone.value || null,
+      occurred_at: f.occurred_at.value || null,
+      occurred_location: f.occurred_location.value || null,
+      occurrence_type: f.occurrence_type.value || null,
+      description: f.description.value || null,
       involved,
-      measures_taken: null,
-      signature: null,
-      attachments: [],
-      status: f.status.value || 'Aberto'
+      status: f.status.value || "Aberto"
     };
-
     try{
       const r = await fetch(`${API}/occurrences`, {
         method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers:{'Content-Type':'application/json', Authorization: `Bearer ${token}`},
         body: JSON.stringify(body)
       });
-      if(!r.ok){
-        const err = await r.json().catch(()=>({}));
-        throw new Error(err.detail || err.error || r.statusText);
-      }
-      resetForm();
+      if(!r.ok) throw new Error(await r.text());
       await getAll();
-      alert('Ocorrência criada com sucesso!');
+      alert("Ocorrência cadastrada!");
     }catch(e){
-      alert('Erro ao criar: ' + e.message);
+      alert("Erro: " + e.message);
     }
   }
 
   async function promptStatus(id, oldStatus){
-    const novo = prompt(`Novo status para #${id} (atual: ${oldStatus || '—'})`, oldStatus || 'Em andamento');
+    const novo = prompt(`Novo status para #${id}`, oldStatus || "Em andamento");
     if(novo===null) return;
     try{
-      const r = await fetch(`${API}/occurrences/${id}`, {
+      await fetch(`${API}/occurrences/${id}`, {
         method:'PUT',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers:{'Content-Type':'application/json', Authorization: `Bearer ${token}`},
         body: JSON.stringify({ status: novo })
       });
-      if(!r.ok){
-        const err = await r.json().catch(()=>({}));
-        throw new Error(err.detail || err.error || r.statusText);
-      }
       await getAll();
-    }catch(e){
-      alert('Erro ao atualizar: ' + e.message);
-    }
+    }catch(e){ alert("Erro: " + e.message); }
   }
 
   async function removeItem(id){
     if(!confirm(`Excluir ocorrência #${id}?`)) return;
     try{
-      const r = await fetch(`${API}/occurrences/${id}`, {
+      await fetch(`${API}/occurrences/${id}`, {
         method:'DELETE',
-        headers:{ 'Authorization': `Bearer ${token}` }
+        headers:{ Authorization: `Bearer ${token}` }
       });
-      if(!r.ok){
-        const err = await r.json().catch(()=>({}));
-        throw new Error(err.detail || err.error || r.statusText);
-      }
       await getAll();
-    }catch(e){
-      alert('Erro ao excluir: ' + e.message);
-    }
+    }catch(e){ alert("Erro: " + e.message); }
   }
 
   function resetForm(){
     els.form.reset();
     els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
   }
-  function emptyToNull(v){ v = (v||'').trim(); return v ? v : null; }
-  function numOrNull(v){ const n = Number((v||'').trim()); return Number.isFinite(n) && (v||'').trim()!=='' ? n : null; }
 
-  els.form.addEventListener('submit', create);
-  els.reset.addEventListener('click', resetForm);
-  els.refresh.addEventListener('click', getAll);
-  window.removeItem = removeItem;
-  window.promptStatus = promptStatus;
+  function logout(){
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  }
+
+  els.form.addEventListener("submit", create);
+  els.reset.addEventListener("click", resetForm);
+  els.refresh.addEventListener("click", getAll);
   getAll();
 </script>
 </body>
