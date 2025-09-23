@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - ROTAM</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
   <style>
     body {
       background-color: #121212;
@@ -13,6 +14,7 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
     .login-box {
       background: #1e1e1e;
@@ -62,12 +64,12 @@
 
         const data = await res.json();
 
-        if (res.ok && data.success) {
-          // Salva token e usuário
-          localStorage.setItem("token", data.token);
+        if (data.success) {
+          // Salva user e token no localStorage
           localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem("token", data.token || "fake-token"); // ← usa JWT se existir, senão um token simbólico
 
-          // Redireciona
+          // Redireciona para o index
           window.location.href = "index.html";
         } else {
           document.getElementById("errorMsg").style.display = "block";
@@ -76,8 +78,7 @@
         }
       } catch (err) {
         document.getElementById("errorMsg").style.display = "block";
-        document.getElementById("errorMsg").textContent =
-          "Erro ao conectar com o servidor.";
+        document.getElementById("errorMsg").textContent = "Erro ao conectar com o servidor.";
       }
     });
   </script>
