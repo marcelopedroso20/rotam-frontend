@@ -62,18 +62,22 @@
 
         const data = await res.json();
 
-        if (data.success) {
-          // Salva no localStorage
+        if (res.ok && data.success) {
+          // Salva token e usuário
+          localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
+
           // Redireciona
           window.location.href = "index.html";
         } else {
           document.getElementById("errorMsg").style.display = "block";
-          document.getElementById("errorMsg").textContent = data.error || "Usuário ou senha incorretos.";
+          document.getElementById("errorMsg").textContent =
+            data.error || "Usuário ou senha incorretos.";
         }
       } catch (err) {
         document.getElementById("errorMsg").style.display = "block";
-        document.getElementById("errorMsg").textContent = "Erro ao conectar com o servidor.";
+        document.getElementById("errorMsg").textContent =
+          "Erro ao conectar com o servidor.";
       }
     });
   </script>
