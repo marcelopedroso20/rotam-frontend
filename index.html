@@ -1,329 +1,259 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ROTAM • Ocorrências</title>
-
-  <!-- Manifest PWA -->
-  <link rel="manifest" href="manifest.json">
-
-  <!-- Ícone -->
-  <link rel="icon" href="assets/favicon.png" type="image/png">
-
-  <!-- Registro do Service Worker -->
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js")
-        .then(() => console.log("Service Worker registrado!"))
-        .catch(err => console.error("Erro ao registrar Service Worker", err));
-    }
-  </script>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
 
   <style>
-    :root {
-      --bg:#0b0c10; --card:#15171c; --muted:#9aa3af; --text:#e5e7eb;
-      --acc:#7c3aed; --acc2:#22c55e; --danger:#ef4444; --br:14px;
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #121212;
+      color: #fff;
+      margin: 0;
+      padding: 0;
     }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
-    .wrap{max-width:1200px;margin:auto;padding:28px}
-    header{display:flex;align-items:center;gap:14px;margin-bottom:22px}
-    header h1{font-size:24px;margin:0}
-    .card{background:var(--card);border-radius:var(--br);padding:20px;box-shadow:0 6px 24px rgba(0,0,0,.24)}
-    .grid{display:grid;grid-template-columns:1fr 2fr;gap:22px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
-    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
-    input,select,textarea{
-      width:100%;padding:10px 12px;border-radius:10px;border:1px solid #262833;background:#101116;color:var(--text);
-      outline:none
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: #1e1e1e;
+      border-bottom: 1px solid #333;
     }
-    textarea{min-height:84px;resize:vertical}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    button{
-      border:0;padding:10px 14px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;transition:.15s transform ease;
-      background:var(--acc)
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
     }
-    button:hover{transform:translateY(-1px)}
-    .ghost{background:#30323a}
-    .good{background:var(--acc2)}
-    .danger{background:var(--danger)}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{padding:12px;border-bottom:1px solid #262833;vertical-align:top}
-    th{color:#b9c0c9;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-    .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:#20222a;font-size:12px}
-    .muted{color:var(--muted)}
-    .right{display:flex;justify-content:flex-end;gap:8px}
-    .empty{padding:18px;border:1px dashed #2b2e36;border-radius:12px;text-align:center;color:var(--muted)}
+
+    header button {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 10px;
+      flex: 1;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: #2c2c2c;
+      color: white;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-green {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-red {
+      background: #e74c3c;
+      color: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+      text-align: left;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .status {
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+
+    .status.aberto {
+      background: #2980b9;
+    }
+
+    .status.andamento {
+      background: #f39c12;
+    }
+
+    .status.fechado {
+      background: #27ae60;
+    }
   </style>
 </head>
 <body>
-<div class="wrap">
+  <script>
+    // 🔐 Checagem de login
+    const user = localStorage.getItem("user");
+    if (!user) {
+      window.location.href = "login.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+  </script>
+
   <header>
-    <img src="assets/icon-192.png" alt="Logo ROTAM" style="width:32px;height:32px">
-    <h1>🚓 ROTAM • Ocorrências</h1>
-    <span class="muted">Frontend simples</span>
+    <h1>🚔 ROTAM • Ocorrências</h1>
+    <button onclick="logout()">Sair</button>
   </header>
 
-  <div class="grid">
+  <div class="container">
     <!-- Formulário -->
-    <section class="card">
-      <h3 style="margin:0 0 8px">Nova ocorrência</h3>
-      <form id="form">
-        <div class="row">
-          <div>
-            <label>ID do agente</label>
-            <input id="reporter_id" type="number" placeholder="Ex: 1006" />
-          </div>
-          <div>
-            <label>Nome do agente</label>
-            <input id="reporter_name" placeholder="Ex: Agente Silva" />
-          </div>
-        </div>
+    <div class="card" style="max-width: 400px;">
+      <h2>Nova ocorrência</h2>
+      <form id="formOcorrencia">
+        <input type="number" id="reporter_id" placeholder="ID do agente" required />
+        <input type="text" id="reporter_name" placeholder="Nome do agente" required />
+        <input type="text" id="comun_name" placeholder="Comunicante (nome)" required />
+        <input type="text" id="comun_rg" placeholder="Comunicante RG" />
+        <input type="text" id="comun_cpf" placeholder="Comunicante CPF" />
+        <input type="text" id="comun_tel" placeholder="Telefone" />
 
-        <div class="row">
-          <div>
-            <label>Comunicante</label>
-            <input id="comunicante_nome" placeholder="Ex: Maria Santos" />
-          </div>
-          <div>
-            <label>RG</label>
-            <input id="comunicante_rg" placeholder="Ex: 1234567" />
-          </div>
-        </div>
+        <input type="text" id="endereco" placeholder="Endereço" />
+        <input type="date" id="ocurred_at" />
+        <input type="text" id="local" placeholder="Local do fato" />
 
-        <div class="row">
-          <div>
-            <label>CPF</label>
-            <input id="comunicante_cpf" placeholder="Somente números" />
-          </div>
-          <div>
-            <label>Telefone</label>
-            <input id="comunicante_telefone" placeholder="(65) 99999-0000" />
-          </div>
-        </div>
+        <input type="text" id="tipo" placeholder="Tipo de ocorrência" />
+        <select id="status">
+          <option value="Aberto">Aberto</option>
+          <option value="Em andamento">Em andamento</option>
+          <option value="Fechado">Fechado</option>
+        </select>
 
-        <label>Endereço</label>
-        <input id="comunicante_endereco" placeholder="Rua, número" />
+        <textarea id="descricao" placeholder="Descrição"></textarea>
+        <textarea id="envolvidos" placeholder='Envolvidos (JSON)'></textarea>
 
-        <div class="row">
-          <div>
-            <label>Data do fato</label>
-            <input id="occurred_at" type="date" />
-          </div>
-          <div>
-            <label>Local do fato</label>
-            <input id="occurred_location" placeholder="Ex: Praça Central" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div>
-            <label>Tipo</label>
-            <input id="occurrence_type" placeholder="Ex: Furto" />
-          </div>
-          <div>
-            <label>Status</label>
-            <select id="status">
-              <option>Aberto</option>
-              <option>Em andamento</option>
-              <option>Encerrado</option>
-            </select>
-          </div>
-        </div>
-
-        <label>Descrição</label>
-        <textarea id="description" placeholder="Relato resumido..."></textarea>
-
-        <label class="muted">Envolvidos (JSON) – ex: [{"nome":"João","papel":"vítima"}]</label>
-        <textarea id="involved" placeholder='[{"nome":"João","papel":"vítima"}]'></textarea>
-
-        <div class="actions">
-          <button type="submit" class="good">Cadastrar</button>
-          <button type="button" class="ghost" id="reset">Limpar</button>
-        </div>
+        <button type="submit" class="btn-green">Cadastrar</button>
+        <button type="reset" class="btn-red">Limpar</button>
       </form>
-    </section>
+    </div>
 
     <!-- Lista -->
-    <section class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <h3 style="margin:0">Ocorrências</h3>
-        <button class="ghost" id="refresh">Recarregar</button>
-      </div>
-      <div id="list"></div>
-    </section>
-  </div>
-</div>
-
-<script>
-  const API = 'https://rotam-backend-production.up.railway.app';
-
-  const els = {
-    form: document.getElementById('form'),
-    reset: document.getElementById('reset'),
-    refresh: document.getElementById('refresh'),
-    list: document.getElementById('list'),
-    fields: {
-      reporter_id: document.getElementById('reporter_id'),
-      reporter_name: document.getElementById('reporter_name'),
-      comunicante_nome: document.getElementById('comunicante_nome'),
-      comunicante_rg: document.getElementById('comunicante_rg'),
-      comunicante_cpf: document.getElementById('comunicante_cpf'),
-      comunicante_endereco: document.getElementById('comunicante_endereco'),
-      comunicante_telefone: document.getElementById('comunicante_telefone'),
-      occurred_at: document.getElementById('occurred_at'),
-      occurred_location: document.getElementById('occurred_location'),
-      occurrence_type: document.getElementById('occurrence_type'),
-      description: document.getElementById('description'),
-      involved: document.getElementById('involved'),
-      status: document.getElementById('status'),
-    }
-  };
-
-  // Data de hoje no campo occurred_at
-  els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
-
-  async function getAll(){
-    els.list.innerHTML = '<div class="empty">Carregando...</div>';
-    try{
-      const r = await fetch(`${API}/occurrences`);
-      const data = await r.json();
-      if(!Array.isArray(data) || data.length === 0){
-        els.list.innerHTML = '<div class="empty">Nenhuma ocorrência.</div>';
-        return;
-      }
-      renderTable(data);
-    }catch(e){
-      els.list.innerHTML = `<div class="empty">Erro ao carregar: ${e.message}</div>`;
-    }
-  }
-
-  function renderTable(rows){
-    const toCell = v => (v===null||v===undefined||v==='') ? '<span class="muted">—</span>' : String(v);
-    const html = `
+    <div class="card">
+      <h2>Ocorrências</h2>
+      <button onclick="carregarOcorrencias()">Recarregar</button>
       <table>
         <thead>
           <tr>
-            <th>ID</th><th>Agente</th><th>Comunicante</th><th>Data</th><th>Local</th>
-            <th>Tipo</th><th>Status</th><th class="right">Ações</th>
+            <th>ID</th>
+            <th>Agente</th>
+            <th>Comunicante</th>
+            <th>Data</th>
+            <th>Local</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Ações</th>
           </tr>
         </thead>
-        <tbody>
-          ${rows.map(o => `
-            <tr>
-              <td>${o.id}</td>
-              <td><div>${toCell(o.reporter_name)}</div><div class="muted">#${toCell(o.reporter_id)}</div></td>
-              <td>${toCell(o.comunicante_nome)}</td>
-              <td>${toCell((o.occurred_at||'').slice(0,10))}</td>
-              <td>${toCell(o.occurred_location)}</td>
-              <td>${toCell(o.occurrence_type)}</td>
-              <td><span class="pill">${toCell(o.status)}</span></td>
-              <td class="right">
-                <button class="ghost" onclick="promptStatus(${o.id}, '${o.status||''}')">Status</button>
-                <button class="danger" onclick="removeItem(${o.id})">Excluir</button>
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>`;
-    els.list.innerHTML = html;
-  }
+        <tbody id="listaOcorrencias"></tbody>
+      </table>
+    </div>
+  </div>
 
-  async function create(e){
-    e.preventDefault();
-    const f = els.fields;
+  <script>
+    const API = "https://rotam-backend-production.up.railway.app";
 
-    let involved = [];
-    if(f.involved.value.trim()){
-      try{ involved = JSON.parse(f.involved.value.trim()); }
-      catch{ alert('Campo "envolvidos" deve ser um JSON válido.'); return; }
-    }
+    async function carregarOcorrencias() {
+      const res = await fetch(API + "/occurrences");
+      const ocorrencias = await res.json();
+      const tbody = document.getElementById("listaOcorrencias");
+      tbody.innerHTML = "";
 
-    const body = {
-      reporter_id: numOrNull(f.reporter_id.value),
-      reporter_name: emptyToNull(f.reporter_name.value),
-      comunicante_nome: emptyToNull(f.comunicante_nome.value),
-      comunicante_rg: emptyToNull(f.comunicante_rg.value),
-      comunicante_cpf: emptyToNull(f.comunicante_cpf.value),
-      comunicante_endereco: emptyToNull(f.comunicante_endereco.value),
-      comunicante_telefone: emptyToNull(f.comunicante_telefone.value),
-      occurred_at: emptyToNull(f.occurred_at.value),
-      occurred_location: emptyToNull(f.occurred_location.value),
-      occurrence_type: emptyToNull(f.occurrence_type.value),
-      description: emptyToNull(f.description.value),
-      involved,
-      measures_taken: null,
-      signature: null,
-      attachments: [],
-      status: f.status.value || 'Aberto'
-    };
-
-    try{
-      const r = await fetch(`${API}/occurrences`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(body)
+      ocorrencias.forEach(o => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${o.id}</td>
+          <td>${o.reporter_name}</td>
+          <td>${o.comun_name}</td>
+          <td>${o.ocurred_at?.substring(0,10) || ""}</td>
+          <td>${o.local}</td>
+          <td>${o.tipo}</td>
+          <td><span class="status ${o.status.toLowerCase()}">${o.status}</span></td>
+          <td class="actions">
+            <button class="btn-red" onclick="excluirOcorrencia(${o.id})">Excluir</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
       });
-      if(!r.ok){
-        const err = await r.json().catch(()=>({}));
-        throw new Error(err.detail || err.error || r.statusText);
-      }
-      resetForm(); // <<< Correto agora
-      await getAll();
-      alert('Ocorrência criada com sucesso!');
-    }catch(e){
-      alert('Erro ao criar: ' + e.message);
     }
-  }
 
-  async function promptStatus(id, oldStatus){
-    const novo = prompt(`Novo status para #${id} (atual: ${oldStatus || '—'})`, oldStatus || 'Em andamento');
-    if(novo===null) return;
-    try{
-      const r = await fetch(`${API}/occurrences/${id}`, {
-        method:'PUT', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ status: novo })
+    async function excluirOcorrencia(id) {
+      if (!confirm("Tem certeza que deseja excluir?")) return;
+      await fetch(API + "/occurrences/" + id, { method: "DELETE" });
+      carregarOcorrencias();
+    }
+
+    document.getElementById("formOcorrencia").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const dados = {
+        reporter_id: document.getElementById("reporter_id").value,
+        reporter_name: document.getElementById("reporter_name").value,
+        comun_name: document.getElementById("comun_name").value,
+        comun_rg: document.getElementById("comun_rg").value,
+        comun_cpf: document.getElementById("comun_cpf").value,
+        comun_tel: document.getElementById("comun_tel").value,
+        endereco: document.getElementById("endereco").value,
+        ocurred_at: document.getElementById("ocurred_at").value,
+        local: document.getElementById("local").value,
+        tipo: document.getElementById("tipo").value,
+        status: document.getElementById("status").value,
+        descricao: document.getElementById("descricao").value,
+        envolvidos: document.getElementById("envolvidos").value,
+      };
+
+      await fetch(API + "/occurrences", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados),
       });
-      if(!r.ok){
-        const err = await r.json().catch(()=>({}));
-        throw new Error(err.detail || err.error || r.statusText);
-      }
-      await getAll();
-    }catch(e){
-      alert('Erro ao atualizar: ' + e.message);
-    }
-  }
 
-  async function removeItem(id){
-    if(!confirm(`Excluir ocorrência #${id}?`)) return;
-    try{
-      const r = await fetch(`${API}/occurrences/${id}`, { method:'DELETE' });
-      if(!r.ok){
-        const err = await r.json().catch(()=>({}));
-        throw new Error(err.detail || err.error || r.statusText);
-      }
-      await getAll();
-    }catch(e){
-      alert('Erro ao excluir: ' + e.message);
-    }
-  }
+      e.target.reset();
+      carregarOcorrencias();
+    });
 
-  function resetForm(){
-    els.form.reset();  
-    els.fields.occurred_at.value = new Date().toISOString().slice(0,10);
-  }
-
-  function emptyToNull(v){ v = (v||'').trim(); return v ? v : null; }
-  function numOrNull(v){ const n = Number((v||'').trim()); return Number.isFinite(n) && (v||'').trim()!=='' ? n : null; }
-
-  els.form.addEventListener('submit', create);
-  els.reset.addEventListener('click', resetForm);
-  els.refresh.addEventListener('click', getAll);
-  window.removeItem = removeItem;
-  window.promptStatus = promptStatus;
-
-  getAll();
-</script>
+    // carregar ao abrir
+    carregarOcorrencias();
+  </script>
 </body>
 </html>
