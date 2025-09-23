@@ -2,233 +2,148 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ROTAM • Ocorrências</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #111827;
-      color: white;
       margin: 0;
-      padding: 0;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      background-color: #1f2937;
-    }
-
-    header h2 {
-      margin: 0;
-    }
-
-    #logoutBtn {
-      background: red;
+      padding: 20px;
+      background-color: #121212;
       color: white;
-      padding: 6px 12px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .logout-container {
+      text-align: right;
+      margin: 10px;
+    }
+    .logout-container button {
+      background: #c0392b;
       border: none;
-      border-radius: 6px;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
       cursor: pointer;
-      font-weight: bold;
     }
-
-    #logoutBtn:hover {
-      background: darkred;
+    .logout-container button:hover {
+      background: #e74c3c;
     }
-
-    .container {
-      padding: 20px;
+    .form-container, .list-container {
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
     }
-
-    .card {
-      background: #1f2937;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
-
     input, select, textarea {
       width: 100%;
       padding: 8px;
       margin: 6px 0;
-      border-radius: 6px;
-      border: none;
+      border-radius: 5px;
+      border: 1px solid #444;
+      background: #2c2c2c;
+      color: white;
     }
-
     button {
       padding: 8px 12px;
-      margin: 5px 0;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
     }
-
     .btn-green {
-      background: green;
+      background: #27ae60;
       color: white;
     }
-
+    .btn-green:hover {
+      background: #2ecc71;
+    }
     .btn-red {
-      background: red;
+      background: #c0392b;
       color: white;
     }
-
+    .btn-red:hover {
+      background: #e74c3c;
+    }
     table {
       width: 100%;
-      margin-top: 20px;
       border-collapse: collapse;
+      margin-top: 15px;
     }
-
+    table, th, td {
+      border: 1px solid #444;
+    }
     th, td {
       padding: 10px;
-      border-bottom: 1px solid #333;
-      text-align: left;
+      text-align: center;
+    }
+    th {
+      background: #2c2c2c;
     }
   </style>
-</head>
-<body>
-  <!-- Cabeçalho -->
-  <header>
-    <h2>ROTAM • Ocorrências</h2>
-    <button id="logoutBtn">Sair</button>
-  </header>
-
-  <div class="container">
-    <div class="card">
-      <h3>Nova ocorrência</h3>
-      <form id="occurrenceForm">
-        <input type="text" id="reporter_id" placeholder="ID do agente (reporter_id)" required>
-        <input type="text" id="reporter_name" placeholder="Nome do agente (reporter_name)" required>
-        <input type="text" id="communicator_name" placeholder="Comunicante (nome)">
-        <input type="text" id="communicator_rg" placeholder="Comunicante RG">
-        <input type="text" id="communicator_cpf" placeholder="Comunicante CPF">
-        <input type="text" id="phone" placeholder="Telefone">
-        <input type="text" id="address" placeholder="Endereço">
-        <input type="date" id="occurred_at">
-        <input type="text" id="location" placeholder="Local do fato">
-        <input type="text" id="type" placeholder="Tipo de ocorrência">
-        <select id="status">
-          <option value="Aberto">Aberto</option>
-          <option value="Em andamento">Em andamento</option>
-          <option value="Fechado">Fechado</option>
-        </select>
-        <textarea id="description" placeholder="Descrição"></textarea>
-        <textarea id="involved" placeholder='[{ "nome": "João", "papel": "Vítima" }]'></textarea>
-        <button type="submit" class="btn-green">Cadastrar</button>
-        <button type="reset">Limpar</button>
-      </form>
-    </div>
-
-    <div class="card">
-      <h3>Ocorrências</h3>
-      <button onclick="loadOccurrences()">Recarregar</button>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Agente</th>
-            <th>Comunicante</th>
-            <th>Data</th>
-            <th>Local</th>
-            <th>Tipo</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="occurrencesTable">
-          <tr><td colspan="8">Nenhuma ocorrência carregada...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 
   <script>
-    // =======================
-    // 🔐 Verificação de login
-    // =======================
-    const user = localStorage.getItem("user");
-    if (!user) {
+    // Proteção de rota (se não tiver token, volta pro login)
+    if (!localStorage.getItem("token")) {
       window.location.href = "login.html";
     }
-
-    // Botão sair
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("user");
-      window.location.href = "login.html";
-    });
-
-    // =======================
-    // ⚡ CRUD de Ocorrências
-    // =======================
-    const API_URL = "https://rotam-backend-production.up.railway.app/occurrences";
-
-    async function loadOccurrences() {
-      try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        const table = document.getElementById("occurrencesTable");
-        table.innerHTML = "";
-
-        data.forEach((occ) => {
-          const row = `
-            <tr>
-              <td>${occ.id}</td>
-              <td>${occ.reporter_name}</td>
-              <td>${occ.communicator_name || ""}</td>
-              <td>${occ.occurred_at?.split("T")[0]}</td>
-              <td>${occ.location}</td>
-              <td>${occ.type}</td>
-              <td>${occ.status}</td>
-              <td>
-                <button class="btn-red" onclick="deleteOccurrence(${occ.id})">Excluir</button>
-              </td>
-            </tr>
-          `;
-          table.innerHTML += row;
-        });
-      } catch (e) {
-        console.error("Erro ao carregar ocorrências", e);
-      }
-    }
-
-    async function deleteOccurrence(id) {
-      if (!confirm("Deseja realmente excluir?")) return;
-      await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-      loadOccurrences();
-    }
-
-    document.getElementById("occurrenceForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const body = {
-        reporter_id: document.getElementById("reporter_id").value,
-        reporter_name: document.getElementById("reporter_name").value,
-        communicator_name: document.getElementById("communicator_name").value,
-        communicator_rg: document.getElementById("communicator_rg").value,
-        communicator_cpf: document.getElementById("communicator_cpf").value,
-        phone: document.getElementById("phone").value,
-        address: document.getElementById("address").value,
-        occurred_at: document.getElementById("occurred_at").value,
-        location: document.getElementById("location").value,
-        type: document.getElementById("type").value,
-        status: document.getElementById("status").value,
-        description: document.getElementById("description").value,
-        involved: document.getElementById("involved").value,
-      };
-
-      await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      e.target.reset();
-      loadOccurrences();
-    });
-
-    // Carregar dados na inicialização
-    loadOccurrences();
   </script>
+</head>
+<body>
+  <div class="logout-container">
+    <button onclick="logout()">Sair</button>
+  </div>
+
+  <h1>🚔 ROTAM • Ocorrências</h1>
+
+  <div class="form-container">
+    <h2>Nova ocorrência</h2>
+    <form id="occurrenceForm">
+      <input type="text" id="reporter_id" placeholder="ID do agente (reporter_id)">
+      <input type="text" id="reporter_name" placeholder="Nome do agente (reporter_name)">
+      <input type="text" id="comun_name" placeholder="Comunicante Nome">
+      <input type="text" id="comun_rg" placeholder="Comunicante RG">
+      <input type="text" id="comun_cpf" placeholder="Comunicante CPF">
+      <input type="text" id="comun_phone" placeholder="Telefone">
+      <input type="text" id="address" placeholder="Endereço">
+      <input type="date" id="occurred_at">
+      <input type="text" id="location" placeholder="Local do fato">
+      <input type="text" id="type" placeholder="Tipo de ocorrência">
+      <select id="status">
+        <option value="Aberto">Aberto</option>
+        <option value="Em andamento">Em andamento</option>
+        <option value="Fechado">Fechado</option>
+      </select>
+      <textarea id="description" placeholder="Descrição"></textarea>
+      <textarea id="involved" placeholder='Opcional: envolvidos em JSON (ex: [{"nome":"João","papel":"Vítima"}])'></textarea>
+      <button type="submit" class="btn-green">Cadastrar</button>
+      <button type="reset">Limpar</button>
+    </form>
+  </div>
+
+  <div class="list-container">
+    <h2>Ocorrências</h2>
+    <button onclick="loadOccurrences()" class="btn-green">Recarregar</button>
+    <table id="occurrencesTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Agente</th>
+          <th>Comunicante</th>
+          <th>Data</th>
+          <th>Local</th>
+          <th>Tipo</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="logout.js"></script>
+  <script src="index.js"></script>
 </body>
 </html>
