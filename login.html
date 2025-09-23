@@ -1,80 +1,81 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - ROTAM</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0d1117;
-      color: #c9d1d9;
+      background-color: #121212;
+      color: #fff;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
-      margin: 0;
     }
-    .login-container {
-      background: #161b22;
-      padding: 2rem;
+    .login-box {
+      background: #1e1e1e;
+      padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      width: 320px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-    label {
-      display: block;
-      margin: 0.5rem 0 0.2rem;
-    }
-    input {
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
       width: 100%;
-      padding: 8px;
-      border: 1px solid #30363d;
-      border-radius: 5px;
-      background: #0d1117;
-      color: #c9d1d9;
+      max-width: 400px;
     }
-    button {
+    .btn-custom {
       width: 100%;
-      margin-top: 1rem;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      background: #238636;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #2ea043;
-    }
-    .error {
-      margin-top: 1rem;
-      color: #f85149;
-      font-size: 0.9rem;
-      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h1>ROTAM - Login</h1>
+  <div class="login-box">
+    <h2 class="text-center mb-4">🔐 Login ROTAM</h2>
     <form id="loginForm">
-      <label for="username">Usuário</label>
-      <input type="text" id="username" required />
-
-      <label for="password">Senha</label>
-      <input type="password" id="password" required />
-
-      <button type="submit">Entrar</button>
-      <div class="error" id="errorMsg"></div>
+      <div class="mb-3">
+        <label for="username" class="form-label">Usuário</label>
+        <input type="text" id="username" class="form-control" placeholder="Digite seu usuário" required />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Senha</label>
+        <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required />
+      </div>
+      <button type="submit" class="btn btn-success btn-custom">Entrar</button>
     </form>
+    <p id="errorMsg" class="text-danger mt-3 text-center" style="display: none;"></p>
   </div>
-  <script src="login.js"></script>
+
+  <script>
+    const backendUrl = "https://rotam-backend-production.up.railway.app/auth/login";
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      try {
+        const res = await fetch(backendUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          // Salva no localStorage
+          localStorage.setItem("user", JSON.stringify(data.user));
+          // Redireciona
+          window.location.href = "index.html";
+        } else {
+          document.getElementById("errorMsg").style.display = "block";
+          document.getElementById("errorMsg").textContent = data.error || "Usuário ou senha incorretos.";
+        }
+      } catch (err) {
+        document.getElementById("errorMsg").style.display = "block";
+        document.getElementById("errorMsg").textContent = "Erro ao conectar com o servidor.";
+      }
+    });
+  </script>
 </body>
 </html>
