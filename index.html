@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROTAM - Sistema</title>
+  <meta charset="UTF-8">
+  <title>ROTAM • Ocorrências</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #111827;
+      color: white;
       margin: 0;
-      background-color: #111827; /* fundo escuro */
-      color: #f3f4f6; /* texto claro */
+      padding: 0;
     }
 
     header {
@@ -17,64 +17,218 @@
       justify-content: space-between;
       align-items: center;
       padding: 15px 20px;
-      background-color: #1f2937; /* cinza escuro */
+      background-color: #1f2937;
     }
 
-    header h1 {
-      font-size: 20px;
+    header h2 {
       margin: 0;
-      color: #fff;
     }
 
-    header button {
-      background-color: #dc2626; /* vermelho */
-      color: #fff;
+    #logoutBtn {
+      background: red;
+      color: white;
+      padding: 6px 12px;
       border: none;
-      padding: 8px 14px;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
     }
 
-    header button:hover {
-      background-color: #b91c1c;
+    #logoutBtn:hover {
+      background: darkred;
     }
 
-    main {
+    .container {
       padding: 20px;
+    }
+
+    .card {
+      background: #1f2937;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      border-radius: 6px;
+      border: none;
+    }
+
+    button {
+      padding: 8px 12px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-green {
+      background: green;
+      color: white;
+    }
+
+    .btn-red {
+      background: red;
+      color: white;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+      text-align: left;
     }
   </style>
 </head>
 <body>
-  <!-- Proteção de acesso -->
+  <!-- Cabeçalho -->
+  <header>
+    <h2>ROTAM • Ocorrências</h2>
+    <button id="logoutBtn">Sair</button>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h3>Nova ocorrência</h3>
+      <form id="occurrenceForm">
+        <input type="text" id="reporter_id" placeholder="ID do agente (reporter_id)" required>
+        <input type="text" id="reporter_name" placeholder="Nome do agente (reporter_name)" required>
+        <input type="text" id="communicator_name" placeholder="Comunicante (nome)">
+        <input type="text" id="communicator_rg" placeholder="Comunicante RG">
+        <input type="text" id="communicator_cpf" placeholder="Comunicante CPF">
+        <input type="text" id="phone" placeholder="Telefone">
+        <input type="text" id="address" placeholder="Endereço">
+        <input type="date" id="occurred_at">
+        <input type="text" id="location" placeholder="Local do fato">
+        <input type="text" id="type" placeholder="Tipo de ocorrência">
+        <select id="status">
+          <option value="Aberto">Aberto</option>
+          <option value="Em andamento">Em andamento</option>
+          <option value="Fechado">Fechado</option>
+        </select>
+        <textarea id="description" placeholder="Descrição"></textarea>
+        <textarea id="involved" placeholder='[{ "nome": "João", "papel": "Vítima" }]'></textarea>
+        <button type="submit" class="btn-green">Cadastrar</button>
+        <button type="reset">Limpar</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Ocorrências</h3>
+      <button onclick="loadOccurrences()">Recarregar</button>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Agente</th>
+            <th>Comunicante</th>
+            <th>Data</th>
+            <th>Local</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="occurrencesTable">
+          <tr><td colspan="8">Nenhuma ocorrência carregada...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <script>
+    // =======================
+    // 🔐 Verificação de login
+    // =======================
     const user = localStorage.getItem("user");
     if (!user) {
       window.location.href = "login.html";
     }
-  </script>
 
-  <!-- Cabeçalho com botão de sair -->
-  <header>
-    <h1>🚔 ROTAM - Painel</h1>
-    <button onclick="logout()">Sair</button>
-  </header>
+    // Botão sair
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    });
 
-  <main>
-    <h2>Bem-vindo ao sistema ROTAM</h2>
-    <p>Aqui você pode gerenciar suas ocorrências.</p>
+    // =======================
+    // ⚡ CRUD de Ocorrências
+    // =======================
+    const API_URL = "https://rotam-backend-production.up.railway.app/occurrences";
 
-    <!-- Exemplo: tabela ou dashboard -->
-    <div id="conteudo">
-      <p>🔹 Conteúdo protegido — só aparece para quem está logado.</p>
-    </div>
-  </main>
+    async function loadOccurrences() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        const table = document.getElementById("occurrencesTable");
+        table.innerHTML = "";
 
-  <script>
-    function logout() {
-      localStorage.removeItem("user"); // remove login salvo
-      window.location.href = "login.html"; // volta pro login
+        data.forEach((occ) => {
+          const row = `
+            <tr>
+              <td>${occ.id}</td>
+              <td>${occ.reporter_name}</td>
+              <td>${occ.communicator_name || ""}</td>
+              <td>${occ.occurred_at?.split("T")[0]}</td>
+              <td>${occ.location}</td>
+              <td>${occ.type}</td>
+              <td>${occ.status}</td>
+              <td>
+                <button class="btn-red" onclick="deleteOccurrence(${occ.id})">Excluir</button>
+              </td>
+            </tr>
+          `;
+          table.innerHTML += row;
+        });
+      } catch (e) {
+        console.error("Erro ao carregar ocorrências", e);
+      }
     }
+
+    async function deleteOccurrence(id) {
+      if (!confirm("Deseja realmente excluir?")) return;
+      await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      loadOccurrences();
+    }
+
+    document.getElementById("occurrenceForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const body = {
+        reporter_id: document.getElementById("reporter_id").value,
+        reporter_name: document.getElementById("reporter_name").value,
+        communicator_name: document.getElementById("communicator_name").value,
+        communicator_rg: document.getElementById("communicator_rg").value,
+        communicator_cpf: document.getElementById("communicator_cpf").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value,
+        occurred_at: document.getElementById("occurred_at").value,
+        location: document.getElementById("location").value,
+        type: document.getElementById("type").value,
+        status: document.getElementById("status").value,
+        description: document.getElementById("description").value,
+        involved: document.getElementById("involved").value,
+      };
+
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      e.target.reset();
+      loadOccurrences();
+    });
+
+    // Carregar dados na inicialização
+    loadOccurrences();
   </script>
 </body>
 </html>
