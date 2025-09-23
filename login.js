@@ -1,7 +1,4 @@
-const form = document.getElementById("loginForm");
-const errorMsg = document.getElementById("errorMsg");
-
-form.addEventListener("submit", async (e) => {
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const username = document.getElementById("username").value;
@@ -11,22 +8,20 @@ form.addEventListener("submit", async (e) => {
     const res = await fetch("https://rotam-backend-production.up.railway.app/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password }),
     });
 
     const data = await res.json();
 
-    if (data.success) {
-      // Salva sessão no localStorage
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      // Redireciona para o sistema
-      window.location.href = "index.html";
+    if (data.success && data.token) {
+      // Salva token no navegador
+      localStorage.setItem("token", data.token);
+      window.location.href = "index.html"; // Redireciona para a tela principal
     } else {
-      errorMsg.textContent = data.error || "Usuário ou senha inválidos.";
+      alert("Usuário ou senha inválidos!");
     }
   } catch (err) {
-    console.error(err);
-    errorMsg.textContent = "Erro de conexão com o servidor.";
+    console.error("Erro no login:", err);
+    alert("Erro de conexão com o servidor.");
   }
 });
