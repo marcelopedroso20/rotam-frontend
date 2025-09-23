@@ -1,259 +1,80 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ROTAM • Ocorrências</title>
-  <link rel="icon" type="image/png" href="assets/favicon.png" />
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROTAM - Sistema</title>
   <style>
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #121212;
-      color: #fff;
+      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      background-color: #111827; /* fundo escuro */
+      color: #f3f4f6; /* texto claro */
     }
 
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 20px;
-      background: #1e1e1e;
-      border-bottom: 1px solid #333;
+      padding: 15px 20px;
+      background-color: #1f2937; /* cinza escuro */
     }
 
     header h1 {
       font-size: 20px;
       margin: 0;
+      color: #fff;
     }
 
     header button {
-      background: #e74c3c;
-      color: white;
+      background-color: #dc2626; /* vermelho */
+      color: #fff;
       border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .container {
-      display: flex;
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .card {
-      background: #1e1e1e;
-      padding: 15px;
-      border-radius: 10px;
-      flex: 1;
-    }
-
-    h2 {
-      margin-top: 0;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 8px;
-      margin: 6px 0;
-      border: 1px solid #444;
-      border-radius: 6px;
-      background: #2c2c2c;
-      color: white;
-    }
-
-    button {
-      margin-top: 10px;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .btn-green {
-      background: #27ae60;
-      color: white;
-    }
-
-    .btn-red {
-      background: #e74c3c;
-      color: white;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #333;
-      text-align: left;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .status {
-      padding: 2px 8px;
+      padding: 8px 14px;
       border-radius: 5px;
-      font-size: 12px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
-    .status.aberto {
-      background: #2980b9;
+    header button:hover {
+      background-color: #b91c1c;
     }
 
-    .status.andamento {
-      background: #f39c12;
-    }
-
-    .status.fechado {
-      background: #27ae60;
+    main {
+      padding: 20px;
     }
   </style>
 </head>
 <body>
+  <!-- Proteção de acesso -->
   <script>
-    // 🔐 Checagem de login
     const user = localStorage.getItem("user");
     if (!user) {
       window.location.href = "login.html";
     }
-
-    function logout() {
-      localStorage.removeItem("user");
-      window.location.href = "login.html";
-    }
   </script>
 
+  <!-- Cabeçalho com botão de sair -->
   <header>
-    <h1>🚔 ROTAM • Ocorrências</h1>
+    <h1>🚔 ROTAM - Painel</h1>
     <button onclick="logout()">Sair</button>
   </header>
 
-  <div class="container">
-    <!-- Formulário -->
-    <div class="card" style="max-width: 400px;">
-      <h2>Nova ocorrência</h2>
-      <form id="formOcorrencia">
-        <input type="number" id="reporter_id" placeholder="ID do agente" required />
-        <input type="text" id="reporter_name" placeholder="Nome do agente" required />
-        <input type="text" id="comun_name" placeholder="Comunicante (nome)" required />
-        <input type="text" id="comun_rg" placeholder="Comunicante RG" />
-        <input type="text" id="comun_cpf" placeholder="Comunicante CPF" />
-        <input type="text" id="comun_tel" placeholder="Telefone" />
+  <main>
+    <h2>Bem-vindo ao sistema ROTAM</h2>
+    <p>Aqui você pode gerenciar suas ocorrências.</p>
 
-        <input type="text" id="endereco" placeholder="Endereço" />
-        <input type="date" id="ocurred_at" />
-        <input type="text" id="local" placeholder="Local do fato" />
-
-        <input type="text" id="tipo" placeholder="Tipo de ocorrência" />
-        <select id="status">
-          <option value="Aberto">Aberto</option>
-          <option value="Em andamento">Em andamento</option>
-          <option value="Fechado">Fechado</option>
-        </select>
-
-        <textarea id="descricao" placeholder="Descrição"></textarea>
-        <textarea id="envolvidos" placeholder='Envolvidos (JSON)'></textarea>
-
-        <button type="submit" class="btn-green">Cadastrar</button>
-        <button type="reset" class="btn-red">Limpar</button>
-      </form>
+    <!-- Exemplo: tabela ou dashboard -->
+    <div id="conteudo">
+      <p>🔹 Conteúdo protegido — só aparece para quem está logado.</p>
     </div>
-
-    <!-- Lista -->
-    <div class="card">
-      <h2>Ocorrências</h2>
-      <button onclick="carregarOcorrencias()">Recarregar</button>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Agente</th>
-            <th>Comunicante</th>
-            <th>Data</th>
-            <th>Local</th>
-            <th>Tipo</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="listaOcorrencias"></tbody>
-      </table>
-    </div>
-  </div>
+  </main>
 
   <script>
-    const API = "https://rotam-backend-production.up.railway.app";
-
-    async function carregarOcorrencias() {
-      const res = await fetch(API + "/occurrences");
-      const ocorrencias = await res.json();
-      const tbody = document.getElementById("listaOcorrencias");
-      tbody.innerHTML = "";
-
-      ocorrencias.forEach(o => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${o.id}</td>
-          <td>${o.reporter_name}</td>
-          <td>${o.comun_name}</td>
-          <td>${o.ocurred_at?.substring(0,10) || ""}</td>
-          <td>${o.local}</td>
-          <td>${o.tipo}</td>
-          <td><span class="status ${o.status.toLowerCase()}">${o.status}</span></td>
-          <td class="actions">
-            <button class="btn-red" onclick="excluirOcorrencia(${o.id})">Excluir</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+    function logout() {
+      localStorage.removeItem("user"); // remove login salvo
+      window.location.href = "login.html"; // volta pro login
     }
-
-    async function excluirOcorrencia(id) {
-      if (!confirm("Tem certeza que deseja excluir?")) return;
-      await fetch(API + "/occurrences/" + id, { method: "DELETE" });
-      carregarOcorrencias();
-    }
-
-    document.getElementById("formOcorrencia").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const dados = {
-        reporter_id: document.getElementById("reporter_id").value,
-        reporter_name: document.getElementById("reporter_name").value,
-        comun_name: document.getElementById("comun_name").value,
-        comun_rg: document.getElementById("comun_rg").value,
-        comun_cpf: document.getElementById("comun_cpf").value,
-        comun_tel: document.getElementById("comun_tel").value,
-        endereco: document.getElementById("endereco").value,
-        ocurred_at: document.getElementById("ocurred_at").value,
-        local: document.getElementById("local").value,
-        tipo: document.getElementById("tipo").value,
-        status: document.getElementById("status").value,
-        descricao: document.getElementById("descricao").value,
-        envolvidos: document.getElementById("envolvidos").value,
-      };
-
-      await fetch(API + "/occurrences", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados),
-      });
-
-      e.target.reset();
-      carregarOcorrencias();
-    });
-
-    // carregar ao abrir
-    carregarOcorrencias();
   </script>
 </body>
 </html>
