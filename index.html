@@ -6,66 +6,24 @@
   <title>Sistema ROTAM</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
-      display: flex;
-      height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background: #1e1e1e;
-      padding: 20px 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .sidebar img {
-      width: 100px;
-      margin-bottom: 10px;
-    }
-    .sidebar h4 {
-      font-size: 16px;
-      margin-bottom: 20px;
-      color: #ccc;
-    }
-    .sidebar button {
-      width: 100%;
-      margin: 5px 0;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      text-align: left;
-      font-weight: bold;
-      background: #2c2c2c;
-      color: #fff;
-      cursor: pointer;
-    }
-    .sidebar button:hover {
-      background: #444;
-    }
-    .sidebar button.active {
-      background: #0d6efd;
-    }
-    .sidebar .btn-logout {
-      background: #dc3545;
-      color: #fff;
-    }
-    .content {
-      flex: 1;
-      padding: 20px;
-    }
+    body { margin: 0; font-family: Arial, sans-serif; background: #121212; color: #fff; display: flex; height: 100vh; }
+    .sidebar { width: 220px; background: #1e1e1e; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; }
+    .sidebar img { width: 100px; margin-bottom: 10px; }
+    .sidebar h4 { font-size: 16px; margin-bottom: 20px; color: #ccc; }
+    .sidebar button { width: 100%; margin: 5px 0; padding: 10px; border: none; border-radius: 5px; text-align: left; font-weight: bold; background: #2c2c2c; color: #fff; cursor: pointer; }
+    .sidebar button:hover { background: #444; }
+    .sidebar button.active { background: #0d6efd; }
+    .sidebar .btn-logout { background: #dc3545; color: #fff; }
+    .content { flex: 1; padding: 20px; }
   </style>
 </head>
 <body>
   <div class="sidebar">
     <img src="assets/logo-rotam.png" alt="Logo ROTAM">
     <h4>ROTAM Sistema</h4>
-    <button onclick="location.href='index.html'">🏠 Início</button>
-    <button onclick="location.href='cadastro.html'">📝 Cadastro</button>
-    <button onclick="location.href='relatorios.html'">📊 Relatórios</button>
+    <button id="btnInicio">🏠 Início</button>
+    <button id="btnCadastro">📝 Cadastro</button>
+    <button id="btnRelatorios">📊 Relatórios</button>
     <button class="btn-logout" onclick="logout()">🚪 Sair</button>
   </div>
 
@@ -76,9 +34,12 @@
 
   <script src="logout.js"></script>
   <script>
-    if (!localStorage.getItem("token")) {
-      window.location.href = "login.html";
-    }
+    if (!localStorage.getItem("token")) window.location.href = "login.html";
+
+    // Marca o menu ativo
+    document.getElementById("btnInicio").classList.add("active");
+    document.getElementById("btnCadastro").onclick = () => location.href = "cadastro.html";
+    document.getElementById("btnRelatorios").onclick = () => location.href = "relatorios.html";
   </script>
 </body>
 </html>
