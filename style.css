@@ -1,0 +1,198 @@
+/* ===== Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background-color: #121212;
+  color: #f0f0f0;
+  min-height: 100vh;
+}
+
+/* ===== Cabeçalho (Menu superior) ===== */
+header.menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1e1e1e;
+  padding: 12px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+}
+
+header .logo {
+  font-size: 18px;
+  font-weight: bold;
+  color: #9b59b6;
+}
+
+header nav ul {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+header nav ul li a {
+  text-decoration: none;
+  color: #f0f0f0;
+  padding: 6px 12px;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+header nav ul li a:hover {
+  background: #333;
+}
+
+header nav ul li a.active {
+  background: #9b59b6;
+  color: white;
+}
+
+header button {
+  background: #e74c3c;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+header button:hover {
+  background: #c0392b;
+}
+
+/* ===== Conteúdo Principal ===== */
+main {
+  padding: 20px;
+}
+
+main h1, main h2 {
+  margin-bottom: 15px;
+  color: #9b59b6;
+}
+
+main p {
+  margin-bottom: 20px;
+}
+
+/* ===== Abas ===== */
+ul.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  list-style: none;
+}
+
+ul.tabs li a {
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  background: #2c2c2c;
+  color: #f0f0f0;
+  transition: 0.3s;
+}
+
+ul.tabs li a:hover {
+  background: #9b59b6;
+  color: white;
+}
+
+ul.tabs li a.active {
+  background: #9b59b6;
+  color: white;
+}
+
+/* ===== Formulários ===== */
+form {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  max-width: 800px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+form input, form textarea, form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 6px;
+  background: #2c2c2c;
+  color: white;
+}
+
+form input:focus, form textarea:focus, form select:focus {
+  outline: 2px solid #9b59b6;
+}
+
+/* ===== Botões ===== */
+button, .btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-success {
+  background: #27ae60;
+  color: white;
+}
+.btn-success:hover {
+  background: #219150;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+.btn-secondary {
+  background: #34495e;
+  color: white;
+}
+.btn-secondary:hover {
+  background: #2c3e50;
+}
+
+/* ===== Tabelas ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table thead {
+  background: #9b59b6;
+  color: white;
+}
+
+table th, table td {
+  padding: 10px;
+  border: 1px solid #333;
+  text-align: left;
+}
+
+table tbody tr:nth-child(even) {
+  background: #1e1e1e;
+}
+
+table tbody tr:nth-child(odd) {
+  background: #2c2c2c;
+}
