@@ -1,83 +1,72 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Relatórios - ROTAM</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema ROTAM - Relatórios</title>
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <style>
-    body { margin: 0; display: flex; height: 100vh; background: #121212; color: #fff; }
-    .sidebar { width: 220px; background: #1e1e1e; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; }
-    .sidebar img { width: 100px; margin-bottom: 10px; }
-    .sidebar button { width: 100%; margin: 5px 0; padding: 10px; border: none; border-radius: 5px; background: #2c2c2c; color: #fff; text-align: left; cursor: pointer; font-weight: bold; }
-    .sidebar button:hover { background: #444; }
-    .sidebar button.active { background: #0d6efd; }
-    .sidebar .btn-logout { background: #dc3545; }
-    .content { flex: 1; padding: 20px; overflow-y: auto; }
-    table { color: #fff; }
-  </style>
+  <script>
+    if (!localStorage.getItem("user")) {
+      window.location.href = "login.html";
+    }
+  </script>
 </head>
 <body>
   <div class="sidebar">
-    <img src="assets/logo-rotam.png" alt="Logo ROTAM">
-    <h4>ROTAM Sistema</h4>
-    <button id="btnInicio">🏠 Início</button>
-    <button id="btnCadastro">📝 Cadastro</button>
-    <button id="btnRelatorios">📊 Relatórios</button>
+    <img src="logo-rotam.png" alt="Logo ROTAM">
+    <h4>Sistema ROTAM</h4>
+    <button onclick="location.href='index.html'">🏠 Início</button>
+    <button onclick="location.href='cadastro.html'">📝 Cadastro</button>
+    <button onclick="location.href='relatorios.html'" class="active">📊 Relatórios</button>
     <button class="btn-logout" onclick="logout()">🚪 Sair</button>
   </div>
 
   <div class="content">
-    <h2>Relatórios</h2>
-    <button class="btn btn-primary mb-3" onclick="carregarOcorrencias()">Recarregar</button>
-    <div id="listaOcorrencias"></div>
+    <h2>📊 Relatórios de Ocorrências</h2>
+    <table class="table table-dark table-striped" id="tabelaOcorrencias">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Agente</th>
+          <th>Comunicante</th>
+          <th>Local</th>
+          <th>Tipo</th>
+          <th>Descrição</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <script src="logout.js"></script>
   <script>
-    const backendUrl = "https://rotam-backend-production.up.railway.app";
-    if (!localStorage.getItem("token")) window.location.href = "login.html";
-
-    // Marca o menu ativo
-    document.getElementById("btnRelatorios").classList.add("active");
-    document.getElementById("btnInicio").onclick = () => location.href = "index.html";
-    document.getElementById("btnCadastro").onclick = () => location.href = "cadastro.html";
+    const backendUrl = "https://rotam-backend-production.up.railway.app/occurrences";
 
     async function carregarOcorrencias() {
-      const lista = document.getElementById("listaOcorrencias");
-      lista.innerHTML = "<p>Carregando...</p>";
       try {
-        const res = await fetch(`${backendUrl}/occurrences`, {
-          headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        const res = await fetch(backendUrl);
+        const data = await res.json();
+
+        const tbody = document.querySelector("#tabelaOcorrencias tbody");
+        tbody.innerHTML = "";
+
+        data.forEach(oc => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${oc.id}</td>
+            <td>${oc.reporter_name || "-"}</td>
+            <td>${oc.comunicante_nome || "-"}</td>
+            <td>${oc.occurred_location || "-"}</td>
+            <td>${oc.occurrence_type || "-"}</td>
+            <td>${oc.description || "-"}</td>
+            <td>${oc.status || "-"}</td>
+          `;
+          tbody.appendChild(tr);
         });
-        const ocorrencias = await res.json();
-        if (ocorrencias.length === 0) {
-          lista.innerHTML = "<p>Nenhuma ocorrência encontrada.</p>";
-          return;
-        }
-        lista.innerHTML = `
-          <table class="table table-dark table-striped">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Agente</th>
-                <th>Descrição</th>
-                <th>Data</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${ocorrencias.map(o => `
-                <tr>
-                  <td>${o.id}</td>
-                  <td>${o.reporter_name}</td>
-                  <td>${o.description}</td>
-                  <td>${o.occurred_at || '-'}</td>
-                </tr>`).join("")}
-            </tbody>
-          </table>
-        `;
-      } catch {
-        lista.innerHTML = "<p>Erro ao carregar ocorrências.</p>";
+      } catch (err) {
+        alert("❌ Erro ao carregar ocorrências.");
       }
     }
 
