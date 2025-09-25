@@ -1,201 +1,199 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ROTAM • Sistema</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema ROTAM</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #121212;
+      background: #121212;
       color: #fff;
       display: flex;
+      height: 100vh;
     }
-
     /* Sidebar */
     .sidebar {
-      width: 250px;
+      width: 220px;
       background: #1e1e1e;
-      height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
       padding: 20px 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-
     .sidebar img {
       width: 100px;
+      margin-bottom: 10px;
+    }
+    .sidebar h4 {
+      font-size: 16px;
       margin-bottom: 20px;
+      color: #ccc;
     }
-
-    .sidebar h2 {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
     .sidebar button {
       width: 100%;
       margin: 5px 0;
-      background: #333;
+      padding: 10px;
       border: none;
-      padding: 12px;
       border-radius: 5px;
+      text-align: left;
+      font-weight: bold;
+      background: #2c2c2c;
       color: #fff;
       cursor: pointer;
-      font-weight: bold;
-      text-align: left;
     }
-
     .sidebar button:hover {
       background: #444;
     }
-
-    /* Conteúdo principal */
-    .content {
-      margin-left: 250px;
-      padding: 20px;
-      flex: 1;
+    .sidebar button.active {
+      background: #0d6efd;
     }
-
+    .sidebar .btn-logout {
+      background: #dc3545;
+      color: #fff;
+    }
+    /* Conteúdo */
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
     .hidden {
       display: none;
-    }
-
-    .card {
-      background: #1e1e1e;
-      border: none;
-      color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-    }
-
-    .logout {
-      margin-top: auto;
-      background: #d9534f !important;
     }
   </style>
 </head>
 <body>
   <!-- Sidebar -->
   <div class="sidebar">
-    <img src="logo-rotam-120.png" alt="Logo ROTAM">
-    <h2>ROTAM Sistema</h2>
-    <button onclick="showPage('home')">🏠 Início</button>
+    <img src="assets/logo-rotam.png" alt="Logo ROTAM">
+    <h4>ROTAM Sistema</h4>
+    <button class="active" onclick="showPage('home')">🏠 Início</button>
     <button onclick="showPage('cadastro')">📝 Cadastro</button>
     <button onclick="showPage('relatorios')">📊 Relatórios</button>
-    <button class="logout" onclick="logout()">🚪 Sair</button>
+    <button class="btn-logout" onclick="logout()">🚪 Sair</button>
   </div>
 
   <!-- Conteúdo -->
   <div class="content">
-    <!-- Página Inicial -->
+    <!-- Página Início -->
     <div id="home" class="page">
-      <div class="card">
-        <h3>Bem-vindo ao Sistema ROTAM</h3>
-        <p>Selecione uma opção no menu ao lado para começar.</p>
-      </div>
+      <h2>Bem-vindo ao Sistema ROTAM</h2>
+      <p>Selecione uma opção no menu ao lado para começar.</p>
     </div>
 
     <!-- Página Cadastro -->
     <div id="cadastro" class="page hidden">
-      <div class="card">
-        <h3>Cadastro de Ocorrência</h3>
-        <form id="occurrenceForm">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label>ID do agente</label>
-              <input type="text" class="form-control" id="reporter_id" placeholder="Ex: 1006">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Nome do agente</label>
-              <input type="text" class="form-control" id="reporter_name" placeholder="Ex: Agente Silva">
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <label>Descrição</label>
-            <textarea class="form-control" id="description" rows="3"></textarea>
-          </div>
-
+      <h2>Cadastro de Ocorrência</h2>
+      <form id="formOcorrencia" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">ID do Agente</label>
+          <input type="text" name="reporter_id" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Nome do Agente</label>
+          <input type="text" name="reporter_name" class="form-control" required>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Descrição</label>
+          <textarea name="description" class="form-control" rows="3" required></textarea>
+        </div>
+        <div class="col-12">
           <button type="submit" class="btn btn-success">Cadastrar</button>
-        </form>
-      </div>
+        </div>
+      </form>
+      <p id="msgCadastro" class="mt-3"></p>
     </div>
 
     <!-- Página Relatórios -->
     <div id="relatorios" class="page hidden">
-      <div class="card">
-        <h3>Relatórios</h3>
-        <button onclick="loadOccurrences()" class="btn btn-primary mb-3">Recarregar</button>
-        <ul id="occurrenceList" class="list-group"></ul>
-      </div>
+      <h2>Relatórios</h2>
+      <button class="btn btn-primary mb-3" onclick="carregarOcorrencias()">Recarregar</button>
+      <div id="listaOcorrencias"></div>
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="logout.js"></script>
   <script>
-    const backendUrl = "https://rotam-backend-production.up.railway.app/occurrences";
+    const backendUrl = "https://rotam-backend-production.up.railway.app";
 
-    // Proteção: exige login
+    // Proteção de login
     if (!localStorage.getItem("token")) {
       window.location.href = "login.html";
     }
 
-    // Navegação entre páginas
+    // Alternar páginas
     function showPage(pageId) {
-      document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
-      document.getElementById(pageId).classList.remove("hidden");
+      document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+      document.getElementById(pageId).classList.remove('hidden');
+      document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
     }
 
-    // Cadastrar ocorrência
-    document.getElementById("occurrenceForm").addEventListener("submit", async (e) => {
+    // Cadastro de ocorrência
+    document.getElementById("formOcorrencia").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const data = {
-        reporter_id: document.getElementById("reporter_id").value,
-        reporter_name: document.getElementById("reporter_name").value,
-        description: document.getElementById("description").value
-      };
-
+      const formData = Object.fromEntries(new FormData(e.target));
       try {
-        await fetch(backendUrl, {
+        const res = await fetch(`${backendUrl}/occurrences`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("token")
+          },
+          body: JSON.stringify(formData)
         });
-        alert("Ocorrência cadastrada!");
+        const data = await res.json();
+        document.getElementById("msgCadastro").textContent = data.success
+          ? "Ocorrência cadastrada com sucesso!"
+          : "Erro ao cadastrar ocorrência.";
         e.target.reset();
       } catch (err) {
-        alert("Erro ao cadastrar ocorrência.");
+        document.getElementById("msgCadastro").textContent = "Erro ao conectar com o servidor.";
       }
     });
 
-    // Listar ocorrências
-    async function loadOccurrences() {
+    // Carregar ocorrências no relatório
+    async function carregarOcorrencias() {
+      const lista = document.getElementById("listaOcorrencias");
+      lista.innerHTML = "<p>Carregando...</p>";
       try {
-        const res = await fetch(backendUrl);
-        const data = await res.json();
-        const list = document.getElementById("occurrenceList");
-        list.innerHTML = "";
-        data.forEach(o => {
-          const li = document.createElement("li");
-          li.className = "list-group-item bg-dark text-white";
-          li.textContent = `${o.id} • ${o.occurrence_type || "Sem tipo"} • ${o.status || "Aberto"}`;
-          list.appendChild(li);
+        const res = await fetch(`${backendUrl}/occurrences`, {
+          headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
         });
+        const ocorrencias = await res.json();
+        if (ocorrencias.length === 0) {
+          lista.innerHTML = "<p>Nenhuma ocorrência encontrada.</p>";
+          return;
+        }
+        lista.innerHTML = `
+          <table class="table table-dark table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Agente</th>
+                <th>Descrição</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ocorrencias.map(o => `
+                <tr>
+                  <td>${o.id}</td>
+                  <td>${o.reporter_name}</td>
+                  <td>${o.description}</td>
+                  <td>${o.occurred_at || '-'}</td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        `;
       } catch (err) {
-        alert("Erro ao carregar ocorrências.");
+        lista.innerHTML = "<p>Erro ao carregar ocorrências.</p>";
       }
     }
-
-    // Exibe a tela inicial por padrão
-    showPage("home");
   </script>
 </body>
 </html>
