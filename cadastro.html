@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro - ROTAM</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    if (!localStorage.getItem("token")) {
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+<body>
+  <header class="menu">
+    <div class="logo">🚓 ROTAM</div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="cadastro.html" class="active">Cadastro</a></li>
+        <li><a href="relatorios.html">Relatórios</a></li>
+      </ul>
+    </nav>
+    <button onclick="logout()">Sair</button>
+  </header>
+
+  <main>
+    <h2>Cadastro</h2>
+    <ul class="tabs">
+      <li><a href="#">Ocorrência</a></li>
+      <li><a href="#">Produtividade</a></li>
+      <li><a href="#">Mapa Força</a></li>
+    </ul>
+
+    <section>
+      <p>Aqui vai o formulário de cadastro (igual ao que você já tem).</p>
+    </section>
+  </main>
+
+  <script src="logout.js"></script>
+</body>
+</html>
