@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro - ROTAM</title>
+  <title>Cadastro de Ocorrências - ROTAM</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- MENU SUPERIOR -->
   <header class="menu">
-    <div class="logo">ROTAM • Cadastro</div>
+    <div class="logo">ROTAM • Sistema</div>
     <nav>
       <ul>
         <li><a href="index.html">Início</a></li>
@@ -21,70 +21,78 @@
   </header>
 
   <!-- CONTEÚDO -->
-  <main>
-    <h1>Cadastro de Ocorrência</h1>
-    <p>Preencha os dados abaixo para registrar uma nova ocorrência.</p>
+  <main class="form-container">
+    <h1>📝 Cadastro de Ocorrência</h1>
+    <form id="occurrenceForm">
+      <div class="form-group">
+        <label>Nome do Comunicante:</label>
+        <input type="text" id="comunicante_nome" required>
+      </div>
 
-    <!-- FORM DE CADASTRO -->
-    <form id="ocorrenciaForm">
-      <label for="reporter_id">ID do Agente</label>
-      <input type="number" id="reporter_id" placeholder="Ex: 1006">
+      <div class="form-group">
+        <label>RG:</label>
+        <input type="text" id="comunicante_rg">
+      </div>
 
-      <label for="reporter_name">Nome do Agente</label>
-      <input type="text" id="reporter_name" placeholder="Ex: Agente Silva">
+      <div class="form-group">
+        <label>CPF:</label>
+        <input type="text" id="comunicante_cpf">
+      </div>
 
-      <label for="comunicante_nome">Comunicante (nome)</label>
-      <input type="text" id="comunicante_nome" placeholder="Ex: Maria Santos">
+      <div class="form-group">
+        <label>Endereço:</label>
+        <input type="text" id="comunicante_endereco">
+      </div>
 
-      <label for="comunicante_rg">RG</label>
-      <input type="text" id="comunicante_rg" placeholder="Ex: 1234567">
+      <div class="form-group">
+        <label>Telefone:</label>
+        <input type="text" id="comunicante_telefone">
+      </div>
 
-      <label for="comunicante_cpf">CPF</label>
-      <input type="text" id="comunicante_cpf" placeholder="Somente números">
+      <div class="form-group">
+        <label>Data do Fato:</label>
+        <input type="date" id="occurred_at">
+      </div>
 
-      <label for="comunicante_endereco">Endereço</label>
-      <input type="text" id="comunicante_endereco" placeholder="Rua, número">
+      <div class="form-group">
+        <label>Local do Fato:</label>
+        <input type="text" id="occurred_location">
+      </div>
 
-      <label for="comunicante_telefone">Telefone</label>
-      <input type="text" id="comunicante_telefone" placeholder="(65) 99999-0000">
+      <div class="form-group">
+        <label>Tipo de Ocorrência:</label>
+        <input type="text" id="occurrence_type">
+      </div>
 
-      <label for="occurred_at">Data do Fato</label>
-      <input type="date" id="occurred_at">
+      <div class="form-group">
+        <label>Descrição:</label>
+        <textarea id="description" rows="4"></textarea>
+      </div>
 
-      <label for="occurred_location">Local do Fato</label>
-      <input type="text" id="occurred_location" placeholder="Ex: Praça Central">
+      <div class="form-group">
+        <label>Medidas Tomadas:</label>
+        <textarea id="measures_taken" rows="3"></textarea>
+      </div>
 
-      <label for="occurrence_type">Tipo de Ocorrência</label>
-      <input type="text" id="occurrence_type" placeholder="Ex: Furto">
-
-      <label for="status">Status</label>
-      <select id="status">
-        <option value="Aberto">Aberto</option>
-        <option value="Em andamento">Em andamento</option>
-        <option value="Fechado">Fechado</option>
-      </select>
-
-      <label for="description">Descrição</label>
-      <textarea id="description" rows="4" placeholder="Relato resumido..."></textarea>
-
-      <label for="involved">Envolvidos (JSON)</label>
-      <textarea id="involved" rows="3" placeholder='[{"nome":"João","papel":"vítima"}]'></textarea>
-
-      <button type="submit" class="btn btn-success">Cadastrar</button>
-      <button type="reset" class="btn btn-secondary">Limpar</button>
+      <button type="submit">Salvar Ocorrência</button>
     </form>
+
+    <p id="msg" class="msg"></p>
   </main>
 
   <script src="logout.js"></script>
   <script>
+    // Proteção: só acessa logado
+    if (!localStorage.getItem("token")) {
+      window.location.href = "login.html";
+    }
+
     const backendUrl = "https://rotam-backend-production.up.railway.app/occurrences";
 
-    document.getElementById("ocorrenciaForm").addEventListener("submit", async (e) => {
+    document.getElementById("occurrenceForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const data = {
-        reporter_id: document.getElementById("reporter_id").value,
-        reporter_name: document.getElementById("reporter_name").value,
+      const occurrence = {
         comunicante_nome: document.getElementById("comunicante_nome").value,
         comunicante_rg: document.getElementById("comunicante_rg").value,
         comunicante_cpf: document.getElementById("comunicante_cpf").value,
@@ -93,27 +101,27 @@
         occurred_at: document.getElementById("occurred_at").value,
         occurred_location: document.getElementById("occurred_location").value,
         occurrence_type: document.getElementById("occurrence_type").value,
-        status: document.getElementById("status").value,
         description: document.getElementById("description").value,
-        involved: JSON.parse(document.getElementById("involved").value || "[]"),
+        measures_taken: document.getElementById("measures_taken").value,
+        status: "Aberto"
       };
 
       try {
         const res = await fetch(backendUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify(occurrence)
         });
 
-        if (res.ok) {
-          alert("✅ Ocorrência cadastrada com sucesso!");
-          document.getElementById("ocorrenciaForm").reset();
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById("msg").textContent = "✅ Ocorrência salva com sucesso!";
+          document.getElementById("occurrenceForm").reset();
         } else {
-          alert("❌ Erro ao cadastrar ocorrência!");
+          document.getElementById("msg").textContent = "❌ Erro ao salvar ocorrência.";
         }
       } catch (err) {
-        console.error(err);
-        alert("❌ Erro de conexão com o servidor.");
+        document.getElementById("msg").textContent = "⚠️ Erro de conexão com o servidor.";
       }
     });
   </script>
