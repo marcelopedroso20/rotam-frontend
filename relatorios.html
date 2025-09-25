@@ -1,117 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Relatório - ROTAM</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatórios - ROTAM</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-
   <style>
-    body {
-      margin: 0;
-      display: flex;
-      height: 100vh;
-      background-color: #121212;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
-    .sidebar {
-      width: 220px;
-      background: #1e1e1e;
-      display: flex;
-      flex-direction: column;
-      padding: 20px 10px;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.4);
-    }
-    .sidebar h2 { color: #0d6efd; text-align: center; margin-bottom: 20px; }
-    .sidebar a {
-      color: #fff; padding: 10px; margin: 5px 0; border-radius: 6px;
-      text-decoration: none; font-weight: bold; display: block;
-    }
-    .sidebar a:hover { background: #0d6efd; }
-    .sidebar .logout {
-      margin-top: auto; background: #dc3545; color: #fff;
-      text-align: center; border-radius: 6px; padding: 10px; cursor: pointer;
-    }
-    .sidebar .logout:hover { background: #bb2d3b; }
-
+    body { margin: 0; display: flex; height: 100vh; background: #121212; color: #fff; }
+    .sidebar { width: 220px; background: #1e1e1e; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; }
+    .sidebar img { width: 100px; margin-bottom: 10px; }
+    .sidebar button { width: 100%; margin: 5px 0; padding: 10px; border: none; border-radius: 5px; background: #2c2c2c; color: #fff; text-align: left; }
+    .sidebar button:hover { background: #444; }
+    .sidebar .btn-logout { background: #dc3545; }
     .content { flex: 1; padding: 20px; overflow-y: auto; }
-    .card {
-      background: #1e1e1e; border: 1px solid #2c2c2c;
-      border-radius: 10px; padding: 25px; margin-top: 20px;
-    }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { padding: 10px; border-bottom: 1px solid #444; }
-    th { color: #0d6efd; }
+    table { color: #fff; }
   </style>
 </head>
 <body>
-  <script>
-    if (!localStorage.getItem("user")) {
-      window.location.href = "login.html";
-    }
-  </script>
-
-  <!-- Sidebar -->
   <div class="sidebar">
-    <h2>🚓 ROTAM</h2>
-    <a href="index.html">🏠 Início</a>
-    <a href="cadastro.html">📝 Cadastro</a>
-    <a href="relatorio.html">📊 Relatório</a>
-    <div class="logout" onclick="logout()">Sair</div>
+    <img src="assets/logo-rotam.png" alt="Logo ROTAM">
+    <h4>ROTAM Sistema</h4>
+    <button onclick="location.href='index.html'">🏠 Início</button>
+    <button onclick="location.href='cadastro.html'">📝 Cadastro</button>
+    <button onclick="location.href='relatorios.html'" class="active">📊 Relatórios</button>
+    <button class="btn-logout" onclick="logout()">🚪 Sair</button>
   </div>
 
-  <!-- Conteúdo -->
   <div class="content">
-    <h1>Relatórios de Ocorrências</h1>
-    <div class="card">
-      <table id="tabelaOcorrencias">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Agente</th>
-            <th>Comunicante</th>
-            <th>Tipo</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <h2>Relatórios</h2>
+    <button class="btn btn-primary mb-3" onclick="carregarOcorrencias()">Recarregar</button>
+    <div id="listaOcorrencias"></div>
   </div>
 
   <script src="logout.js"></script>
   <script>
-    const API = "https://rotam-backend-production.up.railway.app/occurrences";
+    const backendUrl = "https://rotam-backend-production.up.railway.app";
+    if (!localStorage.getItem("token")) window.location.href = "login.html";
 
     async function carregarOcorrencias() {
+      const lista = document.getElementById("listaOcorrencias");
+      lista.innerHTML = "<p>Carregando...</p>";
       try {
-        const res = await fetch(API);
-        const dados = await res.json();
-        const tbody = document.querySelector("#tabelaOcorrencias tbody");
-        tbody.innerHTML = "";
-
-        if (res.ok && Array.isArray(dados)) {
-          dados.forEach(o => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${o.id}</td>
-              <td>${o.reporter_name || "—"}</td>
-              <td>${o.comunicante_nome || "—"}</td>
-              <td>${o.occurrence_type || "—"}</td>
-              <td>${o.status || "—"}</td>
-            `;
-            tbody.appendChild(tr);
-          });
-        } else {
-          tbody.innerHTML = `<tr><td colspan="5">Nenhuma ocorrência encontrada</td></tr>`;
+        const res = await fetch(`${backendUrl}/occurrences`, {
+          headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        });
+        const ocorrencias = await res.json();
+        if (ocorrencias.length === 0) {
+          lista.innerHTML = "<p>Nenhuma ocorrência encontrada.</p>";
+          return;
         }
+        lista.innerHTML = `
+          <table class="table table-dark table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Agente</th>
+                <th>Descrição</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ocorrencias.map(o => `
+                <tr>
+                  <td>${o.id}</td>
+                  <td>${o.reporter_name}</td>
+                  <td>${o.description}</td>
+                  <td>${o.occurred_at || '-'}</td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        `;
       } catch (err) {
-        alert("Erro ao carregar ocorrências.");
+        lista.innerHTML = "<p>Erro ao carregar ocorrências.</p>";
       }
     }
-
-    carregarOcorrencias();
   </script>
 </body>
 </html>
