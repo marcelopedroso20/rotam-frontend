@@ -1,33 +1,34 @@
-const API_URL = "https://rotam-backend-production.up.railway.app";
+const backendUrl = "https://rotam-backend-production.up.railway.app/auth/login";
 
-// Captura o evento de envio do formulário de login
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
 
   try {
-    const res = await fetch(`${API_URL}/auth/login`, {
+    const res = await fetch(backendUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password }),
     });
 
     const data = await res.json();
 
-    if (!res.ok || !data.success) {
-      alert(data.error || "Usuário ou senha inválidos");
-      return;
+    if (res.ok && data.success) {
+      // Salva login no navegador
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("loggedIn", "true");
+
+      // Redireciona
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("errorMsg").style.display = "block";
+      document.getElementById("errorMsg").textContent = data.error || "Usuário ou senha incorretos.";
     }
-
-    // 👉 Aqui salva o token no navegador
-    localStorage.setItem("token", data.token);
-
-    // Redireciona para tela principal
-    window.location.href = "index.html";
   } catch (err) {
-    console.error("Erro no login", err);
-    alert("Erro no servidor. Tente novamente mais tarde.");
+    document.getElementById("errorMsg").style.display = "block";
+    document.getElementById("errorMsg").textContent = "Erro ao conectar com o servidor.";
   }
 });
