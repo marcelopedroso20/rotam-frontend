@@ -9,7 +9,7 @@
 <body>
   <!-- MENU SUPERIOR -->
   <header class="menu">
-    <div class="logo">ROTAM • Relatórios</div>
+    <div class="logo">ROTAM • Sistema</div>
     <nav>
       <ul>
         <li><a href="index.html">Início</a></li>
@@ -21,77 +21,73 @@
   </header>
 
   <!-- CONTEÚDO -->
-  <main>
-    <h1>Relatório de Ocorrências</h1>
-    <p>Abaixo estão listadas as ocorrências registradas no sistema.</p>
-
-    <!-- BOTÃO DE ATUALIZAR -->
-    <button id="reloadBtn" class="btn btn-primary">🔄 Recarregar</button>
-
-    <!-- TABELA DE OCORRÊNCIAS -->
-    <div class="table-container">
-      <table id="ocorrenciasTable">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Agente</th>
-            <th>Comunicante</th>
-            <th>Data</th>
-            <th>Local</th>
-            <th>Tipo</th>
-            <th>Status</th>
-            <th>Descrição</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="8">Carregando ocorrências...</td></tr>
-        </tbody>
-      </table>
-    </div>
+  <main class="table-container">
+    <h1>📊 Relatórios de Ocorrências</h1>
+    <div id="msg" class="msg">Carregando ocorrências...</div>
+    <table id="table" style="display:none">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Comunicante</th>
+          <th>Data</th>
+          <th>Local</th>
+          <th>Tipo</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
   </main>
 
   <script src="logout.js"></script>
   <script>
+    // Proteção: só acessa logado
+    if (!localStorage.getItem("token")) {
+      window.location.href = "login.html";
+    }
+
     const backendUrl = "https://rotam-backend-production.up.railway.app/occurrences";
 
     async function carregarOcorrencias() {
-      const tbody = document.querySelector("#ocorrenciasTable tbody");
-      tbody.innerHTML = "<tr><td colspan='8'>⏳ Carregando...</td></tr>";
+      const msg = document.getElementById("msg");
+      const table = document.getElementById("table");
+      const tbody = document.getElementById("tbody");
+
+      msg.style.display = "block";
+      msg.textContent = "⏳ Carregando...";
 
       try {
         const res = await fetch(backendUrl);
-        if (!res.ok) throw new Error("Erro ao buscar dados");
         const data = await res.json();
 
-        if (data.length === 0) {
-          tbody.innerHTML = "<tr><td colspan='8'>⚠ Nenhuma ocorrência encontrada.</td></tr>";
+        if (!Array.isArray(data) || data.length === 0) {
+          msg.textContent = "⚠️ Nenhuma ocorrência encontrada.";
           return;
         }
 
+        // Preenche tabela
         tbody.innerHTML = "";
-        data.forEach(oc => {
+        data.forEach(o => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${oc.id}</td>
-            <td>${oc.reporter_name || ""}</td>
-            <td>${oc.comunicante_nome || ""}</td>
-            <td>${oc.occurred_at || ""}</td>
-            <td>${oc.occurred_location || ""}</td>
-            <td>${oc.occurrence_type || ""}</td>
-            <td>${oc.status || ""}</td>
-            <td>${oc.description || ""}</td>
+            <td>${o.id}</td>
+            <td>${o.comunicante_nome || "—"}</td>
+            <td>${o.occurred_at ? o.occurred_at.slice(0,10) : "—"}</td>
+            <td>${o.occurred_location || "—"}</td>
+            <td>${o.occurrence_type || "—"}</td>
+            <td>${o.status || "Aberto"}</td>
           `;
           tbody.appendChild(tr);
         });
+
+        msg.style.display = "none";
+        table.style.display = "table";
+
       } catch (err) {
-        console.error(err);
-        tbody.innerHTML = "<tr><td colspan='8'>❌ Erro ao carregar ocorrências.</td></tr>";
+        msg.textContent = "❌ Erro ao carregar ocorrências.";
       }
     }
 
-    document.getElementById("reloadBtn").addEventListener("click", carregarOcorrencias);
-
-    // Carregar na abertura da página
     carregarOcorrencias();
   </script>
 </body>
