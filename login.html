@@ -13,6 +13,7 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
     .login-box {
       background: #1e1e1e;
@@ -34,10 +35,8 @@
 </head>
 <body>
   <div class="login-box">
-    <!-- Logo ROTAM -->
-    <img src="logo-rotam-120.png" alt="Logo ROTAM">
-    <h2 class="text-center mb-4">🔐 Login ROTAM</h2>
-    
+    <img src="assets/logo-rotam.png" alt="Logo ROTAM">
+    <h2 class="mb-4">🔐 Login ROTAM</h2>
     <form id="loginForm">
       <div class="mb-3">
         <label for="username" class="form-label">Usuário</label>
@@ -49,40 +48,9 @@
       </div>
       <button type="submit" class="btn btn-success btn-custom">Entrar</button>
     </form>
-    <p id="errorMsg" class="text-danger mt-3 text-center" style="display: none;"></p>
+    <p id="errorMsg" class="text-danger mt-3" style="display:none;"></p>
   </div>
 
-  <script>
-    const backendUrl = "https://rotam-backend-production.up.railway.app/auth/login";
-
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      try {
-        const res = await fetch(backendUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
-          window.location.href = "index.html";
-        } else {
-          document.getElementById("errorMsg").style.display = "block";
-          document.getElementById("errorMsg").textContent = data.error || "Usuário ou senha incorretos.";
-        }
-      } catch (err) {
-        document.getElementById("errorMsg").style.display = "block";
-        document.getElementById("errorMsg").textContent = "Erro ao conectar com o servidor.";
-      }
-    });
-  </script>
+  <script src="login.js"></script>
 </body>
 </html>
