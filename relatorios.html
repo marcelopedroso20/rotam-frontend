@@ -1,93 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Relatórios - ROTAM</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatório - ROTAM</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+    }
+    header {
+      background: #1e1e1e;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header nav a {
+      color: #fff;
+      margin-right: 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    header nav a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 1100px;
+    }
+    .table {
+      background: #1e1e1e;
+      color: #fff;
+    }
+    .btn-refresh {
+      margin-bottom: 15px;
+    }
+  </style>
 </head>
 <body>
-  <!-- MENU SUPERIOR -->
-  <header class="menu">
-    <div class="logo">ROTAM • Sistema</div>
+  <!-- Proteção: só acessa se estiver logado -->
+  <script>
+    if (!localStorage.getItem("user")) {
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <header>
     <nav>
-      <ul>
-        <li><a href="index.html">Início</a></li>
-        <li><a href="cadastro.html">Cadastro</a></li>
-        <li><a href="relatorios.html" class="active">Relatórios</a></li>
-      </ul>
+      <a href="index.html">🏠 Início</a>
+      <a href="cadastro.html">📝 Cadastro</a>
+      <a href="relatorio.html">📊 Relatório</a>
     </nav>
-    <button onclick="logout()">Sair</button>
+    <button class="btn btn-danger btn-sm" onclick="logout()">Sair</button>
   </header>
 
-  <!-- CONTEÚDO -->
-  <main class="table-container">
-    <h1>📊 Relatórios de Ocorrências</h1>
-    <div id="msg" class="msg">Carregando ocorrências...</div>
-    <table id="table" style="display:none">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Comunicante</th>
-          <th>Data</th>
-          <th>Local</th>
-          <th>Tipo</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </main>
+  <div class="container">
+    <h2 class="mb-4">📊 Relatório de Ocorrências</h2>
+
+    <button class="btn btn-success btn-refresh" onclick="carregarOcorrencias()">🔄 Atualizar</button>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-dark table-bordered align-middle">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Agente</th>
+            <th>Comunicante</th>
+            <th>Data</th>
+            <th>Local</th>
+            <th>Tipo</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaOcorrencias">
+          <tr>
+            <td colspan="7" class="text-center text-muted">Carregando...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <script src="logout.js"></script>
   <script>
-    // Proteção: só acessa logado
-    if (!localStorage.getItem("token")) {
-      window.location.href = "login.html";
-    }
-
-    const backendUrl = "https://rotam-backend-production.up.railway.app/occurrences";
+    const API = "https://rotam-backend-production.up.railway.app";
 
     async function carregarOcorrencias() {
-      const msg = document.getElementById("msg");
-      const table = document.getElementById("table");
-      const tbody = document.getElementById("tbody");
-
-      msg.style.display = "block";
-      msg.textContent = "⏳ Carregando...";
+      const corpoTabela = document.getElementById("tabelaOcorrencias");
+      corpoTabela.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Carregando...</td></tr>`;
 
       try {
-        const res = await fetch(backendUrl);
+        const res = await fetch(`${API}/occurrences`);
         const data = await res.json();
 
         if (!Array.isArray(data) || data.length === 0) {
-          msg.textContent = "⚠️ Nenhuma ocorrência encontrada.";
+          corpoTabela.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Nenhuma ocorrência encontrada.</td></tr>`;
           return;
         }
 
-        // Preenche tabela
-        tbody.innerHTML = "";
-        data.forEach(o => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
+        corpoTabela.innerHTML = data.map(o => `
+          <tr>
             <td>${o.id}</td>
-            <td>${o.comunicante_nome || "—"}</td>
-            <td>${o.occurred_at ? o.occurred_at.slice(0,10) : "—"}</td>
-            <td>${o.occurred_location || "—"}</td>
-            <td>${o.occurrence_type || "—"}</td>
-            <td>${o.status || "Aberto"}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-
-        msg.style.display = "none";
-        table.style.display = "table";
-
+            <td>${o.reporter_name || "-"}</td>
+            <td>${o.comunicante_nome || "-"}</td>
+            <td>${(o.occurred_at || "").slice(0, 10)}</td>
+            <td>${o.occurred_location || "-"}</td>
+            <td>${o.occurrence_type || "-"}</td>
+            <td><span class="badge bg-${o.status === "Encerrado" ? "secondary" : o.status === "Em andamento" ? "warning" : "success"}">${o.status}</span></td>
+          </tr>
+        `).join("");
       } catch (err) {
-        msg.textContent = "❌ Erro ao carregar ocorrências.";
+        corpoTabela.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Erro ao carregar: ${err.message}</td></tr>`;
       }
     }
 
+    // Carrega ao abrir a página
     carregarOcorrencias();
   </script>
 </body>
