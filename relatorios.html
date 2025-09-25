@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Relatórios - ROTAM</title>
   <link rel="stylesheet" href="style.css">
-  <script>
-    if (!localStorage.getItem("token")) {
-      window.location.href = "login.html";
-    }
-  </script>
 </head>
 <body>
+  <!-- MENU SUPERIOR -->
   <header class="menu">
-    <div class="logo">🚓 ROTAM</div>
+    <div class="logo">ROTAM • Relatórios</div>
     <nav>
       <ul>
         <li><a href="index.html">Início</a></li>
@@ -24,20 +20,79 @@
     <button onclick="logout()">Sair</button>
   </header>
 
+  <!-- CONTEÚDO -->
   <main>
-    <h2>Relatórios</h2>
-    <ul class="tabs">
-      <li><a href="#">Relatório Ocorrência</a></li>
-      <li><a href="#">Relatório Mapa Força</a></li>
-      <li><a href="#">Relatório Produtividade</a></li>
-      <li><a href="#">Relatório Diversos</a></li>
-    </ul>
+    <h1>Relatório de Ocorrências</h1>
+    <p>Abaixo estão listadas as ocorrências registradas no sistema.</p>
 
-    <section>
-      <p>Aqui você vai listar e exportar relatórios.</p>
-    </section>
+    <!-- BOTÃO DE ATUALIZAR -->
+    <button id="reloadBtn" class="btn btn-primary">🔄 Recarregar</button>
+
+    <!-- TABELA DE OCORRÊNCIAS -->
+    <div class="table-container">
+      <table id="ocorrenciasTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Agente</th>
+            <th>Comunicante</th>
+            <th>Data</th>
+            <th>Local</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="8">Carregando ocorrências...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </main>
 
   <script src="logout.js"></script>
+  <script>
+    const backendUrl = "https://rotam-backend-production.up.railway.app/occurrences";
+
+    async function carregarOcorrencias() {
+      const tbody = document.querySelector("#ocorrenciasTable tbody");
+      tbody.innerHTML = "<tr><td colspan='8'>⏳ Carregando...</td></tr>";
+
+      try {
+        const res = await fetch(backendUrl);
+        if (!res.ok) throw new Error("Erro ao buscar dados");
+        const data = await res.json();
+
+        if (data.length === 0) {
+          tbody.innerHTML = "<tr><td colspan='8'>⚠ Nenhuma ocorrência encontrada.</td></tr>";
+          return;
+        }
+
+        tbody.innerHTML = "";
+        data.forEach(oc => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${oc.id}</td>
+            <td>${oc.reporter_name || ""}</td>
+            <td>${oc.comunicante_nome || ""}</td>
+            <td>${oc.occurred_at || ""}</td>
+            <td>${oc.occurred_location || ""}</td>
+            <td>${oc.occurrence_type || ""}</td>
+            <td>${oc.status || ""}</td>
+            <td>${oc.description || ""}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = "<tr><td colspan='8'>❌ Erro ao carregar ocorrências.</td></tr>";
+      }
+    }
+
+    document.getElementById("reloadBtn").addEventListener("click", carregarOcorrencias);
+
+    // Carregar na abertura da página
+    carregarOcorrencias();
+  </script>
 </body>
 </html>
