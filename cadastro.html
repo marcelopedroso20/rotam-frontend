@@ -9,8 +9,9 @@
     body { margin: 0; display: flex; height: 100vh; background: #121212; color: #fff; }
     .sidebar { width: 220px; background: #1e1e1e; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; }
     .sidebar img { width: 100px; margin-bottom: 10px; }
-    .sidebar button { width: 100%; margin: 5px 0; padding: 10px; border: none; border-radius: 5px; background: #2c2c2c; color: #fff; text-align: left; }
+    .sidebar button { width: 100%; margin: 5px 0; padding: 10px; border: none; border-radius: 5px; background: #2c2c2c; color: #fff; text-align: left; cursor: pointer; font-weight: bold; }
     .sidebar button:hover { background: #444; }
+    .sidebar button.active { background: #0d6efd; }
     .sidebar .btn-logout { background: #dc3545; }
     .content { flex: 1; padding: 20px; overflow-y: auto; }
   </style>
@@ -19,9 +20,9 @@
   <div class="sidebar">
     <img src="assets/logo-rotam.png" alt="Logo ROTAM">
     <h4>ROTAM Sistema</h4>
-    <button onclick="location.href='index.html'">🏠 Início</button>
-    <button onclick="location.href='cadastro.html'" class="active">📝 Cadastro</button>
-    <button onclick="location.href='relatorios.html'">📊 Relatórios</button>
+    <button id="btnInicio">🏠 Início</button>
+    <button id="btnCadastro">📝 Cadastro</button>
+    <button id="btnRelatorios">📊 Relatórios</button>
     <button class="btn-logout" onclick="logout()">🚪 Sair</button>
   </div>
 
@@ -52,6 +53,11 @@
     const backendUrl = "https://rotam-backend-production.up.railway.app";
     if (!localStorage.getItem("token")) window.location.href = "login.html";
 
+    // Marca o menu ativo
+    document.getElementById("btnCadastro").classList.add("active");
+    document.getElementById("btnInicio").onclick = () => location.href = "index.html";
+    document.getElementById("btnRelatorios").onclick = () => location.href = "relatorios.html";
+
     document.getElementById("formOcorrencia").addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = Object.fromEntries(new FormData(e.target));
@@ -69,7 +75,7 @@
           ? "Ocorrência cadastrada com sucesso!"
           : "Erro ao cadastrar ocorrência.";
         e.target.reset();
-      } catch (err) {
+      } catch {
         document.getElementById("msgCadastro").textContent = "Erro ao conectar com o servidor.";
       }
     });
