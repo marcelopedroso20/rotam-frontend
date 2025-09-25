@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - ROTAM</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
   <style>
     body {
       background-color: #121212;
@@ -13,35 +14,62 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      font-family: Arial, sans-serif;
     }
     .login-box {
       background: #1e1e1e;
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
       width: 100%;
-      max-width: 400px;
+      max-width: 380px;
+      text-align: center;
+    }
+    .login-box h2 {
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #0d6efd;
+    }
+    .form-control {
+      background: #2b2b2b;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    .form-control:focus {
+      background: #333;
+      color: #fff;
+      border-color: #0d6efd;
+      box-shadow: none;
     }
     .btn-custom {
       width: 100%;
+      background: #0d6efd;
+      border: none;
+      font-weight: bold;
+    }
+    .btn-custom:hover {
+      background: #0b5ed7;
+    }
+    #errorMsg {
+      display: none;
+      margin-top: 15px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <div class="login-box">
-    <h2 class="text-center mb-4">🔐 Login ROTAM</h2>
+    <h2>🚓 Login ROTAM</h2>
     <form id="loginForm">
       <div class="mb-3">
-        <label for="username" class="form-label">Usuário</label>
-        <input type="text" id="username" class="form-control" placeholder="Digite seu usuário" required />
+        <input type="text" id="username" class="form-control" placeholder="Usuário" required />
       </div>
       <div class="mb-3">
-        <label for="password" class="form-label">Senha</label>
-        <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required />
+        <input type="password" id="password" class="form-control" placeholder="Senha" required />
       </div>
-      <button type="submit" class="btn btn-success btn-custom">Entrar</button>
+      <button type="submit" class="btn btn-custom">Entrar</button>
     </form>
-    <p id="errorMsg" class="text-danger mt-3 text-center" style="display: none;"></p>
+    <p id="errorMsg" class="text-danger"></p>
   </div>
 
   <script>
@@ -52,6 +80,7 @@
 
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
+      const errorMsg = document.getElementById("errorMsg");
 
       try {
         const res = await fetch(backendUrl, {
@@ -62,19 +91,18 @@
 
         const data = await res.json();
 
-        if (data.success) {
-          // Salva user e token no localStorage
+        if (res.ok && data.success) {
+          // Salva usuário no localStorage
           localStorage.setItem("user", JSON.stringify(data.user));
-          localStorage.setItem("token", data.token);
-          // Redireciona
+          // Redireciona para o sistema
           window.location.href = "index.html";
         } else {
-          document.getElementById("errorMsg").style.display = "block";
-          document.getElementById("errorMsg").textContent = data.error || "Usuário ou senha incorretos.";
+          errorMsg.style.display = "block";
+          errorMsg.textContent = data.error || "Usuário ou senha incorretos.";
         }
       } catch (err) {
-        document.getElementById("errorMsg").style.display = "block";
-        document.getElementById("errorMsg").textContent = "Erro ao conectar com o servidor.";
+        errorMsg.style.display = "block";
+        errorMsg.textContent = "Erro ao conectar com o servidor.";
       }
     });
   </script>
