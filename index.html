@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ROTAM - Sistema</title>
+  <title>Início - ROTAM</title>
   <link rel="stylesheet" href="style.css">
-  <script>
-    if (!localStorage.getItem("token")) {
-      window.location.href = "login.html";
-    }
-  </script>
 </head>
 <body>
+  <!-- MENU SUPERIOR -->
   <header class="menu">
-    <div class="logo">🚓 ROTAM</div>
+    <div class="logo">ROTAM • Sistema</div>
     <nav>
       <ul>
-        <li><a href="index.html">Início</a></li>
+        <li><a href="index.html" class="active">Início</a></li>
         <li><a href="cadastro.html">Cadastro</a></li>
         <li><a href="relatorios.html">Relatórios</a></li>
       </ul>
@@ -24,11 +20,22 @@
     <button onclick="logout()">Sair</button>
   </header>
 
-  <main>
-    <h1>Bem-vindo ao Sistema ROTAM</h1>
-    <p>Selecione uma opção no menu para continuar.</p>
+  <!-- CONTEÚDO -->
+  <main class="welcome">
+    <h1>👮‍♂️ Bem-vindo ao Sistema ROTAM</h1>
+    <p>Escolha uma das opções no menu acima para começar:</p>
+    <ul>
+      <li><b>Cadastro</b>: registre novas ocorrências.</li>
+      <li><b>Relatórios</b>: visualize e consulte ocorrências já cadastradas.</li>
+    </ul>
   </main>
 
   <script src="logout.js"></script>
+  <script>
+    // Proteção da página: só entra logado
+    if (!localStorage.getItem("token")) {
+      window.location.href = "login.html";
+    }
+  </script>
 </body>
 </html>
