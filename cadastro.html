@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro - ROTAM</title>
   <link rel="stylesheet" href="style.css">
-  <script>
-    if (!localStorage.getItem("token")) {
-      window.location.href = "login.html";
-    }
-  </script>
 </head>
 <body>
+  <!-- MENU SUPERIOR -->
   <header class="menu">
-    <div class="logo">🚓 ROTAM</div>
+    <div class="logo">ROTAM • Cadastro</div>
     <nav>
       <ul>
         <li><a href="index.html">Início</a></li>
@@ -24,19 +20,102 @@
     <button onclick="logout()">Sair</button>
   </header>
 
+  <!-- CONTEÚDO -->
   <main>
-    <h2>Cadastro</h2>
-    <ul class="tabs">
-      <li><a href="#">Ocorrência</a></li>
-      <li><a href="#">Produtividade</a></li>
-      <li><a href="#">Mapa Força</a></li>
-    </ul>
+    <h1>Cadastro de Ocorrência</h1>
+    <p>Preencha os dados abaixo para registrar uma nova ocorrência.</p>
 
-    <section>
-      <p>Aqui vai o formulário de cadastro (igual ao que você já tem).</p>
-    </section>
+    <!-- FORM DE CADASTRO -->
+    <form id="ocorrenciaForm">
+      <label for="reporter_id">ID do Agente</label>
+      <input type="number" id="reporter_id" placeholder="Ex: 1006">
+
+      <label for="reporter_name">Nome do Agente</label>
+      <input type="text" id="reporter_name" placeholder="Ex: Agente Silva">
+
+      <label for="comunicante_nome">Comunicante (nome)</label>
+      <input type="text" id="comunicante_nome" placeholder="Ex: Maria Santos">
+
+      <label for="comunicante_rg">RG</label>
+      <input type="text" id="comunicante_rg" placeholder="Ex: 1234567">
+
+      <label for="comunicante_cpf">CPF</label>
+      <input type="text" id="comunicante_cpf" placeholder="Somente números">
+
+      <label for="comunicante_endereco">Endereço</label>
+      <input type="text" id="comunicante_endereco" placeholder="Rua, número">
+
+      <label for="comunicante_telefone">Telefone</label>
+      <input type="text" id="comunicante_telefone" placeholder="(65) 99999-0000">
+
+      <label for="occurred_at">Data do Fato</label>
+      <input type="date" id="occurred_at">
+
+      <label for="occurred_location">Local do Fato</label>
+      <input type="text" id="occurred_location" placeholder="Ex: Praça Central">
+
+      <label for="occurrence_type">Tipo de Ocorrência</label>
+      <input type="text" id="occurrence_type" placeholder="Ex: Furto">
+
+      <label for="status">Status</label>
+      <select id="status">
+        <option value="Aberto">Aberto</option>
+        <option value="Em andamento">Em andamento</option>
+        <option value="Fechado">Fechado</option>
+      </select>
+
+      <label for="description">Descrição</label>
+      <textarea id="description" rows="4" placeholder="Relato resumido..."></textarea>
+
+      <label for="involved">Envolvidos (JSON)</label>
+      <textarea id="involved" rows="3" placeholder='[{"nome":"João","papel":"vítima"}]'></textarea>
+
+      <button type="submit" class="btn btn-success">Cadastrar</button>
+      <button type="reset" class="btn btn-secondary">Limpar</button>
+    </form>
   </main>
 
   <script src="logout.js"></script>
+  <script>
+    const backendUrl = "https://rotam-backend-production.up.railway.app/occurrences";
+
+    document.getElementById("ocorrenciaForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        reporter_id: document.getElementById("reporter_id").value,
+        reporter_name: document.getElementById("reporter_name").value,
+        comunicante_nome: document.getElementById("comunicante_nome").value,
+        comunicante_rg: document.getElementById("comunicante_rg").value,
+        comunicante_cpf: document.getElementById("comunicante_cpf").value,
+        comunicante_endereco: document.getElementById("comunicante_endereco").value,
+        comunicante_telefone: document.getElementById("comunicante_telefone").value,
+        occurred_at: document.getElementById("occurred_at").value,
+        occurred_location: document.getElementById("occurred_location").value,
+        occurrence_type: document.getElementById("occurrence_type").value,
+        status: document.getElementById("status").value,
+        description: document.getElementById("description").value,
+        involved: JSON.parse(document.getElementById("involved").value || "[]"),
+      };
+
+      try {
+        const res = await fetch(backendUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (res.ok) {
+          alert("✅ Ocorrência cadastrada com sucesso!");
+          document.getElementById("ocorrenciaForm").reset();
+        } else {
+          alert("❌ Erro ao cadastrar ocorrência!");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Erro de conexão com o servidor.");
+      }
+    });
+  </script>
 </body>
 </html>
