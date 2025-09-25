@@ -8,29 +8,60 @@
 
   <style>
     body {
+      margin: 0;
+      display: flex;
+      height: 100vh;
       background-color: #121212;
       color: #fff;
+      font-family: Arial, sans-serif;
     }
-    header {
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
       background: #1e1e1e;
-      padding: 15px;
-      margin-bottom: 20px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      padding: 20px 10px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.4);
     }
-    header nav a {
+    .sidebar h2 {
+      color: #0d6efd;
+      font-size: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .sidebar a {
       color: #fff;
-      margin-right: 15px;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 6px;
       text-decoration: none;
       font-weight: bold;
+      display: block;
     }
-    header nav a:hover {
-      text-decoration: underline;
+    .sidebar a:hover {
+      background: #0d6efd;
+      color: #fff;
     }
-    .container {
-      max-width: 900px;
+    .sidebar .logout {
+      margin-top: auto;
+      background: #dc3545;
+      color: #fff;
       text-align: center;
+      border-radius: 6px;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .sidebar .logout:hover {
+      background: #bb2d3b;
+    }
+
+    /* Conteúdo principal */
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
     }
     .card {
       background: #1e1e1e;
@@ -50,31 +81,29 @@
     }
   </script>
 
-  <header>
-    <nav>
-      <a href="index.html">🏠 Início</a>
-      <a href="cadastro.html">📝 Cadastro</a>
-      <a href="relatorio.html">📊 Relatório</a>
-    </nav>
-    <button class="btn btn-danger btn-sm" onclick="logout()">Sair</button>
-  </header>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>🚓 ROTAM</h2>
+    <a href="index.html">🏠 Início</a>
+    <a href="cadastro.html">📝 Cadastro</a>
+    <a href="relatorio.html">📊 Relatório</a>
+    <div class="logout" onclick="logout()">Sair</div>
+  </div>
 
-  <div class="container">
-    <h1 class="mb-4">🚓 ROTAM • Sistema de Ocorrências</h1>
-
+  <!-- Conteúdo -->
+  <div class="content">
+    <h1 class="mb-4">Bem-vindo ao Sistema ROTAM</h1>
     <div class="card">
-      <h3>Bem-vindo!</h3>
+      <h3>Visão Geral</h3>
       <p>
         Este sistema foi desenvolvido para auxiliar o <b>Batalhão ROTAM</b> 
         no gerenciamento de ocorrências, cadastro e relatórios.
       </p>
-      <p>
-        Utilize o menu acima para navegar entre as seções:
-      </p>
-      <ul class="list-unstyled">
+      <p>Menu lateral para navegação:</p>
+      <ul>
         <li>🏠 <b>Início</b> – visão geral do sistema.</li>
         <li>📝 <b>Cadastro</b> – registrar novas ocorrências.</li>
-        <li>📊 <b>Relatório</b> – consultar e acompanhar os registros.</li>
+        <li>📊 <b>Relatório</b> – consultar registros.</li>
       </ul>
     </div>
   </div>
