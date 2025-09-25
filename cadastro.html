@@ -4,122 +4,148 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cadastro - ROTAM</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      background-color: #121212;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    .sidebar {
+      width: 220px;
+      background: #1e1e1e;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 10px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.4);
+    }
+    .sidebar h2 {
+      color: #0d6efd;
+      font-size: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .sidebar a {
+      color: #fff;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      display: block;
+    }
+    .sidebar a:hover { background: #0d6efd; }
+    .sidebar .logout {
+      margin-top: auto;
+      background: #dc3545;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .sidebar .logout:hover { background: #bb2d3b; }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .card {
+      background: #1e1e1e;
+      border: 1px solid #2c2c2c;
+      border-radius: 10px;
+      padding: 25px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
+    label { margin-top: 10px; }
+    input, textarea, select {
+      background: #2b2b2b;
+      color: #fff;
+      border: 1px solid #444;
+    }
+  </style>
+</head>
+<body>
   <script>
-    // Proteção: só acessa se estiver logado
     if (!localStorage.getItem("user")) {
       window.location.href = "login.html";
     }
   </script>
-</head>
-<body>
-  <!-- ===== MENU SUPERIOR ===== -->
-  <header class="menu">
-    <div class="logo">🚓 ROTAM</div>
-    <nav>
-      <ul>
-        <li><a href="index.html">Início</a></li>
-        <li><a href="cadastro.html" class="active">Cadastro</a></li>
-        <li><a href="relatorio.html">Relatório</a></li>
-      </ul>
-    </nav>
-    <button onclick="logout()">Sair</button>
-  </header>
 
-  <!-- ===== CONTEÚDO ===== -->
-  <main>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>🚓 ROTAM</h2>
+    <a href="index.html">🏠 Início</a>
+    <a href="cadastro.html">📝 Cadastro</a>
+    <a href="relatorio.html">📊 Relatório</a>
+    <div class="logout" onclick="logout()">Sair</div>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="content">
     <h1>Cadastro de Ocorrência</h1>
-    <form id="formCadastro">
-      <h2>Dados do Agente</h2>
-      <label>ID do agente</label>
-      <input type="number" id="reporter_id" placeholder="Ex: 1006" required>
+    <div class="card">
+      <form id="formOcorrencia">
+        <label>Agente</label>
+        <input type="text" id="reporter_name" class="form-control" placeholder="Nome do agente" required>
 
-      <label>Nome do agente</label>
-      <input type="text" id="reporter_name" placeholder="Ex: Agente Silva" required>
+        <label>Comunicante</label>
+        <input type="text" id="comunicante_nome" class="form-control" placeholder="Nome do comunicante">
 
-      <h2>Dados do Comunicante</h2>
-      <label>Nome</label>
-      <input type="text" id="comunicante_nome" placeholder="Ex: João da Silva">
+        <label>Tipo de ocorrência</label>
+        <input type="text" id="occurrence_type" class="form-control" placeholder="Ex: Furto">
 
-      <label>RG</label>
-      <input type="text" id="comunicante_rg" placeholder="Ex: 1234567">
+        <label>Descrição</label>
+        <textarea id="description" class="form-control" rows="4"></textarea>
 
-      <label>CPF</label>
-      <input type="text" id="comunicante_cpf" placeholder="Somente números">
+        <label>Status</label>
+        <select id="status" class="form-control">
+          <option value="Aberto">Aberto</option>
+          <option value="Em andamento">Em andamento</option>
+          <option value="Encerrado">Encerrado</option>
+        </select>
 
-      <label>Endereço</label>
-      <input type="text" id="comunicante_endereco" placeholder="Rua, número">
-
-      <label>Telefone</label>
-      <input type="text" id="comunicante_telefone" placeholder="(65) 99999-0000">
-
-      <h2>Ocorrência</h2>
-      <label>Data</label>
-      <input type="date" id="occurred_at">
-
-      <label>Local</label>
-      <input type="text" id="occurred_location" placeholder="Ex: Praça Central">
-
-      <label>Tipo</label>
-      <input type="text" id="occurrence_type" placeholder="Ex: Furto">
-
-      <label>Status</label>
-      <select id="status">
-        <option>Aberto</option>
-        <option>Em andamento</option>
-        <option>Encerrado</option>
-      </select>
-
-      <label>Descrição</label>
-      <textarea id="description" placeholder="Relato resumido..."></textarea>
-
-      <button type="submit">Cadastrar</button>
-    </form>
-    <p id="msg" class="msg"></p>
-  </main>
+        <button type="submit" class="btn btn-success mt-3">Salvar</button>
+      </form>
+    </div>
+  </div>
 
   <script src="logout.js"></script>
   <script>
-    const API = "https://rotam-backend-production.up.railway.app";
+    const API = "https://rotam-backend-production.up.railway.app/occurrences";
 
-    document.getElementById("formCadastro").addEventListener("submit", async (e) => {
+    document.getElementById("formOcorrencia").addEventListener("submit", async (e) => {
       e.preventDefault();
+
       const body = {
-        reporter_id: document.getElementById("reporter_id").value,
         reporter_name: document.getElementById("reporter_name").value,
         comunicante_nome: document.getElementById("comunicante_nome").value,
-        comunicante_rg: document.getElementById("comunicante_rg").value,
-        comunicante_cpf: document.getElementById("comunicante_cpf").value,
-        comunicante_endereco: document.getElementById("comunicante_endereco").value,
-        comunicante_telefone: document.getElementById("comunicante_telefone").value,
-        occurred_at: document.getElementById("occurred_at").value,
-        occurred_location: document.getElementById("occurred_location").value,
         occurrence_type: document.getElementById("occurrence_type").value,
         description: document.getElementById("description").value,
         status: document.getElementById("status").value,
-        involved: [],
-        measures_taken: "",
-        signature: "",
-        attachments: []
       };
 
       try {
-        const res = await fetch(`${API}/occurrences`, {
+        const res = await fetch(API, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body)
         });
-
         const data = await res.json();
-
         if (res.ok) {
-          document.getElementById("msg").textContent = "✅ Ocorrência cadastrada com sucesso!";
-          document.getElementById("formCadastro").reset();
+          alert("Ocorrência cadastrada com sucesso!");
+          e.target.reset();
         } else {
-          document.getElementById("msg").textContent = "❌ Erro: " + (data.error || "Falha desconhecida");
+          alert("Erro: " + (data.error || "não foi possível cadastrar"));
         }
       } catch (err) {
-        document.getElementById("msg").textContent = "❌ Erro de conexão com o servidor.";
+        alert("Erro de conexão com servidor");
       }
     });
   </script>
