@@ -118,8 +118,8 @@ form select:focus {
   display: grid;
   place-items: center;
   min-height: 100vh;
-  background: #000 url("./assets/logo-rotam-bg.png") no-repeat center center;
-  background-size: 60%; /* ajuste: pode ser 50%, 70%, ou 'contain'/'cover' */
+  background: #000 url("./assets/logo-rotam-bg-1920x1080.png") no-repeat center center;
+  background-size: cover; /* cobre toda a área preta */
 }
 
 /* Card sobre o fundo */
