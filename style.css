@@ -112,3 +112,15 @@ form select:focus {
 .btn-primary:hover {
   background: #0b5ed7;
 }
+
+/*========== style.css ========== */
+.login-body {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  background: #000 url("./assets/logo-rotam-frontend.png") no-repeat center center;
+  background-size: contain; /* exibe a logo inteira no fundo */
+}
+.login-card {
+  background: rgba(18, 19, 24, 0.9); /* painel sobre a logo */
+}
