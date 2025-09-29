@@ -3,7 +3,7 @@
 // =========================
 
 // 🔁 Troque a versão SEMPRE que publicar mudanças importantes
-const CACHE_VERSION = 'v2.0.0';
+const CACHE_VERSION = 'v2.0.1';
 const STATIC_CACHE = `rotam-static-${CACHE_VERSION}`;
 
 // 🧰 Arquivos que queremos pré-cachear (abrir rápido e funcionar offline básico)
@@ -16,8 +16,8 @@ const PRECACHE_URLS = [
   './assets/style.css',
   './assets/logo-rotam-frontend.png',
   './assets/logo-rotam-bg-1920x1080.png',
-  './assets/icon-192.png',
-  './assets/icon-512.png',
+  './assets/logo-rotam-192.png',   // corrigido para bater com manifest.json
+  './assets/logo-rotam-512.png',   // corrigido para bater com manifest.json
   './js/api.js',
   './js/auth.js',
   './js/login.js',
@@ -30,6 +30,7 @@ const PRECACHE_URLS = [
 
 // 🛠 Instalação: pré-carrega os assets
 self.addEventListener('install', (event) => {
+  console.log('[SW] Instalando...');
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
   );
@@ -38,6 +39,7 @@ self.addEventListener('install', (event) => {
 
 // 🧹 Ativação: limpa caches antigos e assume controle imediatamente
 self.addEventListener('activate', (event) => {
+  console.log('[SW] Ativado!');
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys
