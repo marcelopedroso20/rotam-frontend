@@ -113,14 +113,18 @@ form select:focus {
   background: #0b5ed7;
 }
 
-/*========== style.css ========== */
+/* Fundo do login com a logo inteira centralizada */
 .login-body {
   display: grid;
   place-items: center;
   min-height: 100vh;
-  background: #000 url("./assets/logo-rotam-frontend.png") no-repeat center center;
-  background-size: contain; /* exibe a logo inteira no fundo */
+  background: #000 url("./assets/logo-rotam-bg.png") no-repeat center center;
+  background-size: 60%; /* ajuste: pode ser 50%, 70%, ou 'contain'/'cover' */
 }
+
+/* Card sobre o fundo */
 .login-card {
-  background: rgba(18, 19, 24, 0.9); /* painel sobre a logo */
+  background: rgba(18, 19, 24, 0.9);
+  border-radius: 12px;
+  padding: 24px;
 }
