@@ -2,22 +2,20 @@
 // Service Worker - ROTAM
 // =========================
 
-// 🔁 Troque a versão SEMPRE que publicar mudanças importantes
-const CACHE_VERSION = 'v2.0.1';
+const CACHE_VERSION = 'v2.0.2'; // ⚡ Sempre mudar ao atualizar
 const STATIC_CACHE = `rotam-static-${CACHE_VERSION}`;
 
-// 🧰 Arquivos que queremos pré-cachear (abrir rápido e funcionar offline básico)
 const PRECACHE_URLS = [
-  './',                // fallback
+  './',
   './index.html',
   './login.html',
   './cadastro.html',
   './relatorios.html',
   './assets/style.css',
   './assets/logo-rotam-frontend.png',
-  './assets/logo-rotam-bg-1920x1080.png',
-  './assets/logo-rotam-192.png',   // corrigido para bater com manifest.json
-  './assets/logo-rotam-512.png',   // corrigido para bater com manifest.json
+  './assets/logo-rotam-bg-1920x1080.png', // cuidado: se não existir, será ignorado
+  './assets/logo-rotam-192.png',
+  './assets/logo-rotam-512.png',
   './js/api.js',
   './js/auth.js',
   './js/login.js',
@@ -32,12 +30,20 @@ const PRECACHE_URLS = [
 self.addEventListener('install', (event) => {
   console.log('[SW] Instalando...');
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
+    caches.open(STATIC_CACHE).then((cache) => {
+      return Promise.all(
+        PRECACHE_URLS.map((url) =>
+          cache.add(url).catch((err) =>
+            console.warn('⚠️ Não foi possível adicionar ao cache:', url, err)
+          )
+        )
+      );
+    })
   );
   self.skipWaiting();
 });
 
-// 🧹 Ativação: limpa caches antigos e assume controle imediatamente
+// 🧹 Ativação: remove caches antigos
 self.addEventListener('activate', (event) => {
   console.log('[SW] Ativado!');
   event.waitUntil(
@@ -56,18 +62,18 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // 1) Para chamadas de API (outro domínio OU rotas /auth e /occurrences): network-first
   const isSameOrigin = url.origin === self.location.origin;
   const isApiPath = url.pathname.startsWith('/auth') || url.pathname.startsWith('/occurrences');
 
+  // 1) APIs → network first
   if (!isSameOrigin || isApiPath) {
     event.respondWith(
-      fetch(req).catch(() => caches.match(req)) // se offline, tenta cache (se existir)
+      fetch(req).catch(() => caches.match(req))
     );
     return;
   }
 
-  // 2) Navegação (HTML): network-first com fallback em cache
+  // 2) Navegação → network first com fallback
   if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(
       fetch(req)
@@ -81,12 +87,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3) Assets estáticos (CSS/JS/Imagens): cache-first
+  // 3) Assets estáticos → cache first
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
       return fetch(req).then((res) => {
-        // Só cacheia GET bem-sucedido
         if (req.method === 'GET' && res && res.status === 200) {
           const copy = res.clone();
           caches.open(STATIC_CACHE).then((cache) => cache.put(req, copy));
