@@ -15,20 +15,22 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
     const data = await res.json();
 
-    if (res.ok && data.success) {
-      // Salva login no navegador
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("loggedIn", "true");
+    if (res.ok && data.token) {
+      // 🔑 Salva no navegador
+      localStorage.setItem("token", data.token);   // token JWT
+      localStorage.setItem("user", username);      // salva apenas o nome do usuário
 
-      // Redireciona
+      // ✅ Redireciona para o painel
       window.location.href = "index.html";
     } else {
       document.getElementById("errorMsg").style.display = "block";
-      document.getElementById("errorMsg").textContent = data.error || "Usuário ou senha incorretos.";
+      document.getElementById("errorMsg").textContent =
+        data.error || "Usuário ou senha incorretos.";
     }
   } catch (err) {
+    console.error("Erro no login:", err);
     document.getElementById("errorMsg").style.display = "block";
-    document.getElementById("errorMsg").textContent = "Erro ao conectar com o servidor.";
+    document.getElementById("errorMsg").textContent =
+      "❌ Erro ao conectar com o servidor.";
   }
 });
