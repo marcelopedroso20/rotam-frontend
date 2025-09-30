@@ -126,7 +126,9 @@ form select:focus {
 
 /* Card sobre o fundo */
 .login-card {
-  background: rgba(18, 19, 24, 0.9);
+  background: rgba(18, 19, 24, 0.95); /* menos transparente */
   border-radius: 12px;
-  padding: 24px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6); /* destaque com sombra */
 }
+
