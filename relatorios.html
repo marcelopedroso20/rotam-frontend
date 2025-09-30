@@ -71,14 +71,15 @@
         data.forEach(oc => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${oc.id}</td>
-            <td>${oc.reporter_name || "-"}</td>
-            <td>${oc.comunicante_nome || "-"}</td>
-            <td>${oc.occurred_location || "-"}</td>
-            <td>${oc.occurrence_type || "-"}</td>
-            <td>${oc.description || "-"}</td>
-            <td>${oc.status || "-"}</td>
-          `;
+            <td data-label="ID">${oc.id}</td>
+            <td data-label="Agente">${oc.reporter_name || "-"}</td>
+            <td data-label="Comunicante">${oc.comunicante_nome || "-"}</td>
+            <td data-label="Local">${oc.occurred_location || "-"}</td>
+            <td data-label="Tipo">${oc.occurrence_type || "-"}</td>
+            <td data-label="Descrição">${oc.description || "-"}</td>
+            <td data-label="Status">${oc.status || "-"}</td>
+`          ;
+
           tbody.appendChild(tr);
         });
       } catch (err) {
