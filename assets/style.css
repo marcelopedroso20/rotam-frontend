@@ -120,7 +120,7 @@ form select:focus {
   place-items: center;
   min-height: 100vh;
   min-width: 100vw;
-  background: #000 url("logo-rotam-bg-1920x1080.png") no-repeat center center;
+  background: #000 url("logo-rotam-bg-1920x10801.png") no-repeat center center;
   background-size: cover; /* cobre toda a área preta */
 }
 
