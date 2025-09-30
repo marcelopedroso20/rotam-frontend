@@ -4,6 +4,7 @@
   margin: 0;
   padding: 0;
 }
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -22,15 +23,18 @@ body {
   flex-direction: column;
   align-items: center;
 }
+
 .sidebar img {
   width: 100px;
   margin-bottom: 10px;
 }
+
 .sidebar h4 {
   font-size: 16px;
   margin-bottom: 20px;
   color: #ccc;
 }
+
 .sidebar button {
   width: 100%;
   margin: 5px 0;
@@ -44,16 +48,20 @@ body {
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .sidebar button:hover {
   background: #444;
 }
+
 .sidebar button.active {
   background: #0d6efd;
 }
+
 .sidebar .btn-logout {
   background: #dc3545;
   margin-top: auto;
 }
+
 .sidebar .btn-logout:hover {
   background: #b02a37;
 }
@@ -64,6 +72,7 @@ body {
   padding: 20px;
   overflow-y: auto;
 }
+
 .content h2 {
   margin-bottom: 20px;
 }
@@ -72,9 +81,11 @@ body {
 table {
   color: #fff;
 }
+
 .table-dark {
   background: #1e1e1e;
 }
+
 .table-dark th,
 .table-dark td {
   border-color: #333;
@@ -84,6 +95,7 @@ table {
 form label {
   font-weight: bold;
 }
+
 form input,
 form textarea,
 form select {
@@ -91,6 +103,7 @@ form select {
   color: #fff !important;
   border: 1px solid #333 !important;
 }
+
 form input:focus,
 form textarea:focus,
 form select:focus {
@@ -98,38 +111,87 @@ form select:focus {
   border-color: #0d6efd !important;
   box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
 }
+
 .btn-success {
   background: #198754;
   border: none;
 }
+
 .btn-success:hover {
   background: #157347;
 }
+
 .btn-primary {
   background: #0d6efd;
   border: none;
 }
+
 .btn-primary:hover {
   background: #0b5ed7;
 }
 
-/* ========== LOGIN ========== */
 /* Fundo do login com a logo inteira centralizada */
 .login-body {
   display: grid;
-  justify-items: center;   /* centraliza na horizontal */
-  align-items: start;      /* começa do topo */
+  place-items: center;
   min-height: 100vh;
-  min-width: 100vw;
-  background: #000 url("logo-rotam-bg-1920x1080.png") no-repeat center center;
-  background-size: cover; /* cobre toda a tela */
-  padding-top: 15vh;       /* empurra o card pra baixo (15% da tela) */
+  background: #000 url("./assets/logo-rotam-bg-1920x1080.png") no-repeat center center;
+  background-size: cover; /* cobre toda a área preta */
 }
 
 /* Card sobre o fundo */
 .login-card {
-  background: rgba(18, 19, 24, 0.95);
+  background: rgba(18, 19, 24, 0.9);
   border-radius: 12px;
-  padding: 28px 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  padding: 24px;
+}
+
+/* ===============================
+   📱 AJUSTES PARA CELULAR
+   =============================== */
+@media (max-width: 768px) {
+  /* Conteúdo menor */
+  .content {
+    padding: 10px;
+  }
+
+  /* Formulário mais compacto */
+  form .mb-3 {
+    margin-bottom: 12px;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font-size: 16px;
+    width: 100%;
+  }
+
+  /* Sidebar menor */
+  .sidebar {
+    width: 70px; /* reduz menu no celular */
+    padding: 10px 5px;
+  }
+
+  .sidebar h4 {
+    display: none; /* esconde texto, deixa só ícones */
+  }
+
+  .sidebar img {
+    width: 50px; /* logo menor */
+  }
+
+  /* Tabelas com scroll horizontal */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  table th,
+  table td {
+    font-size: 14px;
+    padding: 6px;
+  }
 }
