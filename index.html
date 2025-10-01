@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema ROTAM - Início</title>
+  <title>ROTAM - Painel Inicial</title>
 
-  <!-- Manifest + cor do tema -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#e6b800">
-  
+
+  <!-- CSS -->
   <link rel="stylesheet" href="./assets/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
-  <!-- 🔒 Proteção de acesso -->
   <script>
     const token = localStorage.getItem("token");
     if (!token) {
-      // Se não tiver token, redireciona para login
       window.location.href = "login.html";
     }
   </script>
@@ -37,7 +35,6 @@
   </div>
 
   <!-- Scripts -->
-  <script src="./js/login.js"></script>
   <script src="./js/config.js"></script>
   <script src="./js/logout.js"></script>
   <script src="./js/pwa.js"></script>
