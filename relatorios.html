@@ -3,132 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema ROTAM - Relatórios</title>
-
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#e6b800">
-
-  <link rel="stylesheet" href="./assets/style.css">
+  <title>Relatórios de Ocorrências - ROTAM</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-
-  <script>
-    const token = localStorage.getItem("token");
-    if (!token) window.location.href = "login.html";
-  </script>
-
-  <style>
-    .page-topbar {
-      position: sticky; top: 0;
-      display: flex; align-items: center; gap: 10px;
-      background: #1e1e1e; padding: 10px 12px; z-index: 5;
-      border-bottom: 1px solid #2a2a2a;
-    }
-    .back-btn {
-      background: #6c757d; color: #fff; border: none;
-      padding: 6px 12px; border-radius: 6px; font-size: 14px;
-    }
-  </style>
+  <link rel="stylesheet" href="./assets/style.css">
 </head>
-<body class="p-3">
+<body>
+  <div class="content container mt-4">
+    <button onclick="window.location.href='index.html'" class="btn btn-secondary btn-voltar">⬅ Voltar</button>
 
-  <div class="page-topbar">
-    <button class="back-btn" onclick="window.location.href='index.html'">⬅ Voltar</button>
-    <h2 class="m-0">📊 Relatórios de Ocorrências</h2>
+    <div class="card p-4 mt-3">
+      <h2 class="mb-4">📊 Relatórios de Ocorrências</h2>
+      <form id="filtroForm" class="row g-3">
+        <div class="col-md-6">
+          <label for="dataInicio" class="form-label">Data início</label>
+          <input type="date" id="dataInicio" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label for="dataFim" class="form-label">Data fim</label>
+          <input type="date" id="dataFim" class="form-control" />
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary w-100">Buscar</button>
+        </div>
+      </form>
+
+      <div class="mt-4">
+        <table id="tabelaOcorrencias" class="table table-dark table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Agente</th>
+              <th>Comunicante</th>
+              <th>Local</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Status</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="8" class="text-center">Nenhum dado carregado.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p id="erroMsg" class="text-danger" style="display:none;">❌ Erro ao carregar ocorrências.</p>
+      </div>
+    </div>
   </div>
-
-  <!-- Filtros -->
-  <form id="filtroForm" class="row g-2 my-3">
-    <div class="col-md-4 col-12">
-      <label for="dataInicio" class="form-label">Data início</label>
-      <input type="date" id="dataInicio" class="form-control">
-    </div>
-    <div class="col-md-4 col-12">
-      <label for="dataFim" class="form-label">Data fim</label>
-      <input type="date" id="dataFim" class="form-control">
-    </div>
-    <div class="col-md-4 col-12 d-flex align-items-end">
-      <button type="submit" class="btn btn-primary w-100">Buscar</button>
-    </div>
-  </form>
-
-  <!-- Tabela -->
-  <div class="content">
-    <table class="table table-dark table-striped" id="tabelaOcorrencias">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Agente</th>
-          <th>Comunicante</th>
-          <th>Local</th>
-          <th>Tipo</th>
-          <th>Descrição</th>
-          <th>Status</th>
-          <th>Data</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <!-- (Opcional) Cards para mobile – se quiser ativar depois -->
-    <div class="cards-container" id="cardsOcorrencias" style="display:none;"></div>
-  </div>
-
-  <div id="msgErro" class="mt-3"></div>
 
   <script src="./js/config.js"></script>
-  <script>
-    async function carregarOcorrencias(filtro = {}) {
-      try {
-        let url = CONFIG.ENDPOINTS.occurrences;
-
-        if (filtro.dataInicio || filtro.dataFim) {
-          const params = new URLSearchParams();
-          if (filtro.dataInicio) params.append("start", filtro.dataInicio);
-          if (filtro.dataFim) params.append("end", filtro.dataFim);
-          url += "?" + params.toString();
-        }
-
-        const res = await fetch(url, { headers: CONFIG.getAuthHeaders() });
-        const data = await res.json();
-
-        const tbody = document.querySelector("#tabelaOcorrencias tbody");
-        tbody.innerHTML = "";
-
-        if (Array.isArray(data) && data.length > 0) {
-          data.forEach(oc => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${oc.id}</td>
-              <td>${oc.reporter_name || "-"}</td>
-              <td>${oc.comunicante_nome || "-"}</td>
-              <td>${oc.occurred_location || "-"}</td>
-              <td>${oc.occurrence_type || "-"}</td>
-              <td>${oc.description || "-"}</td>
-              <td>${oc.status || "-"}</td>
-              <td>${oc.occurred_at ? new Date(oc.occurred_at).toLocaleDateString() : "-"}</td>
-            `;
-            tbody.appendChild(tr);
-          });
-        } else {
-          document.getElementById("msgErro").innerHTML =
-            `<div class="alert alert-warning">⚠ Nenhuma ocorrência encontrada.</div>`;
-        }
-      } catch (err) {
-        document.getElementById("msgErro").innerHTML =
-          `<div class="alert alert-danger">❌ Erro ao carregar ocorrências.</div>`;
-      }
-    }
-
-    document.getElementById("filtroForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const dataInicio = document.getElementById("dataInicio").value;
-      const dataFim = document.getElementById("dataFim").value;
-      carregarOcorrencias({ dataInicio, dataFim });
-    });
-
-    carregarOcorrencias();
-  </script>
-
-  <script src="./js/pwa.js"></script>
+  <script src="./js/relatorios.js"></script>
 </body>
 </html>
