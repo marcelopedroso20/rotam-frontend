@@ -17,11 +17,45 @@
       window.location.href = "login.html";
     }
   </script>
+
+  <style>
+    /* 📱 Ajustes Mobile */
+    @media (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+
+      form .mb-3 {
+        margin-bottom: 14px;
+      }
+
+      label {
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+
+      input, select, textarea {
+        font-size: 16px;
+        width: 100%;
+      }
+
+      button {
+        font-size: 16px;
+        padding: 12px;
+      }
+
+      .btn-voltar {
+        width: auto;
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body class="p-3">
 
   <!-- Botão voltar -->
-  <button class="btn btn-secondary mb-3" onclick="window.location.href='index.html'">⬅ Voltar</button>
+  <button class="btn btn-secondary btn-voltar mb-3" onclick="window.location.href='index.html'">⬅ Voltar</button>
 
   <h2>📝 Cadastro de Ocorrência</h2>
   <form id="cadastroForm" class="mt-3">
