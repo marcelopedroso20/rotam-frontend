@@ -13,30 +13,45 @@
 
   <script>
     const token = localStorage.getItem("token");
-    if (!token) {
-      window.location.href = "login.html";
-    }
+    if (!token) window.location.href = "login.html";
   </script>
+
+  <style>
+    .page-topbar {
+      position: sticky; top: 0;
+      display: flex; align-items: center; gap: 10px;
+      background: #1e1e1e; padding: 10px 12px; z-index: 5;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .back-btn {
+      background: #6c757d; color: #fff; border: none;
+      padding: 6px 12px; border-radius: 6px; font-size: 14px;
+    }
+  </style>
 </head>
 <body class="p-3">
-  <button class="btn btn-secondary mb-3" onclick="window.location.href='index.html'">⬅ Voltar</button>
 
-  <h2>📊 Relatórios de Ocorrências</h2>
+  <div class="page-topbar">
+    <button class="back-btn" onclick="window.location.href='index.html'">⬅ Voltar</button>
+    <h2 class="m-0">📊 Relatórios de Ocorrências</h2>
+  </div>
 
-  <form id="filtroForm" class="row g-2 mb-3">
-    <div class="col-md-4">
+  <!-- Filtros -->
+  <form id="filtroForm" class="row g-2 my-3">
+    <div class="col-md-4 col-12">
       <label for="dataInicio" class="form-label">Data início</label>
       <input type="date" id="dataInicio" class="form-control">
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 col-12">
       <label for="dataFim" class="form-label">Data fim</label>
       <input type="date" id="dataFim" class="form-control">
     </div>
-    <div class="col-md-4 d-flex align-items-end">
+    <div class="col-md-4 col-12 d-flex align-items-end">
       <button type="submit" class="btn btn-primary w-100">Buscar</button>
     </div>
   </form>
 
+  <!-- Tabela -->
   <div class="content">
     <table class="table table-dark table-striped" id="tabelaOcorrencias">
       <thead>
@@ -53,6 +68,9 @@
       </thead>
       <tbody></tbody>
     </table>
+
+    <!-- (Opcional) Cards para mobile – se quiser ativar depois -->
+    <div class="cards-container" id="cardsOcorrencias" style="display:none;"></div>
   </div>
 
   <div id="msgErro" class="mt-3"></div>
@@ -111,7 +129,6 @@
     carregarOcorrencias();
   </script>
 
-  <script src="./js/logout.js"></script>
   <script src="./js/pwa.js"></script>
 </body>
 </html>
