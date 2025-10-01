@@ -170,6 +170,7 @@ form select:focus {
     padding: 15px;
   }
 
+  /* 🔹 Ajuste básico para tabelas */
   table {
     display: block;
     overflow-x: auto;
@@ -180,5 +181,47 @@ form select:focus {
   table td {
     font-size: 14px;
     padding: 6px;
+  }
+
+  /* 🔹 Tabela de relatórios em cards */
+  #tabelaOcorrencias {
+    display: block;
+    width: 100%;
+    border: 0;
+  }
+
+  #tabelaOcorrencias thead {
+    display: none; /* Esconde cabeçalho */
+  }
+
+  #tabelaOcorrencias tbody {
+    display: block;
+    width: 100%;
+  }
+
+  #tabelaOcorrencias tbody tr {
+    display: block;
+    margin-bottom: 15px;
+    background: #1e1e1e;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  #tabelaOcorrencias tbody tr td {
+    display: block;
+    text-align: left;
+    padding: 6px 0;
+    font-size: 15px;
+    border: none;
+    color: #fff;
+  }
+
+  #tabelaOcorrencias tbody tr td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #0d6efd;
+    display: block;
+    margin-bottom: 2px;
   }
 }
