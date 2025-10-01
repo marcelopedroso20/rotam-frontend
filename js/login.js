@@ -1,4 +1,7 @@
-const backendUrl = "https://rotam-backend-production.up.railway.app/auth/login";
+// login.js
+
+// Usa a URL centralizada do config.js
+const backendUrl = CONFIG.ENDPOINTS.login;
 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -19,18 +22,27 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
       // 🔑 Salva no navegador
       localStorage.setItem("token", data.token);   // token JWT
       localStorage.setItem("user", username);      // salva apenas o nome do usuário
+      localStorage.setItem("loggedIn", "true");    // flag de sessão
 
       // ✅ Redireciona para o painel
       window.location.href = "index.html";
     } else {
-      document.getElementById("errorMsg").style.display = "block";
-      document.getElementById("errorMsg").textContent =
-        data.error || "Usuário ou senha incorretos.";
+      const msgBox = document.getElementById("errorMsg");
+      if (msgBox) {
+        msgBox.style.display = "block";
+        msgBox.textContent = data.error || "Usuário ou senha incorretos.";
+      } else {
+        alert(data.error || "Usuário ou senha incorretos.");
+      }
     }
   } catch (err) {
     console.error("Erro no login:", err);
-    document.getElementById("errorMsg").style.display = "block";
-    document.getElementById("errorMsg").textContent =
-      "❌ Erro ao conectar com o servidor.";
+    const msgBox = document.getElementById("errorMsg");
+    if (msgBox) {
+      msgBox.style.display = "block";
+      msgBox.textContent = "❌ Erro ao conectar com o servidor.";
+    } else {
+      alert("❌ Erro ao conectar com o servidor.");
+    }
   }
 });
