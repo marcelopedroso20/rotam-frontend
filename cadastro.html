@@ -17,62 +17,26 @@
       window.location.href = "login.html";
     }
   </script>
-
-  <style>
-    /* 📱 Ajustes Mobile */
-    @media (max-width: 768px) {
-      body {
-        padding: 12px;
-      }
-
-      form .mb-3 {
-        margin-bottom: 14px;
-      }
-
-      label {
-        font-size: 14px;
-        margin-bottom: 4px;
-      }
-
-      input, select, textarea {
-        font-size: 16px;
-        width: 100%;
-      }
-
-      button {
-        font-size: 16px;
-        padding: 12px;
-      }
-
-      .btn-voltar {
-        width: auto;
-        padding: 6px 12px;
-        font-size: 14px;
-      }
-    }
-  </style>
 </head>
 <body class="p-3">
-
-  <!-- Botão voltar -->
-  <button class="btn btn-secondary btn-voltar mb-3" onclick="window.location.href='index.html'">⬅ Voltar</button>
+  <button class="btn btn-secondary mb-3" onclick="window.location.href='index.html'">⬅ Voltar</button>
 
   <h2>📝 Cadastro de Ocorrência</h2>
-  <form id="cadastroForm" class="mt-3">
+  <form id="cadastroForm">
     <div class="mb-3">
-      <label for="reporter_name" class="form-label">Nome do Agente</label>
+      <label for="reporter_name">Nome do Agente</label>
       <input type="text" id="reporter_name" class="form-control" required>
     </div>
     <div class="mb-3">
-      <label for="comunicante_nome" class="form-label">Nome do Comunicante</label>
+      <label for="comunicante_nome">Nome do Comunicante</label>
       <input type="text" id="comunicante_nome" class="form-control">
     </div>
     <div class="mb-3">
-      <label for="occurred_location" class="form-label">Local da Ocorrência</label>
+      <label for="occurred_location">Local da Ocorrência</label>
       <input type="text" id="occurred_location" class="form-control">
     </div>
     <div class="mb-3">
-      <label for="occurrence_type" class="form-label">Tipo de Ocorrência</label>
+      <label for="occurrence_type">Tipo de Ocorrência</label>
       <select id="occurrence_type" class="form-select">
         <option value="Furto">Furto</option>
         <option value="Roubo">Roubo</option>
@@ -81,7 +45,7 @@
       </select>
     </div>
     <div class="mb-3">
-      <label for="description" class="form-label">Descrição</label>
+      <label for="description">Descrição</label>
       <textarea id="description" class="form-control" rows="4"></textarea>
     </div>
     <button type="submit" class="btn btn-success w-100">Salvar Ocorrência</button>
@@ -89,9 +53,8 @@
 
   <div id="msgRetorno" class="mt-3"></div>
 
+  <script src="./js/config.js"></script>
   <script>
-    const backendUrl = "https://rotam-backend-production.up.railway.app/occurrences";
-
     document.getElementById("cadastroForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -104,9 +67,9 @@
       };
 
       try {
-        const res = await fetch(backendUrl, {
+        const res = await fetch(CONFIG.ENDPOINTS.occurrences, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: CONFIG.getAuthHeaders(),
           body: JSON.stringify(occurrence),
         });
 
@@ -125,5 +88,7 @@
     });
   </script>
 
+  <script src="./js/logout.js"></script>
+  <script src="./js/pwa.js"></script>
 </body>
 </html>
