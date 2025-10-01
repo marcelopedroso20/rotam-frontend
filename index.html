@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema ROTAM - Painel</title>
 
-  <!-- Manifest e cor do tema -->
+  <!-- Manifest + cor do tema -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#e6b800">
 
@@ -16,8 +16,17 @@
   <link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
+  <!-- Topbar (aparece só no mobile) -->
+  <div class="topbar">
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+    <span class="app-title">ROTAM</span>
+  </div>
+
+  <!-- Fundo escuro para o menu mobile -->
+  <div class="backdrop" id="backdrop" onclick="toggleMenu()"></div>
+
   <!-- Sidebar -->
-  <div class="sidebar">
+  <div class="sidebar" id="sidebar">
     <img src="./assets/logo-rotam-192.png" alt="Logo ROTAM">
     <h4>Sistema ROTAM</h4>
 
@@ -46,6 +55,13 @@
     function logout() {
       localStorage.clear();
       window.location.href = "login.html";
+    }
+
+    // Função para abrir/fechar sidebar no mobile
+    function toggleMenu() {
+      document.getElementById("sidebar").classList.toggle("open");
+      document.getElementById("backdrop").classList.toggle("show");
+      document.body.classList.toggle("no-scroll");
     }
   </script>
 </body>
