@@ -16,17 +16,8 @@
   <link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
-  <!-- Topbar (mobile) -->
-  <div class="topbar">
-    <button class="hamburger" onclick="toggleMenu()">☰</button>
-    <span class="app-title">ROTAM</span>
-  </div>
-
-  <!-- Fundo escuro no mobile -->
-  <div class="backdrop" id="backdrop" onclick="toggleMenu()"></div>
-
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
+  <!-- Sidebar fixa -->
+  <div class="sidebar">
     <img src="./assets/logo-rotam-192.png" alt="Logo ROTAM">
     <h4>Sistema ROTAM</h4>
 
@@ -52,17 +43,10 @@
       window.location.href = "login.html";
     }
 
-    // Logout
+    // Função de logout
     function logout() {
       localStorage.clear();
       window.location.href = "login.html";
-    }
-
-    // Menu mobile
-    function toggleMenu() {
-      document.getElementById("sidebar").classList.toggle("open");
-      document.getElementById("backdrop").classList.toggle("show");
-      document.body.classList.toggle("no-scroll");
     }
   </script>
 </body>
