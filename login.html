@@ -9,8 +9,10 @@
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#e6b800">
 
+  <!-- CSS -->
   <link rel="stylesheet" href="./assets/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
   <style>
     body {
       background-color: #121212;
@@ -54,12 +56,13 @@
       </div>
       <button type="submit" class="btn btn-success btn-custom">Entrar</button>
     </form>
-    <p id="errorMsg" class="text-danger mt-3" style="display:none;"></p>
+    <!-- Mensagem de erro -->
+    <p id="errorMsg" class="alert alert-danger mt-3" style="display:none;"></p>
   </div>
 
-  <!-- Scripts -->
-  <script src="./js/config.js"></script>
-  <script src="./js/login.js"></script>
-  <script src="./js/pwa.js"></script> <!-- aqui chamamos o PWA -->
+  <!-- Scripts (ordem IMPORTANTE) -->
+  <script src="./js/config.js"></script>  <!-- 🔑 Config primeiro -->
+  <script src="./js/login.js"></script>   <!-- Depois o login -->
+  <script src="./js/pwa.js"></script>     <!-- PWA por último -->
 </body>
 </html>
