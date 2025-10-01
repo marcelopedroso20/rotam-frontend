@@ -1,282 +1,82 @@
-/* ========== RESET ========== */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #121212;
-  color: #fff;
-  display: flex;
-  height: 100vh;
-}
-
-/* ========== SIDEBAR ========== */
-.sidebar {
-  width: 220px;
+/* ======= Topbar (mobile) ======= */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
   background: #1e1e1e;
-  padding: 20px 10px;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border-bottom: 1px solid #2a2a2a;
+  z-index: 1000;
 }
 
-.sidebar img {
-  width: 100px;
-  margin-bottom: 10px;
+.app-title {
+  font-weight: 700;
+  letter-spacing: .3px;
 }
 
-.sidebar h4 {
-  font-size: 16px;
-  margin-bottom: 20px;
-  color: #ccc;
-}
-
-.sidebar button {
-  width: 100%;
-  margin: 5px 0;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  text-align: left;
-  font-weight: bold;
+/* Botão hamburguer */
+.hamburger {
   background: #2c2c2c;
   color: #fff;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 18px;
+  line-height: 1;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
-.sidebar button:hover {
-  background: #444;
+.hamburger:active { transform: scale(0.98); }
+
+/* Backdrop (fundo escuro) */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: .2s ease;
+  z-index: 900;
+}
+.backdrop.show {
+  opacity: 1;
+  visibility: visible;
 }
 
-.sidebar button.active {
-  background: #0d6efd;
-}
+/* Quando o menu abre, evita scroll do conteúdo */
+.no-scroll { overflow: hidden; }
 
-.sidebar .btn-logout {
-  background: #dc3545;
-  margin-top: auto;
-}
-
-.sidebar .btn-logout:hover {
-  background: #b02a37;
-}
-
-/* ========== CONTENT ========== */
-.content {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.content h2 {
-  margin-bottom: 20px;
-}
-
-/* ========== TABLES ========== */
-table {
-  color: #fff;
-}
-
-.table-dark {
-  background: #1e1e1e;
-}
-
-.table-dark th,
-.table-dark td {
-  border-color: #333;
-}
-
-/* ========== FORMS ========== */
-form label {
-  font-weight: bold;
-}
-
-form input,
-form textarea,
-form select {
-  background: #1e1e1e !important;
-  color: #fff !important;
-  border: 1px solid #333 !important;
-}
-
-form input:focus,
-form textarea:focus,
-form select:focus {
-  outline: none !important;
-  border-color: #0d6efd !important;
-  box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
-}
-
-.btn-success {
-  background: #198754;
-  border: none;
-}
-
-.btn-success:hover {
-  background: #157347;
-}
-
-.btn-primary {
-  background: #0d6efd;
-  border: none;
-}
-
-.btn-primary:hover {
-  background: #0b5ed7;
-}
-
-/* Fundo do login com a logo inteira centralizada */
-.login-body {
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-  background: #000 url("../assets/logo-rotam-bg-1920x1080.png") no-repeat center center;
-  background-size: cover; /* cobre toda a área preta */
-}
-
-/* Card sobre o fundo */
-.login-card {
-  background: rgba(18, 19, 24, 0.9);
-  border-radius: 12px;
-  padding: 24px;
-}
-
-/* ===============================
-   📱 AJUSTES PARA CELULAR
-   =============================== */
+/* ======= Sidebar como drawer no mobile ======= */
 @media (max-width: 768px) {
-  /* Conteúdo menor */
-  .content {
-    padding: 10px;
-  }
+  /* A topbar aparece só no mobile */
+  .topbar { display: flex; }
 
-  /* Formulário mais compacto */
-  form .mb-3 {
-    margin-bottom: 12px;
-  }
-
-  input,
-  select,
-  textarea,
-  button {
-    font-size: 16px;
-    width: 100%;
-  }
-
-  /* Sidebar menor */
+  /* Sidebar vira gaveta */
   .sidebar {
-    width: 70px; /* reduz menu no celular */
-    padding: 10px 5px;
-  }
-
-  .sidebar h4 {
-    display: none; /* esconde texto, deixa só ícones */
-  }
-
-  .sidebar img {
-    width: 50px; /* logo menor */
-  }
-
-  /* Tabelas com scroll horizontal */
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  table th,
-  table td {
-    font-size: 14px;
-    padding: 6px;
-  }
-}
-
-/* ===============================
-   📱 Relatórios como Cards no Mobile
-   =============================== */
-@media (max-width: 768px) {
-  #tabelaOcorrencias {
-    display: block;
-    border: 0;
-  }
-
-  #tabelaOcorrencias thead {
-    display: none; /* esconde cabeçalho */
-  }
-
-  #tabelaOcorrencias tbody tr {
-    display: block;
-    margin-bottom: 15px;
+    position: fixed;
+    top: 56px; /* abaixo da topbar */
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    max-width: 85vw;
     background: #1e1e1e;
-    border-radius: 8px;
-    padding: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transform: translateX(-100%);
+    transition: transform .2s ease;
+    z-index: 1100;
+    box-shadow: 2px 0 10px rgba(0,0,0,.6);
   }
+  .sidebar.open { transform: translateX(0); }
 
-  #tabelaOcorrencias tbody tr td {
-    display: block;
-    text-align: left;
-    padding: 6px 0;
-    font-size: 15px;
-    border: none;
-  }
+  /* Conteúdo desce para não ficar atrás da topbar */
+  .content { padding-top: 76px; }
 
-  #tabelaOcorrencias tbody tr td::before {
-    content: attr(data-label); /* pega o título da coluna */
-    font-weight: bold;
-    color: #0d6efd;
-    display: block;
-    margin-bottom: 2px;
-  }
+  /* Sidebar compacta já existia — mantém seus ajustes */
 }
 
-/* ===============================
-   📱 Ajustes extras para formulário no mobile
-   =============================== */
-@media (max-width: 768px) {
-  form label {
-    font-size: 14px;
-    margin-bottom: 4px;
-    display: block;
-  }
-
-  form input,
-  form select,
-  form textarea {
-    width: 100% !important;
-    max-width: 100%;
-    font-size: 16px;
-    padding: 10px;
-    margin-bottom: 12px;
-    border-radius: 6px;
-  }
-
-  form button {
-    width: 100% !important;
-    font-size: 18px;
-    padding: 12px;
-    margin-top: 10px;
-  }
-}
-
-/* Botão Voltar */
-.btn-voltar {
-  background: #6c757d;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-bottom: 15px;
-  display: inline-block;
-}
-
-.btn-voltar:hover {
-  background: #5a6268;
+/* Desktop: esconde a topbar e mantém sidebar fixa */
+@media (min-width: 769px) {
+  .topbar { display: none; }
 }
