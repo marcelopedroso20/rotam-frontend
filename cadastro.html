@@ -24,21 +24,21 @@
   <button class="btn btn-secondary mb-3" onclick="window.location.href='index.html'">⬅ Voltar</button>
 
   <h2>📝 Cadastro de Ocorrência</h2>
-  <form id="cadastroForm">
+  <form id="cadastroForm" class="mt-3">
     <div class="mb-3">
-      <label for="reporter_name">Nome do Agente</label>
+      <label for="reporter_name" class="form-label">Nome do Agente</label>
       <input type="text" id="reporter_name" class="form-control" required>
     </div>
     <div class="mb-3">
-      <label for="comunicante_nome">Nome do Comunicante</label>
+      <label for="comunicante_nome" class="form-label">Nome do Comunicante</label>
       <input type="text" id="comunicante_nome" class="form-control">
     </div>
     <div class="mb-3">
-      <label for="occurred_location">Local da Ocorrência</label>
+      <label for="occurred_location" class="form-label">Local da Ocorrência</label>
       <input type="text" id="occurred_location" class="form-control">
     </div>
     <div class="mb-3">
-      <label for="occurrence_type">Tipo de Ocorrência</label>
+      <label for="occurrence_type" class="form-label">Tipo de Ocorrência</label>
       <select id="occurrence_type" class="form-select">
         <option value="Furto">Furto</option>
         <option value="Roubo">Roubo</option>
@@ -47,7 +47,7 @@
       </select>
     </div>
     <div class="mb-3">
-      <label for="description">Descrição</label>
+      <label for="description" class="form-label">Descrição</label>
       <textarea id="description" class="form-control" rows="4"></textarea>
     </div>
     <button type="submit" class="btn btn-success w-100">Salvar Ocorrência</button>
