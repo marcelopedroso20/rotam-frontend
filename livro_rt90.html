@@ -13,12 +13,6 @@
       padding: 25px;
     }
 
-    h2 {
-      text-align: center;
-      color: #000;
-      margin-bottom: 10px;
-    }
-
     .header {
       text-align: center;
       margin-bottom: 20px;
@@ -35,11 +29,18 @@
       margin: 5px 0;
     }
 
+    h2 {
+      text-align: center;
+      color: #000;
+      margin-top: 10px;
+    }
+
     form {
       background: #fff;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      margin-top: 20px;
     }
 
     label {
@@ -74,14 +75,43 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 15px;
+      transition: background 0.3s;
     }
 
     button:hover {
       background: #157347;
     }
+
+    .btn-voltar {
+      background: #2c2c2c;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-voltar:hover {
+      background: #444;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+
+      .header img {
+        width: 80px;
+      }
+
+      form {
+        padding: 15px;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <button class="btn-voltar" onclick="voltarPainel()">⬅ Voltar ao Painel</button>
 
   <div class="header">
     <img src="logo-rotam.png" alt="Logo ROTAM">
@@ -89,6 +119,8 @@
     <p>Comando de Policiamento Especializado<br>Batalhão ROTAM</p>
     <p><strong>Relatório de Serviço do Dia:</strong> <span id="dataAtual"></span></p>
   </div>
+
+  <h2>📘 Livro RT 90</h2>
 
   <form id="livroForm">
     <label>1️⃣ ROTAM Comando e ROTAM 90:</label>
@@ -127,6 +159,11 @@
     const dataFormatada = data.toLocaleDateString('pt-BR', opcoes);
     document.getElementById("dataAtual").innerText = dataFormatada;
     document.getElementById("dataRodape").innerText = dataFormatada;
+
+    // === Função para voltar ao painel ===
+    function voltarPainel() {
+      window.location.href = "index.html";
+    }
 
     // === Geração do PDF ===
     async function gerarPDF() {
