@@ -1,34 +1,175 @@
-<h2>📘 Livro RT 90</h2>
-<p><strong>Polícia Militar do Estado de Mato Grosso</strong><br>
-Comando de Policiamento Especializado<br>
-Batalhão ROTAM<br>
-<b>Relatório de Serviço do Dia:</b> ____ / ____ / ____</p>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Livro RT 90 - ROTAM</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #000;
+      padding: 25px;
+    }
 
-<hr>
+    h2 {
+      text-align: center;
+      color: #000;
+      margin-bottom: 10px;
+    }
 
-<form>
-  <label>1️⃣ ROTAM Comando e ROTAM 90:</label><br>
-  <textarea rows="3" style="width:100%"></textarea><br><br>
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-  <label>2️⃣ Alterações na Escala de Serviço:</label><br>
-  <textarea rows="3" style="width:100%"></textarea><br><br>
+    .header img {
+      width: 100px;
+      display: block;
+      margin: 0 auto;
+    }
 
-  <label>3️⃣ Distribuição das Equipes:</label><br>
-  <textarea rows="3" style="width:100%"></textarea><br><br>
+    .header p {
+      line-height: 1.4;
+      margin: 5px 0;
+    }
 
-  <label>4️⃣ Ocorrências Registradas:</label><br>
-  <textarea rows="3" style="width:100%"></textarea><br><br>
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
 
-  <label>5️⃣ Justiça e Disciplina:</label><br>
-  <textarea rows="3" style="width:100%"></textarea><br><br>
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
 
-  <label>6️⃣ Documentos:</label><br>
-  <textarea rows="3" style="width:100%"></textarea><br><br>
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+      font-size: 14px;
+    }
 
-  <label>7️⃣ Diversos:</label><br>
-  <textarea rows="3" style="width:100%"></textarea><br><br>
+    .footer {
+      margin-top: 25px;
+      text-align: center;
+      font-style: italic;
+      color: #444;
+    }
 
-  <p><i>Quartel do Batalhão ROTAM — Cuiabá-MT, ____ / ____ / ____</i></p>
+    button {
+      margin-top: 20px;
+      background: #198754;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 15px;
+    }
 
-  <button type="submit" style="background:#198754;color:#fff;padding:10px 20px;border:none;border-radius:5px;">Salvar / Gerar PDF</button>
-</form>
+    button:hover {
+      background: #157347;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <img src="logo-rotam.png" alt="Logo ROTAM">
+    <p><strong>Polícia Militar do Estado de Mato Grosso</strong></p>
+    <p>Comando de Policiamento Especializado<br>Batalhão ROTAM</p>
+    <p><strong>Relatório de Serviço do Dia:</strong> <span id="dataAtual"></span></p>
+  </div>
+
+  <form id="livroForm">
+    <label>1️⃣ ROTAM Comando e ROTAM 90:</label>
+    <textarea rows="3" id="rotamComando"></textarea>
+
+    <label>2️⃣ Alterações na Escala de Serviço:</label>
+    <textarea rows="3" id="alteracoesEscala"></textarea>
+
+    <label>3️⃣ Distribuição das Equipes:</label>
+    <textarea rows="3" id="distribuicaoEquipes"></textarea>
+
+    <label>4️⃣ Ocorrências Registradas:</label>
+    <textarea rows="3" id="ocorrencias"></textarea>
+
+    <label>5️⃣ Justiça e Disciplina:</label>
+    <textarea rows="3" id="justicaDisciplina"></textarea>
+
+    <label>6️⃣ Documentos:</label>
+    <textarea rows="3" id="documentos"></textarea>
+
+    <label>7️⃣ Diversos:</label>
+    <textarea rows="3" id="diversos"></textarea>
+
+    <div class="footer">
+      Quartel do Batalhão ROTAM — Cuiabá/MT<br>
+      Data: <span id="dataRodape"></span>
+    </div>
+
+    <button type="button" onclick="gerarPDF()">📄 Gerar PDF</button>
+  </form>
+
+  <script>
+    // === Preenche a data automaticamente ===
+    const data = new Date();
+    const opcoes = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const dataFormatada = data.toLocaleDateString('pt-BR', opcoes);
+    document.getElementById("dataAtual").innerText = dataFormatada;
+    document.getElementById("dataRodape").innerText = dataFormatada;
+
+    // === Geração do PDF ===
+    async function gerarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+      const img = new Image();
+      img.src = "logo-rotam.png";
+      await img.decode();
+
+      doc.addImage(img, "PNG", 90, 10, 30, 30);
+      doc.setFontSize(12);
+      doc.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, 50, { align: "center" });
+      doc.text("Comando de Policiamento Especializado", 105, 56, { align: "center" });
+      doc.text("Batalhão ROTAM", 105, 62, { align: "center" });
+      doc.text(`Relatório de Serviço do Dia: ${dataFormatada}`, 105, 68, { align: "center" });
+
+      let y = 80;
+      const campos = [
+        ["1️⃣ ROTAM Comando e ROTAM 90:", document.getElementById("rotamComando").value],
+        ["2️⃣ Alterações na Escala de Serviço:", document.getElementById("alteracoesEscala").value],
+        ["3️⃣ Distribuição das Equipes:", document.getElementById("distribuicaoEquipes").value],
+        ["4️⃣ Ocorrências Registradas:", document.getElementById("ocorrencias").value],
+        ["5️⃣ Justiça e Disciplina:", document.getElementById("justicaDisciplina").value],
+        ["6️⃣ Documentos:", document.getElementById("documentos").value],
+        ["7️⃣ Diversos:", document.getElementById("diversos").value]
+      ];
+
+      campos.forEach(([titulo, texto]) => {
+        doc.setFont("helvetica", "bold");
+        doc.text(titulo, 10, y);
+        doc.setFont("helvetica", "normal");
+        y += 6;
+        const linhas = doc.splitTextToSize(texto || "—", 190);
+        doc.text(linhas, 10, y);
+        y += linhas.length * 6 + 4;
+      });
+
+      doc.text("Quartel do Batalhão ROTAM — Cuiabá/MT", 105, 285, { align: "center" });
+      doc.text(`Data: ${dataFormatada}`, 105, 291, { align: "center" });
+
+      doc.save(`Livro_RT90_${dataFormatada}.pdf`);
+    }
+  </script>
+</body>
+</html>
