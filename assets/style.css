@@ -10,14 +10,15 @@ body {
   font-family: Arial, sans-serif;
   background: #121212;
   color: #fff;
-  display: flex; /* 🔑 Faz sidebar + conteúdo lado a lado */
+  display: flex;
+  flex-direction: row;
   height: 100vh;
   overflow: hidden;
 }
 
 /* ========== SIDEBAR ========== */
 .sidebar {
-  width: 220px;
+  width: 240px;
   background: #1e1e1e;
   padding: 20px 10px;
   display: flex;
@@ -26,7 +27,7 @@ body {
 }
 
 .sidebar img {
-  width: 100px;
+  width: 120px;
   margin-bottom: 10px;
 }
 
@@ -39,19 +40,20 @@ body {
 .sidebar button {
   width: 100%;
   margin: 5px 0;
-  padding: 10px;
+  padding: 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   text-align: left;
   font-weight: bold;
   background: #2c2c2c;
   color: #fff;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .sidebar button:hover {
   background: #444;
+  transform: scale(1.02);
 }
 
 .sidebar button.active {
@@ -70,7 +72,7 @@ body {
 /* ========== CONTENT ========== */
 .content {
   flex: 1;
-  padding: 20px;
+  padding: 25px;
   overflow-y: auto;
   background: #f5f5f5;
   color: #000;
@@ -78,6 +80,7 @@ body {
 
 .content h2 {
   margin-bottom: 20px;
+  font-size: 1.8rem;
 }
 
 /* ========== TABELAS ========== */
@@ -105,6 +108,7 @@ form select {
   background: #1e1e1e !important;
   color: #fff !important;
   border: 1px solid #333 !important;
+  border-radius: 6px;
 }
 
 form input:focus,
@@ -147,30 +151,50 @@ form select:focus {
   background: rgba(18, 19, 24, 0.9);
   border-radius: 12px;
   padding: 24px;
+  text-align: center;
 }
 
-/* ========== MOBILE (responsivo) ========== */
+/* ========== MOBILE (mantém o layout vertical) ========== */
 @media (max-width: 768px) {
   body {
     flex-direction: column;
+    overflow: auto;
   }
 
   .sidebar {
     width: 100%;
-    flex-direction: row;
-    justify-content: space-around;
+    height: auto;
+    padding: 15px;
+    flex-direction: column;
+    align-items: center;
+    background: #1e1e1e;
   }
 
-  .sidebar img,
+  .sidebar img {
+    width: 100px;
+    margin-bottom: 8px;
+  }
+
   .sidebar h4 {
-    display: none;
+    margin-bottom: 12px;
+  }
+
+  .sidebar button {
+    width: 90%;
+    text-align: center;
+    margin: 6px 0;
+    font-size: 15px;
+  }
+
+  .sidebar .btn-logout {
+    width: 90%;
+    margin-top: 10px;
   }
 
   .content {
     padding: 15px;
   }
 
-  /* 🔹 Ajuste básico para tabelas */
   table {
     display: block;
     overflow-x: auto;
@@ -179,49 +203,13 @@ form select:focus {
 
   table th,
   table td {
-    font-size: 14px;
-    padding: 6px;
+    font-size: 13px;
+    padding: 5px;
   }
 
-  /* 🔹 Tabela de relatórios em cards */
-  #tabelaOcorrencias {
-    display: block;
+  form input,
+  form textarea,
+  form select {
     width: 100%;
-    border: 0;
-  }
-
-  #tabelaOcorrencias thead {
-    display: none; /* Esconde cabeçalho */
-  }
-
-  #tabelaOcorrencias tbody {
-    display: block;
-    width: 100%;
-  }
-
-  #tabelaOcorrencias tbody tr {
-    display: block;
-    margin-bottom: 15px;
-    background: #1e1e1e;
-    border-radius: 8px;
-    padding: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  }
-
-  #tabelaOcorrencias tbody tr td {
-    display: block;
-    text-align: left;
-    padding: 6px 0;
-    font-size: 15px;
-    border: none;
-    color: #fff;
-  }
-
-  #tabelaOcorrencias tbody tr td::before {
-    content: attr(data-label);
-    font-weight: bold;
-    color: #0d6efd;
-    display: block;
-    margin-bottom: 2px;
   }
 }
