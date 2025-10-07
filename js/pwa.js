@@ -1,28 +1,18 @@
-// =====================================
-// Registro do Service Worker - ROTAM PWA
-// =====================================
-(function () {
-  if (!('serviceWorker' in navigator)) return;
+<!-- assets/js/pwa.js -->
+<script>
+(() => {
+  const BASE = '/rotam-frontend';
+  const SW_URL = `${BASE}/sw.js`;
 
-  window.addEventListener('load', async () => {
-    try {
-      const reg = await navigator.serviceWorker.register('../sw.js', { scope: '../' });
-      console.log('✅ Service Worker registrado:', reg.scope);
-
-      // Atualiza automaticamente quando nova versão for instalada
-      if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        if (!newWorker) return;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            console.log('⚙️ Nova versão disponível.');
-          }
-        });
-      });
-    } catch (err) {
-      console.error('❌ Erro ao registrar o Service Worker:', err);
-    }
-  });
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+      try {
+        const reg = await navigator.serviceWorker.register(SW_URL, { scope: BASE + '/' });
+        console.log('[PWA] Service Worker OK:', reg.scope);
+      } catch (err) {
+        console.error('[PWA] Erro ao registrar SW:', err);
+      }
+    });
+  }
 })();
+</script>
