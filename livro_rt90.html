@@ -3,272 +3,229 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Livro RT 90 - ROTAM</title>
+  <title>Livro RT90 - Sistema ROTAM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
       background: #f5f5f5;
-      color: #000;
-      padding: 25px;
+      font-family: Arial, sans-serif;
+      color: #222;
     }
 
-    .top-bar {
-      display: flex;
-      justify-content: flex-start;
-      margin-bottom: 15px;
-    }
-
-    .btn-voltar {
-      background: #2c2c2c;
+    header {
+      background: #1e1e1e;
       color: #fff;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 5px;
-      cursor: pointer;
-      display: inline-flex;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 5px;
-      transition: background 0.3s;
     }
 
-    .btn-voltar:hover {
-      background: #444;
+    header h1 {
+      font-size: 20px;
+      margin: 0;
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
+    header button {
+      background: #0d6efd;
+      border: none;
+      padding: 8px 14px;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
     }
 
-    .header img {
-      width: 100px;
-      display: block;
-      margin: 0 auto 10px;
+    header button:hover {
+      background: #0b5ed7;
     }
 
-    .header p {
-      margin: 4px 0;
-      line-height: 1.3;
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     h2 {
       text-align: center;
-      color: #000;
-      text-decoration: underline;
-    }
-
-    form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
-      margin-top: 20px;
-    }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      font-size: 18px;
     }
 
     textarea {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      height: 70px;
       resize: vertical;
-      font-size: 14px;
+      margin-bottom: 15px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
 
-    .footer {
-      margin-top: 25px;
-      text-align: center;
-      font-style: italic;
-      color: #444;
+    label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
     }
 
-    button {
-      margin-top: 20px;
+    .btn-success {
       background: #198754;
-      color: #fff;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 15px;
-      transition: background 0.3s;
+      font-weight: bold;
+      transition: 0.3s;
     }
 
-    button:hover {
+    .btn-success:hover {
       background: #157347;
     }
 
-    @media (max-width: 768px) {
-      body {
-        padding: 15px;
-      }
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: #666;
+    }
 
-      .header img {
-        width: 80px;
-      }
-
-      form {
-        padding: 15px;
-      }
+    .logo-rotam {
+      width: 80px;
+      display: block;
+      margin: 0 auto 10px;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1><i class="bi bi-book"></i> Livro RT 90</h1>
+    <button onclick="voltarPainel()"><i class="bi bi-arrow-left"></i> Voltar ao Painel</button>
+  </header>
 
-  <div class="top-bar">
-    <button class="btn-voltar" onclick="voltarPainel()">⬅ Voltar ao Painel</button>
-  </div>
-
-  <div class="header">
-    <img src="logo-rotam.png" alt="Logo ROTAM">
-    <p><strong>POLÍCIA MILITAR DO ESTADO DE MATO GROSSO</strong></p>
-    <p>COMANDO DE POLICIAMENTO ESPECIALIZADO</p>
-    <p><strong>BATALHÃO ROTAM</strong></p>
-    <p><u>RELATÓRIO DE SERVIÇO DO DIA: <span id="dataAtual"></span></u></p>
-  </div>
-
-  <h2>LIVRO RT 90</h2>
-
-  <form id="livroForm">
-    <label>1️⃣ ROTAM Comando e ROTAM 90:</label>
-    <textarea rows="3" id="rotamComando"></textarea>
-
-    <label>2️⃣ Alterações na Escala de Serviço:</label>
-    <textarea rows="3" id="alteracoesEscala"></textarea>
-
-    <label>3️⃣ Distribuição das Equipes:</label>
-    <textarea rows="3" id="distribuicaoEquipes"></textarea>
-
-    <label>4️⃣ Ocorrências Registradas:</label>
-    <textarea rows="3" id="ocorrencias"></textarea>
-
-    <label>5️⃣ Justiça e Disciplina:</label>
-    <textarea rows="3" id="justicaDisciplina"></textarea>
-
-    <label>6️⃣ Documentos:</label>
-    <textarea rows="3" id="documentos"></textarea>
-
-    <label>7️⃣ Diversos:</label>
-    <textarea rows="3" id="diversos"></textarea>
-
-    <div class="footer">
-      Quartel do Batalhão ROTAM — Cuiabá/MT<br>
-      Data: <span id="dataRodape"></span>
+  <main>
+    <div class="text-center mb-4">
+      <img src="logo-rotam.png" alt="Logo ROTAM" class="logo-rotam">
+      <p><strong>POLÍCIA MILITAR DO ESTADO DE MATO GROSSO</strong><br>
+      COMANDO DE POLICIAMENTO ESPECIALIZADO<br>
+      BATALHÃO ROTAM<br>
+      <u>RELATÓRIO DE SERVIÇO DO DIA:</u></p>
+      <h2>LIVRO RT 90</h2>
     </div>
 
-    <button type="button" onclick="gerarPDF()">📄 Gerar PDF Oficial</button>
-  </form>
+    <form id="formLivro">
+      <div>
+        <label>1️⃣ ROTAM Comando e ROTAM 90:</label>
+        <textarea id="comando"></textarea>
+
+        <label>2️⃣ Alterações na Escala de Serviço:</label>
+        <textarea id="escala"></textarea>
+
+        <label>3️⃣ Distribuição das Equipes:</label>
+        <textarea id="equipes"></textarea>
+
+        <label>4️⃣ Ocorrências Registradas:</label>
+        <textarea id="ocorrencias"></textarea>
+
+        <label>5️⃣ Justiça e Disciplina:</label>
+        <textarea id="justica"></textarea>
+
+        <label>6️⃣ Documentos:</label>
+        <textarea id="documentos"></textarea>
+
+        <label>7️⃣ Diversos:</label>
+        <textarea id="diversos"></textarea>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="button" class="btn-success" onclick="gerarPDF()">
+          <i class="bi bi-file-earmark-pdf"></i> Gerar PDF
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <footer>
+    Quartel do Batalhão ROTAM — Cuiabá/MT
+  </footer>
 
   <script>
-    // === Preenche a data ===
-    const data = new Date();
-    const opcoes = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    const dataFormatada = data.toLocaleDateString('pt-BR', opcoes);
-    document.getElementById("dataAtual").innerText = dataFormatada;
-    document.getElementById("dataRodape").innerText = dataFormatada;
-
-    // === Voltar ao painel ===
     function voltarPainel() {
       window.location.href = "index.html";
     }
 
-    // === Número automático do relatório ===
-    function obterNumeroRelatorio() {
-      let numero = localStorage.getItem("rotam_num_relatorio");
-      if (!numero) numero = 1;
-      const numAtual = parseInt(numero);
-      localStorage.setItem("rotam_num_relatorio", numAtual + 1);
-      return numAtual.toString().padStart(3, "0");
-    }
-
-    // === Geração do PDF ===
     async function gerarPDF() {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const doc = new jsPDF();
 
-      const margemEsq = 15;
-      let y = 25;
+      const hoje = new Date();
+      const dataStr = hoje.toLocaleDateString();
+      const horaStr = hoje.toLocaleTimeString();
 
-      const numeroRelatorio = obterNumeroRelatorio();
-      const anoAtual = new Date().getFullYear();
-
-      const img = new Image();
-      img.src = "logo-rotam.png";
-      await img.decode();
-      doc.addImage(img, "PNG", margemEsq, y - 10, 25, 25);
-
-      const marca = new Image();
-      marca.src = "logo-rotam.png";
-      await marca.decode();
-      doc.addImage(marca, "PNG", 50, 90, 110, 110, "", "FAST", 0.15);
-
-      doc.setFont("helvetica", "bold");
+      // Cabeçalho
       doc.setFontSize(12);
-      doc.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, y, { align: "center" });
-      y += 6;
-      doc.setFont("helvetica", "normal");
-      doc.text("Comando de Policiamento Especializado", 105, y, { align: "center" });
-      y += 6;
-      doc.setFont("helvetica", "bold");
-      doc.text("BATALHÃO ROTAM", 105, y, { align: "center" });
-      y += 10;
+      doc.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, 20, { align: "center" });
+      doc.text("COMANDO DE POLICIAMENTO ESPECIALIZADO", 105, 26, { align: "center" });
+      doc.text("BATALHÃO ROTAM", 105, 32, { align: "center" });
+      doc.text("RELATÓRIO DE SERVIÇO DO DIA", 105, 38, { align: "center" });
 
-      doc.setFontSize(11);
-      doc.text(`RELATÓRIO Nº ${numeroRelatorio}/${anoAtual} - RT90`, 105, y, { align: "center" });
-      y += 6;
-      doc.text(`SERVIÇO DO DIA: ${dataFormatada}`, 105, y, { align: "center" });
-      y += 10;
+      doc.setFontSize(14);
+      doc.text("LIVRO RT 90", 105, 46, { align: "center" });
 
-      doc.line(margemEsq, y, 195, y);
-      y += 10;
-
+      // Conteúdo
+      const yStart = 60;
       const campos = [
-        ["1️⃣ ROTAM Comando e ROTAM 90:", document.getElementById("rotamComando").value],
-        ["2️⃣ Alterações na Escala de Serviço:", document.getElementById("alteracoesEscala").value],
-        ["3️⃣ Distribuição das Equipes:", document.getElementById("distribuicaoEquipes").value],
-        ["4️⃣ Ocorrências Registradas:", document.getElementById("ocorrencias").value],
-        ["5️⃣ Justiça e Disciplina:", document.getElementById("justicaDisciplina").value],
-        ["6️⃣ Documentos:", document.getElementById("documentos").value],
-        ["7️⃣ Diversos:", document.getElementById("diversos").value]
+        { label: "1 - ROTAM Comando e ROTAM 90:", value: document.getElementById("comando").value },
+        { label: "2 - Alterações na Escala de Serviço:", value: document.getElementById("escala").value },
+        { label: "3 - Distribuição das Equipes:", value: document.getElementById("equipes").value },
+        { label: "4 - Ocorrências Registradas:", value: document.getElementById("ocorrencias").value },
+        { label: "5 - Justiça e Disciplina:", value: document.getElementById("justica").value },
+        { label: "6 - Documentos:", value: document.getElementById("documentos").value },
+        { label: "7 - Diversos:", value: document.getElementById("diversos").value },
       ];
 
-      campos.forEach(([titulo, texto]) => {
-        doc.setFont("helvetica", "bold");
-        doc.text(titulo, margemEsq, y);
-        y += 6;
-        doc.setFont("helvetica", "normal");
-        const linhas = doc.splitTextToSize(texto || "—", 180);
-        doc.text(linhas, margemEsq, y);
-        y += linhas.length * 6 + 6;
+      let y = yStart;
+      doc.setFontSize(11);
+
+      campos.forEach(campo => {
+        doc.text(campo.label, 14, y);
+        const linhas = doc.splitTextToSize(campo.value, 180);
+        doc.text(linhas, 14, y + 6);
+        y += 12 + (linhas.length * 6);
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
       });
 
-      doc.line(margemEsq, 275, 195, 275);
-      doc.setFont("helvetica", "italic");
+      // Rodapé
       doc.setFontSize(10);
-      doc.text("Quartel do Batalhão ROTAM — Cuiabá/MT", 105, 282, { align: "center" });
-      doc.text(`Data: ${dataFormatada}`, 105, 288, { align: "center" });
+      doc.text(`Quartel do Batalhão ROTAM — Cuiabá/MT, ${dataStr}`, 105, 285, { align: "center" });
 
-      // === Salvar no histórico ===
-      const horaAtual = new Date().toLocaleTimeString("pt-BR");
+      const nomeArquivo = `Relatorio_RT90_${dataStr.replaceAll('/', '-')}_${horaStr.replaceAll(':', '-')}.pdf`;
+      doc.save(nomeArquivo);
+
+      salvarHistorico(nomeArquivo, dataStr, horaStr);
+      alert("📄 PDF gerado e salvo no histórico!");
+    }
+
+    function salvarHistorico(nome, data, hora) {
       const historico = JSON.parse(localStorage.getItem("rotam_historico_rt90")) || [];
-
-      historico.push({
-        numero: `${numeroRelatorio}/${anoAtual}`,
-        data: dataFormatada,
-        hora: horaAtual,
-        link: `Livro_RT90_Relatorio_${numeroRelatorio}_${anoAtual}.pdf`
-      });
-
+      const novoItem = {
+        numero: historico.length + 1,
+        data: data,
+        hora: hora,
+        link: nome
+      };
+      historico.push(novoItem);
       localStorage.setItem("rotam_historico_rt90", JSON.stringify(historico));
-
-      doc.save(`Livro_RT90_Relatorio_${numeroRelatorio}_${anoAtual}.pdf`);
     }
   </script>
 </body>
