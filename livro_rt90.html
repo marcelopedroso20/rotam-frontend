@@ -169,18 +169,30 @@
       const dataStr = hoje.toLocaleDateString();
       const horaStr = hoje.toLocaleTimeString();
 
+      // Carregar o logo (assume que está no mesmo diretório)
+      const logoUrl = "logo-rotam.png";
+      const logo = await carregarImagem(logoUrl);
+
+      if (logo) {
+        const imgProps = doc.getImageProperties(logo);
+        const imgWidth = 30;
+        const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+        const xPos = (210 - imgWidth) / 2;
+        doc.addImage(logo, "PNG", xPos, 10, imgWidth, imgHeight);
+      }
+
       // Cabeçalho
       doc.setFontSize(12);
-      doc.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, 20, { align: "center" });
-      doc.text("COMANDO DE POLICIAMENTO ESPECIALIZADO", 105, 26, { align: "center" });
-      doc.text("BATALHÃO ROTAM", 105, 32, { align: "center" });
-      doc.text("RELATÓRIO DE SERVIÇO DO DIA", 105, 38, { align: "center" });
+      doc.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, 35, { align: "center" });
+      doc.text("COMANDO DE POLICIAMENTO ESPECIALIZADO", 105, 41, { align: "center" });
+      doc.text("BATALHÃO ROTAM", 105, 47, { align: "center" });
+      doc.text("RELATÓRIO DE SERVIÇO DO DIA", 105, 53, { align: "center" });
 
       doc.setFontSize(14);
-      doc.text("LIVRO RT 90", 105, 46, { align: "center" });
+      doc.text("LIVRO RT 90", 105, 61, { align: "center" });
 
       // Conteúdo
-      const yStart = 60;
+      const yStart = 75;
       const campos = [
         { label: "1 - ROTAM Comando e ROTAM 90:", value: document.getElementById("comando").value },
         { label: "2 - Alterações na Escala de Serviço:", value: document.getElementById("escala").value },
@@ -196,7 +208,7 @@
 
       campos.forEach(campo => {
         doc.text(campo.label, 14, y);
-        const linhas = doc.splitTextToSize(campo.value, 180);
+        const linhas = doc.splitTextToSize(campo.value || "-", 180);
         doc.text(linhas, 14, y + 6);
         y += 12 + (linhas.length * 6);
         if (y > 270) {
@@ -209,11 +221,13 @@
       doc.setFontSize(10);
       doc.text(`Quartel do Batalhão ROTAM — Cuiabá/MT, ${dataStr}`, 105, 285, { align: "center" });
 
+      // Nome do arquivo
       const nomeArquivo = `Relatorio_RT90_${dataStr.replaceAll('/', '-')}_${horaStr.replaceAll(':', '-')}.pdf`;
       doc.save(nomeArquivo);
 
+      // Salvar histórico local
       salvarHistorico(nomeArquivo, dataStr, horaStr);
-      alert("📄 PDF gerado e salvo no histórico!");
+      alert("📄 PDF gerado com sucesso e salvo no histórico!");
     }
 
     function salvarHistorico(nome, data, hora) {
@@ -226,6 +240,26 @@
       };
       historico.push(novoItem);
       localStorage.setItem("rotam_historico_rt90", JSON.stringify(historico));
+    }
+
+    function carregarImagem(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          canvas.width = this.width;
+          canvas.height = this.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(this, 0, 0);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.onerror = function () {
+          console.warn("⚠️ Não foi possível carregar o logo ROTAM para o PDF.");
+          resolve(null);
+        };
+        img.src = url;
+      });
     }
   </script>
 </body>
