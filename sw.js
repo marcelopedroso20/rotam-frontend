@@ -1,6 +1,9 @@
-// sw.js (na raiz do repositório)
+// ============================================
+// ROTAM - SERVICE WORKER (PWA CACHE MANAGER)
+// ============================================
+
+const CACHE_NAME = 'rotam-cache-v5';
 const BASE = '/rotam-frontend';
-const CACHE = 'rotam-cache-v4';
 
 const ASSETS = [
   `${BASE}/`,
@@ -10,46 +13,70 @@ const ASSETS = [
   `${BASE}/relatorios.html`,
   `${BASE}/livro_rt90.html`,
   `${BASE}/historico_rt90.html`,
+  `${BASE}/offline.html`,
+  `${BASE}/manifest.json`,
+
+  // CSS e imagens
   `${BASE}/assets/style.css`,
   `${BASE}/assets/favicon.ico`,
-  `${BASE}/assets/logo-rotam.png`,
   `${BASE}/assets/logo-rotam-frontend.png`,
-  `${BASE}/assets/js/config.js`,
-  `${BASE}/assets/js/pwa.js`,
-  `${BASE}/assets/js/login.js`,
-  `${BASE}/assets/js/cadastro.js`,
-  `${BASE}/assets/js/index.js`,
+  `${BASE}/assets/logo-rotam.jpg`,
+  `${BASE}/assets/logo-rotam-bg.png`,
+
+  // JS principais
+  `${BASE}/js/pwa.js`,
+  `${BASE}/js/login.js`,
+  `${BASE}/js/logout.js`,
+  `${BASE}/js/config.js`,
+  `${BASE}/js/auth.js`
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
+// ============================
+// INSTALL
+// ============================
+self.addEventListener('install', event => {
+  console.log('[SW] Instalando e criando cache...');
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        return Promise.allSettled(
+          ASSETS.map(url =>
+            fetch(url).then(resp => {
+              if (resp.ok) {
+                return cache.put(url, resp.clone());
+              } else {
+                console.warn('[SW] Falha ao buscar:', url);
+              }
+            }).catch(() => console.warn('[SW] Não foi possível armazenar:', url))
+          )
+        );
+      })
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+// ============================
+// ACTIVATE
+// ============================
+self.addEventListener('activate', event => {
+  console.log('[SW] Ativado');
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(key => key !== CACHE_NAME)
+            .map(key => caches.delete(key))
+      )
+    )
   );
 });
 
-self.addEventListener('fetch', (e) => {
-  const { request } = e;
-  if (request.method !== 'GET') return;
-
-  e.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(request)
-        .then((resp) => {
-          const copy = resp.clone();
-          caches.open(CACHE).then((c) => c.put(request, copy));
-          return resp;
-        })
-        .catch(() => cached || caches.match(`${BASE}/index.html`));
-    })
+// ============================
+// FETCH (Offline fallback)
+// ============================
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(resp => resp || fetch(event.request))
+      .catch(() => caches.match(`${BASE}/offline.html`))
   );
 });
