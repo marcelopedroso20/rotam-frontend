@@ -24,11 +24,11 @@ const PRECACHE_URLS = [
   './js/config.js',
 
   // Ícones do PWA
-  './icon-192.png',
-  './icon-512.png',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
 
   // Logos/Imagens usadas
-  './logo-rotam.png'
+  './assets/logo-rotam.png'
 ];
 
 // 🛠 Instala: pré-carrega os assets
