@@ -3,21 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <title>Offline - Sistema ROTAM</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; background:#121212; color:#fff; margin:0; display:grid; place-items:center; min-height:100vh; text-align:center; padding:20px; }
-    .card { background:#1e1e1e; padding:20px; border-radius:10px; max-width:420px; }
-    img { width:80px; margin-bottom:10px; }
-    a { color:#0d6efd; text-decoration:none; }
-    a:hover { text-decoration:underline; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+    .card {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+    }
+    img {
+      width: 90px;
+      margin-bottom: 10px;
+    }
+    a {
+      display: inline-block;
+      margin-top: 10px;
+      color: #0d6efd;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <img src="./assets/icon-192.png" alt="ROTAM">
     <h2>Você está offline</h2>
-    <p>Algumas páginas podem não carregar agora. Tente novamente quando a conexão voltar.</p>
-    <p><a href="./index.html">Voltar ao início</a></p>
+    <p>Sem conexão no momento.<br>Algumas funções do sistema não estão disponíveis.</p>
+    <a href="./index.html">Voltar ao início</a>
   </div>
 </body>
 </html>
