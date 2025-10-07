@@ -261,6 +261,20 @@
       doc.text("Quartel do Batalhão ROTAM — Cuiabá/MT", 105, 282, { align: "center" });
       doc.text(`Data: ${dataFormatada}`, 105, 288, { align: "center" });
 
+      // === Salvar no histórico local ===
+      const horaAtual = new Date().toLocaleTimeString("pt-BR");
+      const historico = JSON.parse(localStorage.getItem("rotam_historico_rt90")) || [];
+
+      historico.push({
+        numero: `${numeroRelatorio}/${anoAtual}`,
+        data: dataFormatada,
+        hora: horaAtual,
+        link: `Livro_RT90_Relatorio_${numeroRelatorio}_${anoAtual}.pdf`
+      });
+
+      localStorage.setItem("rotam_historico_rt90", JSON.stringify(historico));
+
+
       doc.save(`Livro_RT90_Relatorio_${numeroRelatorio}_${anoAtual}.pdf`);
     }
   </script>
