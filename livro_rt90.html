@@ -179,7 +179,16 @@
       window.location.href = "index.html";
     }
 
-    // === Geração do PDF com marca d'água ===
+    // === Número automático do relatório ===
+    function obterNumeroRelatorio() {
+      let numero = localStorage.getItem("rotam_num_relatorio");
+      if (!numero) numero = 1;
+      const numAtual = parseInt(numero);
+      localStorage.setItem("rotam_num_relatorio", numAtual + 1);
+      return numAtual.toString().padStart(3, "0");
+    }
+
+    // === Geração do PDF ===
     async function gerarPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
@@ -187,19 +196,23 @@
       const margemEsq = 15;
       let y = 25;
 
+      // Obter número sequencial
+      const numeroRelatorio = obterNumeroRelatorio();
+      const anoAtual = new Date().getFullYear();
+
       // Adiciona o brasão no topo esquerdo
       const img = new Image();
       img.src = "logo-rotam.png";
       await img.decode();
       doc.addImage(img, "PNG", margemEsq, y - 10, 25, 25);
 
-      // Marca d'água no centro (translúcida)
+      // Marca d'água central
       const marca = new Image();
       marca.src = "logo-rotam.png";
       await marca.decode();
-      doc.addImage(marca, "PNG", 50, 90, 110, 110, "", "FAST", 0.15); // opacidade leve
+      doc.addImage(marca, "PNG", 50, 90, 110, 110, "", "FAST", 0.15);
 
-      // Cabeçalho centralizado
+      // Cabeçalho
       doc.setFont("helvetica", "bold");
       doc.setFontSize(12);
       doc.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, y, { align: "center" });
@@ -210,15 +223,17 @@
       doc.setFont("helvetica", "bold");
       doc.text("BATALHÃO ROTAM", 105, y, { align: "center" });
       y += 10;
+
       doc.setFontSize(11);
-      doc.text(`RELATÓRIO DE SERVIÇO DO DIA: ${dataFormatada}`, 105, y, { align: "center" });
+      doc.text(`RELATÓRIO Nº ${numeroRelatorio}/${anoAtual} - RT90`, 105, y, { align: "center" });
+      y += 6;
+      doc.text(`SERVIÇO DO DIA: ${dataFormatada}`, 105, y, { align: "center" });
       y += 10;
 
-      doc.setDrawColor(0);
       doc.line(margemEsq, y, 195, y);
       y += 10;
 
-      // Campos
+      // Campos principais
       const campos = [
         ["1️⃣ ROTAM Comando e ROTAM 90:", document.getElementById("rotamComando").value],
         ["2️⃣ Alterações na Escala de Serviço:", document.getElementById("alteracoesEscala").value],
@@ -246,7 +261,7 @@
       doc.text("Quartel do Batalhão ROTAM — Cuiabá/MT", 105, 282, { align: "center" });
       doc.text(`Data: ${dataFormatada}`, 105, 288, { align: "center" });
 
-      doc.save(`Livro_RT90_${dataFormatada}.pdf`);
+      doc.save(`Livro_RT90_Relatorio_${numeroRelatorio}_${anoAtual}.pdf`);
     }
   </script>
 </body>
