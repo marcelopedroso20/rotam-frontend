@@ -1,54 +1,61 @@
 // =========================
-// Service Worker - ROTAM
+// Service Worker - ROTAM PWA
 // =========================
 
 // 🔁 Troque a versão SEMPRE que publicar mudanças importantes
-const CACHE_VERSION = 'v2.0.1';
+const CACHE_VERSION = 'v3.0.0';
 const STATIC_CACHE = `rotam-static-${CACHE_VERSION}`;
 
-// 🧰 Arquivos para pré-cache (abrir rápido e offline básico)
+// 🧰 Arquivos para pré-cache (coloque o que existe no seu repositório)
 const PRECACHE_URLS = [
-  './',
+  './', // fallback de raiz
   './index.html',
   './login.html',
   './cadastro.html',
   './relatorios.html',
-  './assets/style.css',
-  './assets/logo-rotam-frontend.png',
-  './assets/logo-rotam-bg-1920x1080.png',
-  './assets/icon-192.png',
-  './assets/icon-512.png',
-  './js/auth.js',
+  './livro_rt90.html',
+  './historico_rt90.html',
+  './offline.html',
+
+  // JS/CSS
+  './pwa.js',
   './js/login.js',
   './js/logout.js',
-  './js/pwa.js',
-  './manifest.json'
+  './js/config.js',
+
+  // Ícones do PWA
+  './icon-192.png',
+  './icon-512.png',
+
+  // Logos/Imagens usadas
+  './logo-rotam.png'
 ];
 
-// 🛠 Instalação: pré-carrega os assets
+// 🛠 Instala: pré-carrega os assets
 self.addEventListener('install', (event) => {
-  console.log('[SW] Instalando...');
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => {
-      return cache.addAll(PRECACHE_URLS);
-    })
+    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
   );
   self.skipWaiting();
 });
 
-// 🧹 Ativação: limpa caches antigos e assume controle
+// 🧹 Ativa: remove caches antigos
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Ativando...');
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys
-          .filter((k) => k !== STATIC_CACHE)
-          .map((k) => caches.delete(k))
+        keys.filter((k) => k !== STATIC_CACHE).map((k) => caches.delete(k))
       )
     )
   );
   self.clients.claim();
+});
+
+// Recebe mensagem do app (atualizar SW imediatamente)
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // 🌐 Estratégias de cache
@@ -56,23 +63,9 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // 1) Chamadas de API: network-first
-  const isSameOrigin = url.origin === self.location.origin;
-  const isApiPath =
-    url.pathname.startsWith('/auth') || url.pathname.startsWith('/occurrences');
-
-  if (!isSameOrigin || isApiPath) {
-    event.respondWith(
-      fetch(req).catch(() => caches.match(req)) // fallback offline
-    );
-    return;
-  }
-
-  // 2) Páginas HTML: network-first + fallback em cache
-  if (
-    req.mode === 'navigate' ||
-    (req.headers.get('accept') || '').includes('text/html')
-  ) {
+  // Navegação/HTML → network-first com fallback
+  const acceptsHTML = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
+  if (acceptsHTML) {
     event.respondWith(
       fetch(req)
         .then((res) => {
@@ -80,26 +73,33 @@ self.addEventListener('fetch', (event) => {
           caches.open(STATIC_CACHE).then((cache) => cache.put(req, copy));
           return res;
         })
-        .catch(() =>
-          caches
-            .match(req)
-            .then((r) => r || caches.match('./index.html'))
-        )
+        .catch(async () => {
+          const cached = await caches.match(req);
+          return cached || caches.match('./offline.html');
+        })
     );
     return;
   }
 
-  // 3) Arquivos estáticos (CSS/JS/Imagens): cache-first
+  // Assets estáticos (CSS/JS/Imagens) → cache-first
+  if (['style', 'script', 'image', 'font'].includes(req.destination)) {
+    event.respondWith(
+      caches.match(req).then((cached) => {
+        if (cached) return cached;
+        return fetch(req).then((res) => {
+          if (req.method === 'GET' && res && res.status === 200) {
+            const copy = res.clone();
+            caches.open(STATIC_CACHE).then((cache) => cache.put(req, copy));
+          }
+          return res;
+        });
+      })
+    );
+    return;
+  }
+
+  // Demais (ex.: APIs) → network-first, fallback cache
   event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((res) => {
-        if (req.method === 'GET' && res && res.status === 200) {
-          const copy = res.clone();
-          caches.open(STATIC_CACHE).then((cache) => cache.put(req, copy));
-        }
-        return res;
-      });
-    })
+    fetch(req).catch(() => caches.match(req))
   );
 });
