@@ -15,8 +15,8 @@ const PRECACHE_URLS = [
   './historico_rt90.html',
   './offline.html',
 
-  // JS/CSS
-  './pwa.js',
+  // JS e CSS
+  './js/pwa.js',
   './js/login.js',
   './js/logout.js',
   './js/config.js',
@@ -39,7 +39,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// ♻️ Ativação (limpa caches antigos)
+// ♻️ Ativação
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -49,7 +49,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 🔁 Mensagem para atualização forçada
+// 📩 Mensagens
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
@@ -92,6 +92,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Outros (API etc)
+  // Outros → network-first com fallback
   event.respondWith(fetch(req).catch(() => caches.match(req)));
 });
