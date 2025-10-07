@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histórico de Relatórios - RT90</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #1e1e1e;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #0d6efd;
+    }
+
+    header h1 {
+      margin: 0;
+      color: #0d6efd;
+      font-size: 22px;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1e1e1e;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #333;
+      text-align: center;
+    }
+
+    th {
+      background: #0d6efd;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    tr:hover {
+      background: #2b2b2b;
+    }
+
+    .btn-voltar {
+      background: #198754;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .btn-voltar:hover {
+      background: #157347;
+    }
+
+    .btn-limpar {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .btn-limpar:hover {
+      background: #b02a37;
+    }
+
+    @media (max-width: 768px) {
+      table {
+        font-size: 13px;
+      }
+      th, td {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📘 Histórico de Relatórios RT90</h1>
+  </header>
+
+  <main>
+    <a href="index.html" class="btn-voltar">⬅ Voltar ao Painel</a>
+
+    <table id="tabelaHistorico">
+      <thead>
+        <tr>
+          <th>Nº Relatório</th>
+          <th>Data</th>
+          <th>Hora</th>
+          <th>Arquivo PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Registros são inseridos dinamicamente -->
+      </tbody>
+    </table>
+
+    <button class="btn-limpar" onclick="limparHistorico()">🗑 Limpar Histórico</button>
+  </main>
+
+  <script>
+    // Carregar histórico salvo
+    document.addEventListener("DOMContentLoaded", () => {
+      const tabela = document.getElementById("tabelaHistorico").querySelector("tbody");
+      const historico = JSON.parse(localStorage.getItem("rotam_historico_rt90")) || [];
+
+      if (historico.length === 0) {
+        const linha = document.createElement("tr");
+        linha.innerHTML = `<td colspan="4">Nenhum relatório encontrado.</td>`;
+        tabela.appendChild(linha);
+        return;
+      }
+
+      historico.forEach((item) => {
+        const linha = document.createElement("tr");
+        linha.innerHTML = `
+          <td>${item.numero}</td>
+          <td>${item.data}</td>
+          <td>${item.hora}</td>
+          <td><a href="${item.link}" target="_blank" style="color:#0d6efd;">📄 Abrir</a></td>
+        `;
+        tabela.appendChild(linha);
+      });
+    });
+
+    // Limpar histórico
+    function limparHistorico() {
+      if (confirm("Tem certeza que deseja apagar todo o histórico?")) {
+        localStorage.removeItem("rotam_historico_rt90");
+        location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
