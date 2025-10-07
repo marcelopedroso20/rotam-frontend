@@ -1,97 +1,55 @@
-// =======================================
-// Service Worker - ROTAM Sistema PWA
-// =======================================
+// sw.js (na raiz do repositório)
+const BASE = '/rotam-frontend';
+const CACHE = 'rotam-cache-v4';
 
-const CACHE_VERSION = 'v3.0.0';
-const STATIC_CACHE = `rotam-static-${CACHE_VERSION}`;
-
-const PRECACHE_URLS = [
-  './',
-  './index.html',
-  './login.html',
-  './cadastro.html',
-  './relatorios.html',
-  './livro_rt90.html',
-  './historico_rt90.html',
-  './offline.html',
-
-  // JS e CSS
-  './js/pwa.js',
-  './js/login.js',
-  './js/logout.js',
-  './js/config.js',
-  './assets/style.css',
-
-  // Ícones e logos
-  './assets/icon-192.png',
-  './assets/icon-512.png',
-  './assets/logo-rotam.png',
-  './assets/logo-rotam-192.png',
-  './assets/logo-rotam-512.png',
-  './assets/logo-rotam-bg.png'
+const ASSETS = [
+  `${BASE}/`,
+  `${BASE}/index.html`,
+  `${BASE}/login.html`,
+  `${BASE}/cadastro.html`,
+  `${BASE}/relatorios.html`,
+  `${BASE}/livro_rt90.html`,
+  `${BASE}/historico_rt90.html`,
+  `${BASE}/assets/style.css`,
+  `${BASE}/assets/favicon.ico`,
+  `${BASE}/assets/logo-rotam.png`,
+  `${BASE}/assets/logo-rotam-frontend.png`,
+  `${BASE}/assets/js/config.js`,
+  `${BASE}/assets/js/pwa.js`,
+  `${BASE}/assets/js/login.js`,
+  `${BASE}/assets/js/cadastro.js`,
+  `${BASE}/assets/js/index.js`,
 ];
 
-// 🧩 Instalação
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
-// ♻️ Ativação
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter(k => k !== STATIC_CACHE).map(k => caches.delete(k)))
-    )
+      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// 📩 Mensagens
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-});
+self.addEventListener('fetch', (e) => {
+  const { request } = e;
+  if (request.method !== 'GET') return;
 
-// 🌐 Estratégias de cache
-self.addEventListener('fetch', (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
+  e.respondWith(
+    caches.match(request).then((cached) => {
+      if (cached) return cached;
 
-  // HTML → network-first
-  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(STATIC_CACHE).then((cache) => cache.put(req, copy));
-          return res;
+      return fetch(request)
+        .then((resp) => {
+          const copy = resp.clone();
+          caches.open(CACHE).then((c) => c.put(request, copy));
+          return resp;
         })
-        .catch(() => caches.match(req).then(res => res || caches.match('./offline.html')))
-    );
-    return;
-  }
-
-  // CSS/JS/Imagens → cache-first
-  if (['style', 'script', 'image', 'font'].includes(req.destination)) {
-    event.respondWith(
-      caches.match(req).then((cached) => {
-        if (cached) return cached;
-        return fetch(req).then((res) => {
-          if (req.method === 'GET' && res && res.status === 200) {
-            const copy = res.clone();
-            caches.open(STATIC_CACHE).then((cache) => cache.put(req, copy));
-          }
-          return res;
-        });
-      })
-    );
-    return;
-  }
-
-  // Outros → network-first com fallback
-  event.respondWith(fetch(req).catch(() => caches.match(req)));
+        .catch(() => cached || caches.match(`${BASE}/index.html`));
+    })
+  );
 });
