@@ -3,107 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Histórico de Relatórios - RT90</title>
+  <title>Histórico RT90 - Sistema ROTAM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     body {
+      background: #f5f5f5;
       font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
-      margin: 0;
-      padding: 0;
+      color: #222;
     }
 
     header {
       background: #1e1e1e;
-      padding: 20px;
-      text-align: center;
-      border-bottom: 2px solid #0d6efd;
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     header h1 {
+      font-size: 20px;
       margin: 0;
-      color: #0d6efd;
-      font-size: 22px;
+    }
+
+    header button {
+      background: #0d6efd;
+      border: none;
+      padding: 8px 14px;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    header button:hover {
+      background: #0b5ed7;
     }
 
     main {
-      padding: 20px;
       max-width: 900px;
-      margin: auto;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: #1e1e1e;
-      border-radius: 8px;
-      overflow: hidden;
     }
 
     th, td {
-      padding: 12px 10px;
-      border-bottom: 1px solid #333;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
       text-align: center;
     }
 
     th {
       background: #0d6efd;
       color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
     tr:hover {
-      background: #2b2b2b;
+      background: #f1f1f1;
     }
 
-    .btn-voltar {
+    .btn-abrir {
       background: #198754;
-      color: #fff;
       border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
       cursor: pointer;
-      margin-bottom: 15px;
-      display: inline-block;
-      text-decoration: none;
+      font-size: 14px;
     }
 
-    .btn-voltar:hover {
+    .btn-abrir:hover {
       background: #157347;
     }
 
-    .btn-limpar {
-      background: #dc3545;
-      color: #fff;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 15px;
+    .vazio {
+      text-align: center;
+      color: #888;
+      margin-top: 20px;
+      font-style: italic;
     }
 
-    .btn-limpar:hover {
-      background: #b02a37;
-    }
-
-    @media (max-width: 768px) {
-      table {
-        font-size: 13px;
-      }
-      th, td {
-        padding: 8px;
-      }
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: #666;
     }
   </style>
 </head>
 <body>
+
   <header>
-    <h1>📘 Histórico de Relatórios RT90</h1>
+    <h1><i class="bi bi-clock-history"></i> Histórico de Relatórios RT90</h1>
+    <button onclick="voltarPainel()"><i class="bi bi-arrow-left"></i> Voltar ao Painel</button>
   </header>
 
   <main>
-    <a href="index.html" class="btn-voltar">⬅ Voltar ao Painel</a>
+    <h2><i class="bi bi-journal-text"></i> Relatórios Gerados</h2>
 
     <table id="tabelaHistorico">
       <thead>
@@ -111,49 +121,67 @@
           <th>Nº Relatório</th>
           <th>Data</th>
           <th>Hora</th>
-          <th>Arquivo PDF</th>
+          <th>Arquivo</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- Registros são inseridos dinamicamente -->
-      </tbody>
+      <tbody id="corpoTabela"></tbody>
     </table>
 
-    <button class="btn-limpar" onclick="limparHistorico()">🗑 Limpar Histórico</button>
+    <p class="vazio" id="mensagemVazio" style="display:none;">Nenhum relatório gerado ainda.</p>
   </main>
 
+  <footer>
+    Quartel do Batalhão ROTAM — Cuiabá/MT
+  </footer>
+
   <script>
-    // Carregar histórico salvo
-    document.addEventListener("DOMContentLoaded", () => {
-      const tabela = document.getElementById("tabelaHistorico").querySelector("tbody");
+    function voltarPainel() {
+      window.location.href = "index.html";
+    }
+
+    function carregarHistorico() {
+      const corpoTabela = document.getElementById("corpoTabela");
+      const mensagemVazio = document.getElementById("mensagemVazio");
       const historico = JSON.parse(localStorage.getItem("rotam_historico_rt90")) || [];
 
       if (historico.length === 0) {
-        const linha = document.createElement("tr");
-        linha.innerHTML = `<td colspan="4">Nenhum relatório encontrado.</td>`;
-        tabela.appendChild(linha);
+        mensagemVazio.style.display = "block";
         return;
       }
 
-      historico.forEach((item) => {
+      historico.slice().reverse().forEach(item => {
         const linha = document.createElement("tr");
-        linha.innerHTML = `
-          <td>${item.numero}</td>
-          <td>${item.data}</td>
-          <td>${item.hora}</td>
-          <td><a href="${item.link}" target="_blank" style="color:#0d6efd;">📄 Abrir</a></td>
-        `;
-        tabela.appendChild(linha);
-      });
-    });
 
-    // Limpar histórico
-    function limparHistorico() {
-      if (confirm("Tem certeza que deseja apagar todo o histórico?")) {
-        localStorage.removeItem("rotam_historico_rt90");
-        location.reload();
-      }
+        const colNumero = document.createElement("td");
+        colNumero.textContent = item.numero;
+        linha.appendChild(colNumero);
+
+        const colData = document.createElement("td");
+        colData.textContent = item.data;
+        linha.appendChild(colData);
+
+        const colHora = document.createElement("td");
+        colHora.textContent = item.hora;
+        linha.appendChild(colHora);
+
+        const colArquivo = document.createElement("td");
+        const botao = document.createElement("button");
+        botao.textContent = "Abrir PDF";
+        botao.className = "btn-abrir";
+        botao.onclick = () => abrirPDF(item.link);
+        colArquivo.appendChild(botao);
+        linha.appendChild(colArquivo);
+
+        corpoTabela.appendChild(linha);
+      });
     }
+
+    function abrirPDF(link) {
+      // Tenta abrir o arquivo PDF gerado localmente
+      alert("Baixando: " + link);
+    }
+
+    carregarHistorico();
   </script>
 </body>
 </html>
