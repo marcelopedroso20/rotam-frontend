@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema ROTAM</title>
-  <link rel="icon" href="logo-rotam.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    /* ===== RESET ===== */
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
 
     body {
       font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
+      background: #f5f5f5;
       display: flex;
       height: 100vh;
       overflow: hidden;
@@ -26,10 +24,10 @@
     .sidebar {
       width: 230px;
       background: #1e1e1e;
+      color: #fff;
       display: flex;
       flex-direction: column;
-      align-items: stretch;
-      padding-top: 20px;
+      padding: 20px 10px;
     }
 
     .sidebar img {
@@ -40,68 +38,66 @@
 
     .sidebar h4 {
       text-align: center;
-      font-size: 16px;
-      color: #ccc;
+      font-weight: normal;
       margin-bottom: 20px;
+      color: #ccc;
     }
 
-    .menu-item {
-      padding: 10px 15px;
-      background: #2c2c2c;
+    .menu-btn {
+      background: none;
       border: none;
       color: #fff;
-      font-weight: bold;
-      text-align: left;
-      cursor: pointer;
-      transition: background 0.2s;
       width: 100%;
+      padding: 10px;
+      text-align: left;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
     }
 
-    .menu-item:hover {
-      background: #444;
+    .menu-btn:hover {
+      background: #333;
     }
 
-    .menu-item.active {
+    .menu-btn.active {
       background: #0d6efd;
     }
 
-    /* Submenu */
     .submenu {
+      margin-left: 20px;
       display: none;
       flex-direction: column;
-      background: #242424;
-      padding-left: 15px;
     }
 
-    .submenu button {
-      background: #2c2c2c;
-      border: none;
+    .submenu a {
+      text-decoration: none;
       color: #ccc;
-      padding: 8px 20px;
-      text-align: left;
+      padding: 8px 0;
       font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .submenu button:hover {
-      background: #0d6efd;
-      color: #fff;
-    }
-
-    .submenu.show {
       display: flex;
-      animation: fadeIn 0.3s;
+      align-items: center;
+      gap: 8px;
     }
 
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
+    .submenu a:hover {
+      color: #fff;
     }
 
     .btn-logout {
       background: #dc3545;
+      border: none;
+      color: #fff;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
+      font-weight: bold;
       margin-top: auto;
+      cursor: pointer;
+      transition: 0.3s;
     }
 
     .btn-logout:hover {
@@ -111,15 +107,20 @@
     /* ===== CONTENT ===== */
     .content {
       flex: 1;
-      background: #f5f5f5;
-      color: #000;
-      padding: 25px;
+      padding: 20px;
       overflow-y: auto;
+      background: #f5f5f5;
     }
 
     .content h2 {
-      color: #000;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .content p {
+      line-height: 1.5;
     }
 
     /* ===== MOBILE ===== */
@@ -129,76 +130,103 @@
       }
 
       .sidebar {
-        width: 100%;
         flex-direction: row;
-        flex-wrap: wrap;
+        width: 100%;
+        overflow-x: auto;
+        align-items: center;
         justify-content: space-around;
-        padding: 10px;
-        height: auto;
       }
 
-      .sidebar img, .sidebar h4 {
+      .sidebar img,
+      .sidebar h4 {
         display: none;
       }
 
-      .menu-item {
-        width: auto;
-        flex: 1;
-        text-align: center;
-        font-size: 14px;
+      .submenu {
+        position: absolute;
+        background: #1e1e1e;
+        left: 0;
+        top: 60px;
+        width: 100%;
+        padding: 10px;
+        border-top: 1px solid #333;
       }
 
-      .submenu {
-        width: 100%;
-        background: #1e1e1e;
-        padding: 5px 10px;
+      .submenu a {
+        font-size: 16px;
+        padding: 10px;
       }
     }
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <img src="logo-rotam.png" alt="Logo ROTAM" />
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <img src="logo-rotam.png" alt="Logo ROTAM">
     <h4>Sistema ROTAM</h4>
 
-    <button class="menu-item active" onclick="abrirPagina('inicio.html')">🏠 Início</button>
+    <button class="menu-btn active" onclick="mostrarPagina('inicio')">
+      <i class="bi bi-house-door"></i> Início
+    </button>
 
-    <button class="menu-item" id="cadastroBtn">📁 Cadastro ▾</button>
-    <div class="submenu" id="submenuCadastro">
-      <button onclick="abrirPagina('cadastro.html')">📄 Ocorrência</button>
-      <button onclick="abrirPagina('livro_rt90.html')">📘 Livro RT 90</button>
+    <button class="menu-btn" onclick="toggleSubmenu('cadastroSubmenu')">
+      <i class="bi bi-journal-text"></i> Cadastro
+    </button>
+    <div id="cadastroSubmenu" class="submenu">
+      <a href="cadastro.html"><i class="bi bi-pencil"></i> Ocorrência</a>
+      <a href="livro_rt90.html"><i class="bi bi-book"></i> Livro RT 90</a>
     </div>
 
-    <button class="menu-item" onclick="abrirPagina('relatorios.html')">📊 Relatórios</button>
-    <button class="menu-item btn-logout" onclick="sair()">🚪 Sair</button>
-  </aside>
+    <button class="menu-btn" onclick="mostrarPagina('relatorios')">
+      <i class="bi bi-bar-chart"></i> Relatórios
+    </button>
 
-  <main class="content" id="conteudo">
-    <h2>📌 Painel Inicial</h2>
-    <p>Bem-vindo ao Sistema ROTAM. Use o menu lateral para navegar entre as funções.</p>
-  </main>
+    <a href="historico_rt90.html" class="menu-btn">
+      <i class="bi bi-clock-history"></i> Histórico RT90
+    </a>
+
+    <button class="btn-logout" onclick="sair()">
+      <i class="bi bi-box-arrow-right"></i> Sair
+    </button>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="content" id="conteudo">
+    <h2><i class="bi bi-pin-angle"></i> Painel Inicial</h2>
+    <p>Bem-vindo ao <strong>Sistema ROTAM</strong>. Use o menu lateral para navegar entre as funções.</p>
+  </div>
 
   <script>
-    // Submenu toggle
-    const cadastroBtn = document.getElementById('cadastroBtn');
-    const submenuCadastro = document.getElementById('submenuCadastro');
-
-    cadastroBtn.addEventListener('click', () => {
-      submenuCadastro.classList.toggle('show');
-    });
-
-    // Navegação de páginas (SPA simples)
-    function abrirPagina(pagina) {
-      const conteudo = document.getElementById('conteudo');
-      fetch(pagina)
-        .then(res => res.text())
-        .then(data => conteudo.innerHTML = data)
-        .catch(() => conteudo.innerHTML = "<p>Erro ao carregar página.</p>");
+    // Alternar submenu
+    function toggleSubmenu(id) {
+      const submenu = document.getElementById(id);
+      const isVisible = submenu.style.display === "flex";
+      submenu.style.display = isVisible ? "none" : "flex";
     }
 
+    // Alternar página ativa
+    function mostrarPagina(pagina) {
+      document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      const conteudo = document.getElementById('conteudo');
+
+      if (pagina === 'inicio') {
+        conteudo.innerHTML = `
+          <h2><i class="bi bi-pin-angle"></i> Painel Inicial</h2>
+          <p>Bem-vindo ao <strong>Sistema ROTAM</strong>. Use o menu lateral para navegar entre as funções.</p>
+        `;
+      } else if (pagina === 'relatorios') {
+        conteudo.innerHTML = `
+          <h2><i class="bi bi-bar-chart"></i> Relatórios</h2>
+          <p>Aqui você poderá visualizar relatórios de produtividade, ocorrências e registros internos.</p>
+        `;
+      }
+    }
+
+    // Sair do sistema
     function sair() {
-      alert('Saindo do sistema...');
-      window.location.href = 'login.html';
+      alert("Você saiu do sistema.");
+      window.location.href = "login.html";
     }
   </script>
 </body>
