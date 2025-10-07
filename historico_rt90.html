@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Histórico RT90 - Sistema ROTAM</title>
+  <title>Livro RT90 - Sistema ROTAM</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
       background: #f5f5f5;
@@ -52,49 +53,41 @@
     }
 
     h2 {
-      margin-bottom: 20px;
       text-align: center;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      font-size: 18px;
     }
 
-    table {
+    textarea {
       width: 100%;
-      border-collapse: collapse;
+      height: 70px;
+      resize: vertical;
+      margin-bottom: 15px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
 
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ccc;
-      text-align: center;
+    label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
     }
 
-    th {
-      background: #0d6efd;
-      color: #fff;
-    }
-
-    tr:hover {
-      background: #f1f1f1;
-    }
-
-    .btn-abrir {
+    .btn-success {
       background: #198754;
       border: none;
       color: #fff;
-      padding: 6px 10px;
-      border-radius: 4px;
+      padding: 10px 18px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 14px;
+      font-weight: bold;
+      transition: 0.3s;
     }
 
-    .btn-abrir:hover {
+    .btn-success:hover {
       background: #157347;
-    }
-
-    .vazio {
-      text-align: center;
-      color: #888;
-      margin-top: 20px;
-      font-style: italic;
     }
 
     footer {
@@ -103,31 +96,60 @@
       font-size: 13px;
       color: #666;
     }
+
+    .logo-rotam {
+      width: 80px;
+      display: block;
+      margin: 0 auto 10px;
+    }
   </style>
 </head>
 <body>
-
   <header>
-    <h1><i class="bi bi-clock-history"></i> Histórico de Relatórios RT90</h1>
+    <h1><i class="bi bi-book"></i> Livro RT 90</h1>
     <button onclick="voltarPainel()"><i class="bi bi-arrow-left"></i> Voltar ao Painel</button>
   </header>
 
   <main>
-    <h2><i class="bi bi-journal-text"></i> Relatórios Gerados</h2>
+    <div class="text-center mb-4">
+      <img src="logo-rotam.png" alt="Logo ROTAM" class="logo-rotam">
+      <p><strong>POLÍCIA MILITAR DO ESTADO DE MATO GROSSO</strong><br>
+      COMANDO DE POLICIAMENTO ESPECIALIZADO<br>
+      BATALHÃO ROTAM<br>
+      <u>RELATÓRIO DE SERVIÇO DO DIA:</u></p>
+      <h2>LIVRO RT 90</h2>
+    </div>
 
-    <table id="tabelaHistorico">
-      <thead>
-        <tr>
-          <th>Nº Relatório</th>
-          <th>Data</th>
-          <th>Hora</th>
-          <th>Arquivo</th>
-        </tr>
-      </thead>
-      <tbody id="corpoTabela"></tbody>
-    </table>
+    <form id="formLivro">
+      <div>
+        <label>1️⃣ ROTAM Comando e ROTAM 90:</label>
+        <textarea id="comando"></textarea>
 
-    <p class="vazio" id="mensagemVazio" style="display:none;">Nenhum relatório gerado ainda.</p>
+        <label>2️⃣ Alterações na Escala de Serviço:</label>
+        <textarea id="escala"></textarea>
+
+        <label>3️⃣ Distribuição das Equipes:</label>
+        <textarea id="equipes"></textarea>
+
+        <label>4️⃣ Ocorrências Registradas:</label>
+        <textarea id="ocorrencias"></textarea>
+
+        <label>5️⃣ Justiça e Disciplina:</label>
+        <textarea id="justica"></textarea>
+
+        <label>6️⃣ Documentos:</label>
+        <textarea id="documentos"></textarea>
+
+        <label>7️⃣ Diversos:</label>
+        <textarea id="diversos"></textarea>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="button" class="btn-success" onclick="gerarPDF()">
+          <i class="bi bi-file-earmark-pdf"></i> Gerar PDF
+        </button>
+      </div>
+    </form>
   </main>
 
   <footer>
@@ -139,49 +161,106 @@
       window.location.href = "index.html";
     }
 
-    function carregarHistorico() {
-      const corpoTabela = document.getElementById("corpoTabela");
-      const mensagemVazio = document.getElementById("mensagemVazio");
-      const historico = JSON.parse(localStorage.getItem("rotam_historico_rt90")) || [];
+    async function gerarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
-      if (historico.length === 0) {
-        mensagemVazio.style.display = "block";
-        return;
+      const hoje = new Date();
+      const dataStr = hoje.toLocaleDateString();
+      const horaStr = hoje.toLocaleTimeString();
+
+      // Carregar o logo (assume que está no mesmo diretório)
+      const logoUrl = "logo-rotam.png";
+      const logo = await carregarImagem(logoUrl);
+
+      if (logo) {
+        const imgProps = doc.getImageProperties(logo);
+        const imgWidth = 30;
+        const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+        const xPos = (210 - imgWidth) / 2;
+        doc.addImage(logo, "PNG", xPos, 10, imgWidth, imgHeight);
       }
 
-      historico.slice().reverse().forEach(item => {
-        const linha = document.createElement("tr");
+      // Cabeçalho
+      doc.setFontSize(12);
+      doc.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, 35, { align: "center" });
+      doc.text("COMANDO DE POLICIAMENTO ESPECIALIZADO", 105, 41, { align: "center" });
+      doc.text("BATALHÃO ROTAM", 105, 47, { align: "center" });
+      doc.text("RELATÓRIO DE SERVIÇO DO DIA", 105, 53, { align: "center" });
 
-        const colNumero = document.createElement("td");
-        colNumero.textContent = item.numero;
-        linha.appendChild(colNumero);
+      doc.setFontSize(14);
+      doc.text("LIVRO RT 90", 105, 61, { align: "center" });
 
-        const colData = document.createElement("td");
-        colData.textContent = item.data;
-        linha.appendChild(colData);
+      // Conteúdo
+      const yStart = 75;
+      const campos = [
+        { label: "1 - ROTAM Comando e ROTAM 90:", value: document.getElementById("comando").value },
+        { label: "2 - Alterações na Escala de Serviço:", value: document.getElementById("escala").value },
+        { label: "3 - Distribuição das Equipes:", value: document.getElementById("equipes").value },
+        { label: "4 - Ocorrências Registradas:", value: document.getElementById("ocorrencias").value },
+        { label: "5 - Justiça e Disciplina:", value: document.getElementById("justica").value },
+        { label: "6 - Documentos:", value: document.getElementById("documentos").value },
+        { label: "7 - Diversos:", value: document.getElementById("diversos").value },
+      ];
 
-        const colHora = document.createElement("td");
-        colHora.textContent = item.hora;
-        linha.appendChild(colHora);
+      let y = yStart;
+      doc.setFontSize(11);
 
-        const colArquivo = document.createElement("td");
-        const botao = document.createElement("button");
-        botao.textContent = "Abrir PDF";
-        botao.className = "btn-abrir";
-        botao.onclick = () => abrirPDF(item.link);
-        colArquivo.appendChild(botao);
-        linha.appendChild(colArquivo);
+      campos.forEach(campo => {
+        doc.text(campo.label, 14, y);
+        const linhas = doc.splitTextToSize(campo.value || "-", 180);
+        doc.text(linhas, 14, y + 6);
+        y += 12 + (linhas.length * 6);
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+      });
 
-        corpoTabela.appendChild(linha);
+      // Rodapé
+      doc.setFontSize(10);
+      doc.text(`Quartel do Batalhão ROTAM — Cuiabá/MT, ${dataStr}`, 105, 285, { align: "center" });
+
+      // Nome do arquivo
+      const nomeArquivo = `Relatorio_RT90_${dataStr.replaceAll('/', '-')}_${horaStr.replaceAll(':', '-')}.pdf`;
+      doc.save(nomeArquivo);
+
+      // Salvar histórico local
+      salvarHistorico(nomeArquivo, dataStr, horaStr);
+      alert("📄 PDF gerado com sucesso e salvo no histórico!");
+    }
+
+    function salvarHistorico(nome, data, hora) {
+      const historico = JSON.parse(localStorage.getItem("rotam_historico_rt90")) || [];
+      const novoItem = {
+        numero: historico.length + 1,
+        data: data,
+        hora: hora,
+        link: nome
+      };
+      historico.push(novoItem);
+      localStorage.setItem("rotam_historico_rt90", JSON.stringify(historico));
+    }
+
+    function carregarImagem(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          canvas.width = this.width;
+          canvas.height = this.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(this, 0, 0);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.onerror = function () {
+          console.warn("⚠️ Não foi possível carregar o logo ROTAM para o PDF.");
+          resolve(null);
+        };
+        img.src = url;
       });
     }
-
-    function abrirPDF(link) {
-      // Tenta abrir o arquivo PDF gerado localmente
-      alert("Baixando: " + link);
-    }
-
-    carregarHistorico();
   </script>
 </body>
 </html>
