@@ -175,9 +175,9 @@
     document.getElementById("dataRodape").innerText = dataFormatada;
 
     // === Voltar ao painel ===
-    function voltarPainel() { window.location.href = "index.html"; }
-    async function gerarPDF() { ... }
-
+    function voltarPainel() {
+      window.location.href = "index.html";
+    }
 
     // === Número automático do relatório ===
     function obterNumeroRelatorio() {
@@ -196,23 +196,19 @@
       const margemEsq = 15;
       let y = 25;
 
-      // Obter número sequencial
       const numeroRelatorio = obterNumeroRelatorio();
       const anoAtual = new Date().getFullYear();
 
-      // Adiciona o brasão no topo esquerdo
       const img = new Image();
       img.src = "logo-rotam.png";
       await img.decode();
       doc.addImage(img, "PNG", margemEsq, y - 10, 25, 25);
 
-      // Marca d'água central
       const marca = new Image();
       marca.src = "logo-rotam.png";
       await marca.decode();
       doc.addImage(marca, "PNG", 50, 90, 110, 110, "", "FAST", 0.15);
 
-      // Cabeçalho
       doc.setFont("helvetica", "bold");
       doc.setFontSize(12);
       doc.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, y, { align: "center" });
@@ -233,7 +229,6 @@
       doc.line(margemEsq, y, 195, y);
       y += 10;
 
-      // Campos principais
       const campos = [
         ["1️⃣ ROTAM Comando e ROTAM 90:", document.getElementById("rotamComando").value],
         ["2️⃣ Alterações na Escala de Serviço:", document.getElementById("alteracoesEscala").value],
@@ -254,14 +249,13 @@
         y += linhas.length * 6 + 6;
       });
 
-      // Linha e rodapé
       doc.line(margemEsq, 275, 195, 275);
       doc.setFont("helvetica", "italic");
       doc.setFontSize(10);
       doc.text("Quartel do Batalhão ROTAM — Cuiabá/MT", 105, 282, { align: "center" });
       doc.text(`Data: ${dataFormatada}`, 105, 288, { align: "center" });
 
-      // === Salvar no histórico local ===
+      // === Salvar no histórico ===
       const horaAtual = new Date().toLocaleTimeString("pt-BR");
       const historico = JSON.parse(localStorage.getItem("rotam_historico_rt90")) || [];
 
@@ -273,7 +267,6 @@
       });
 
       localStorage.setItem("rotam_historico_rt90", JSON.stringify(historico));
-
 
       doc.save(`Livro_RT90_Relatorio_${numeroRelatorio}_${anoAtual}.pdf`);
     }
