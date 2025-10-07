@@ -1,14 +1,12 @@
-// =========================
-// Service Worker - ROTAM PWA
-// =========================
+// =======================================
+// Service Worker - ROTAM Sistema PWA
+// =======================================
 
-// 🔁 Troque a versão SEMPRE que publicar mudanças importantes
 const CACHE_VERSION = 'v3.0.0';
 const STATIC_CACHE = `rotam-static-${CACHE_VERSION}`;
 
-// 🧰 Arquivos para pré-cache (coloque o que existe no seu repositório)
 const PRECACHE_URLS = [
-  './', // fallback de raiz
+  './',
   './index.html',
   './login.html',
   './cadastro.html',
@@ -22,16 +20,18 @@ const PRECACHE_URLS = [
   './js/login.js',
   './js/logout.js',
   './js/config.js',
+  './assets/style.css',
 
-  // Ícones do PWA
+  // Ícones e logos
   './assets/icon-192.png',
   './assets/icon-512.png',
-
-  // Logos/Imagens usadas
-  './assets/logo-rotam.png'
+  './assets/logo-rotam.png',
+  './assets/logo-rotam-192.png',
+  './assets/logo-rotam-512.png',
+  './assets/logo-rotam-bg.png'
 ];
 
-// 🛠 Instala: pré-carrega os assets
+// 🧩 Instalação
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
@@ -39,19 +39,17 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// 🧹 Ativa: remove caches antigos
+// ♻️ Ativação (limpa caches antigos)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys.filter((k) => k !== STATIC_CACHE).map((k) => caches.delete(k))
-      )
+      Promise.all(keys.filter(k => k !== STATIC_CACHE).map(k => caches.delete(k)))
     )
   );
   self.clients.claim();
 });
 
-// Recebe mensagem do app (atualizar SW imediatamente)
+// 🔁 Mensagem para atualização forçada
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
@@ -63,9 +61,8 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // Navegação/HTML → network-first com fallback
-  const acceptsHTML = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
-  if (acceptsHTML) {
+  // HTML → network-first
+  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(
       fetch(req)
         .then((res) => {
@@ -73,15 +70,12 @@ self.addEventListener('fetch', (event) => {
           caches.open(STATIC_CACHE).then((cache) => cache.put(req, copy));
           return res;
         })
-        .catch(async () => {
-          const cached = await caches.match(req);
-          return cached || caches.match('./offline.html');
-        })
+        .catch(() => caches.match(req).then(res => res || caches.match('./offline.html')))
     );
     return;
   }
 
-  // Assets estáticos (CSS/JS/Imagens) → cache-first
+  // CSS/JS/Imagens → cache-first
   if (['style', 'script', 'image', 'font'].includes(req.destination)) {
     event.respondWith(
       caches.match(req).then((cached) => {
@@ -98,8 +92,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Demais (ex.: APIs) → network-first, fallback cache
-  event.respondWith(
-    fetch(req).catch(() => caches.match(req))
-  );
+  // Outros (API etc)
+  event.respondWith(fetch(req).catch(() => caches.match(req)));
 });
