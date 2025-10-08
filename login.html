@@ -5,16 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - ROTAM</title>
 
-  <!-- ✅ Ícone da aba (favicon) -->
+  <!-- ✅ Caminho base para o GitHub Pages -->
+  <base href="/rotam-frontend/">
+
+  <!-- ✅ Ícone da aba -->
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 
-  <!-- Manifest + cor do tema -->
-  <link rel="manifest" href="./manifest.json">
+  <!-- ✅ Manifesto PWA e cor do tema -->
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#121212">
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="./assets/style.css">
+  <!-- ✅ CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/style.css">
 
   <style>
     body {
@@ -25,29 +28,43 @@
       align-items: center;
       height: 100vh;
       margin: 0;
+      background-image: url('assets/logo-rotam-bg-1920x1080.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
+
     .login-box {
-      background: #1e1e1e;
+      background: rgba(0, 0, 0, 0.85);
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
       width: 100%;
       max-width: 400px;
       text-align: center;
+      border: 1px solid #333;
     }
+
     .login-box img {
       width: 120px;
       margin-bottom: 15px;
     }
+
     .btn-custom {
       width: 100%;
     }
+
+    #errorMsg {
+      display: none;
+    }
   </style>
 </head>
+
 <body class="login-body">
   <div class="login-box">
-    <img src="./assets/logo-rotam-frontend.png" alt="ROTAM" />
+    <img src="assets/logo-rotam-frontend.png" alt="ROTAM">
     <h2 class="mb-4">🔐 Login ROTAM</h2>
+
     <form id="loginForm">
       <div class="mb-3">
         <label for="username" class="form-label">Usuário</label>
@@ -59,13 +76,14 @@
       </div>
       <button type="submit" class="btn btn-success btn-custom">Entrar</button>
     </form>
+
     <!-- Mensagem de erro -->
-    <p id="errorMsg" class="alert alert-danger mt-3" style="display:none;"></p>
+    <p id="errorMsg" class="alert alert-danger mt-3"></p>
   </div>
 
-  <!-- Scripts (ordem IMPORTANTE) -->
-  <script src="js/config.js"></script>  <!-- 🔑 Config primeiro -->
-  <script src="js/login.js"></script>   <!-- Depois o login -->
-  <script src="js/pwa.js"></script>     <!-- PWA por último -->
+  <!-- ✅ Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/login.js"></script>
+  <script src="js/pwa.js"></script>
 </body>
 </html>
