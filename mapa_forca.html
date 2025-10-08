@@ -1,1 +1,175 @@
-//teste
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa Força - Sistema ROTAM</title>
+
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+
+  <style>
+    body {
+      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: bold;
+      color: #111;
+    }
+
+    .setor {
+      margin-bottom: 35px;
+    }
+
+    .setor h3 {
+      background: #1e1e1e;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-size: 18px;
+    }
+
+    .efetivo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 15px;
+      justify-content: center;
+    }
+
+    .card-militar {
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 180px;
+      text-align: center;
+      padding: 10px;
+      transition: transform 0.2s ease;
+    }
+
+    .card-militar:hover {
+      transform: scale(1.05);
+    }
+
+    .card-militar img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 8px;
+      border: 2px solid #444;
+    }
+
+    .card-militar h4 {
+      font-size: 16px;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #222;
+    }
+
+    .card-militar p {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .btn-voltar {
+      background: #6c757d;
+      color: #fff;
+      border: none;
+      margin-bottom: 20px;
+    }
+
+    .btn-voltar:hover {
+      background: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="btn btn-voltar" onclick="window.location.href='index.html'">⬅ Voltar</button>
+
+    <h2>🗂️ Mapa da Força Operacional ROTAM</h2>
+    <p class="text-center text-muted mb-4">
+      Painel informativo do efetivo da unidade — atualizado conforme escala e setores.
+    </p>
+
+    <!-- Comando -->
+    <div class="setor">
+      <h3>👮‍♂️ Comando</h3>
+      <div class="efetivo">
+        <div class="card-militar">
+          <img src="assets/militares/ten_cel.jpg" alt="Ten Cel Comandante">
+          <h4>Ten Cel Silva</h4>
+          <p>Comandante do Batalhão</p>
+        </div>
+
+        <div class="card-militar">
+          <img src="assets/militares/major.jpg" alt="Major Subcomandante">
+          <h4>Maj Costa</h4>
+          <p>Subcomandante</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Administração -->
+    <div class="setor">
+      <h3>📋 Administração</h3>
+      <div class="efetivo">
+        <div class="card-militar">
+          <img src="assets/militares/sgt_lima.jpg" alt="Sargento Lima">
+          <h4>1º Sgt Lima</h4>
+          <p>Seção de Logística</p>
+        </div>
+
+        <div class="card-militar">
+          <img src="assets/militares/sgt_mendes.jpg" alt="Sargento Mendes">
+          <h4>2º Sgt Mendes</h4>
+          <p>Material Bélico</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Operacional -->
+    <div class="setor">
+      <h3>⚔️ Equipes Operacionais</h3>
+      <div class="efetivo">
+        <div class="card-militar">
+          <img src="assets/militares/cb_nunes.jpg" alt="Cabo Nunes">
+          <h4>Cb Nunes</h4>
+          <p>Equipe Alfa 01</p>
+        </div>
+
+        <div class="card-militar">
+          <img src="assets/militares/sd_pereira.jpg" alt="Soldado Pereira">
+          <h4>Sd Pereira</h4>
+          <p>Equipe Alfa 02</p>
+        </div>
+
+        <div class="card-militar">
+          <img src="assets/militares/sd_rocha.jpg" alt="Soldado Rocha">
+          <h4>Sd Rocha</h4>
+          <p>Equipe Bravo 01</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/pwa.js"></script>
+</body>
+</html>
