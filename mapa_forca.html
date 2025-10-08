@@ -105,6 +105,18 @@
     .btn-success { margin-top: 10px; }
 
     hr { margin: 30px 0; }
+
+    #mural {
+      padding: 10px;
+      border-radius: 10px;
+      background: white;
+    }
+
+    .logo-header {
+      width: 80px;
+      display: block;
+      margin: 10px auto;
+    }
   </style>
 </head>
 <body>
@@ -253,25 +265,53 @@
       });
     }
 
-    // Gerar PDF do mural inteiro
+    // Geração de PDF com logotipo ROTAM
     btnPDF.addEventListener('click', async () => {
       const { jsPDF } = window.jspdf;
-      const mural = document.getElementById('mural');
+      const pdf = new jsPDF('p', 'mm', 'a4');
 
+      const logoUrl = 'assets/logo-rotam.png';
+      const logo = await carregarImagem(logoUrl);
+
+      if (logo) pdf.addImage(logo, 'PNG', 90, 8, 30, 30);
+
+      pdf.setFontSize(12);
+      pdf.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, 45, { align: "center" });
+      pdf.text("BATALHÃO ROTAM - MAPA DA FORÇA", 105, 52, { align: "center" });
+
+      const mural = document.getElementById('mural');
       const canvas = await html2canvas(mural, { scale: 2 });
       const imgData = canvas.toDataURL('image/png');
 
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'PNG', 0, 60, pdfWidth, pdfHeight - 20);
 
       const dataHora = new Date().toLocaleString().replace(/[/:]/g, '-');
+      pdf.text(`Quartel do Batalhão ROTAM — Cuiabá/MT, ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
+
       pdf.save(`Mapa_Forca_ROTAM_${dataHora}.pdf`);
     });
+
+    function carregarImagem(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          canvas.width = this.width;
+          canvas.height = this.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(this, 0, 0);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.onerror = () => resolve(null);
+        img.src = url;
+      });
+    }
   </script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
