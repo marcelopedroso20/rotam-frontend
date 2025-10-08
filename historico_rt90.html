@@ -1,33 +1,244 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <base href="/rotam-frontend/">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Histórico RT90</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histórico RT90 - Sistema ROTAM</title>
 
-  <!-- ✅ Ícone da aba (favicon) -->
+  <!-- Ícone da aba -->
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 
-  <!-- ✅ Caminho base para o GitHub Pages -->
-  <base href="/rotam-frontend/">
+  <!-- Estilos -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#e6b800">
+  <style>
+    body {
+      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+      color: #222;
+    }
 
-  <link rel="stylesheet" href="assets/style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    header {
+      background: #1e1e1e;
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    header button {
+      background: #0d6efd;
+      border: none;
+      padding: 8px 14px;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    header button:hover {
+      background: #0b5ed7;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      text-transform: uppercase;
+      font-size: 18px;
+    }
+
+    table {
+      width: 100%;
+    }
+
+    .table th, .table td {
+      vertical-align: middle !important;
+    }
+
+    .btn-ver {
+      background: #198754;
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    .btn-ver:hover {
+      background: #157347;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .logo-rotam {
+      width: 80px;
+      display: block;
+      margin: 0 auto 10px;
+    }
+
+    /* 📱 Mobile */
+    @media (max-width: 768px) {
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .table th, .table td {
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
-<body class="p-3">
-  <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>📚 Histórico RT90</h2>
-      <a class="btn btn-secondary" href="index.html">← Voltar ao Painel</a>
+<body>
+  <header>
+    <h1><i class="bi bi-clock-history"></i> Histórico RT90</h1>
+    <button onclick="voltarPainel()"><i class="bi bi-arrow-left"></i> Voltar ao Painel</button>
+  </header>
+
+  <main>
+    <div class="text-center mb-4">
+      <img src="assets/logo-rotam.png" alt="Logo ROTAM" class="logo-rotam">
+      <p><strong>POLÍCIA MILITAR DO ESTADO DE MATO GROSSO</strong><br>
+      COMANDO DE POLICIAMENTO ESPECIALIZADO<br>
+      BATALHÃO ROTAM<br>
+      <u>HISTÓRICO DE RELATÓRIOS E OCORRÊNCIAS</u></p>
+      <h2>HISTÓRICO RT 90</h2>
     </div>
 
-    <div class="alert alert-info">Nenhum registro carregado ainda.</div>
-    <!-- Futuro: tabela com os registros do Livro RT90 -->
-  </div>
+    <div id="historicoContainer">
+      <table class="table table-striped table-bordered align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="historicoBody">
+          <tr><td colspan="5">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    Quartel do Batalhão ROTAM — Cuiabá/MT
+  </footer>
+
+  <script>
+    function voltarPainel() {
+      window.location.href = "index.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const historicoBody = document.getElementById("historicoBody");
+      const historicoPDF = JSON.parse(localStorage.getItem("rotam_historico_rt90")) || [];
+      const ocorrencias = JSON.parse(localStorage.getItem("ocorrenciasROTAM")) || [];
+
+      // Unifica PDF + Ocorrências
+      const lista = [
+        ...historicoPDF.map(h => ({
+          tipo: "PDF",
+          numero: h.numero,
+          data: h.data,
+          hora: h.hora,
+          descricao: h.nomeArquivo || "Relatório Gerado",
+          link: h.nomeArquivo
+        })),
+        ...ocorrencias.map((o, index) => ({
+          tipo: "Ocorrência",
+          numero: historicoPDF.length + index + 1,
+          data: o.data,
+          hora: o.hora,
+          descricao: `${o.tipo} — ${o.local}`,
+          detalhes: o.descricao
+        }))
+      ];
+
+      if (lista.length === 0) {
+        historicoBody.innerHTML = `<tr><td colspan="5">Nenhum registro encontrado.</td></tr>`;
+        return;
+      }
+
+      historicoBody.innerHTML = "";
+
+      lista
+        .sort((a, b) => new Date(b.data + " " + b.hora) - new Date(a.data + " " + a.hora))
+        .forEach(item => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td>${item.numero}</td>
+            <td>${item.data}</td>
+            <td>${item.hora}</td>
+            <td>${item.descricao}</td>
+            <td>
+              ${
+                item.tipo === "PDF"
+                  ? `<button class="btn-ver" onclick="abrirPDF('${item.link}')"><i class="bi bi-file-earmark-pdf"></i> Abrir</button>`
+                  : `<button class="btn-ver" onclick="verOcorrencia('${item.descricao}', '${item.detalhes.replace(/'/g, "\\'")}')"><i class="bi bi-eye"></i> Ver</button>`
+              }
+            </td>
+          `;
+
+          historicoBody.appendChild(tr);
+        });
+    });
+
+    // 📄 Abrir PDF
+    function abrirPDF(nome) {
+      alert("📂 PDF salvo localmente: " + nome + "\n\nSe estiver hospedado, será necessário baixar manualmente.");
+    }
+
+    // 🔍 Visualizar ocorrência
+    function verOcorrencia(titulo, detalhes) {
+      const modal = document.createElement("div");
+      modal.style.position = "fixed";
+      modal.style.top = "0";
+      modal.style.left = "0";
+      modal.style.width = "100%";
+      modal.style.height = "100%";
+      modal.style.background = "rgba(0,0,0,0.6)";
+      modal.style.display = "flex";
+      modal.style.justifyContent = "center";
+      modal.style.alignItems = "center";
+      modal.innerHTML = `
+        <div style="background:#fff; color:#000; border-radius:10px; padding:20px; max-width:500px; text-align:left;">
+          <h4 style="margin-bottom:10px;">${titulo}</h4>
+          <p>${detalhes}</p>
+          <div class="text-end">
+            <button class="btn btn-secondary" onclick="this.closest('div').parentElement.remove()">Fechar</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+  </script>
 
   <script src="js/pwa.js"></script>
 </body>
