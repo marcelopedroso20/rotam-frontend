@@ -210,10 +210,25 @@
         });
     });
 
-    // 📄 Abrir PDF
-    function abrirPDF(nome) {
-      alert("📂 PDF salvo localmente: " + nome + "\n\nSe estiver hospedado, será necessário baixar manualmente.");
-    }
+    // 📄 Abrir PDF no navegador ou baixar automaticamente
+  function abrirPDF(nome) {
+    // Caminho padrão onde os PDFs ficam gerados localmente
+    const fileUrl = `${window.location.origin}/rotam-frontend/${nome}`;
+
+    // Tenta abrir o PDF direto
+    fetch(fileUrl)
+      .then(response => {
+        if (response.ok) {
+          window.open(fileUrl, "_blank");
+        } else {
+          // Caso o arquivo não esteja hospedado (como no GitHub Pages)
+          alert("📁 O arquivo está salvo apenas localmente no seu navegador.\nPara baixá-lo novamente, gere o PDF outra vez no Livro RT90.");
+        }
+      })
+      .catch(() => {
+        alert("⚠️ O arquivo PDF não está disponível no servidor.\nGere novamente o relatório no Livro RT90.");
+      });
+  }
 
     // 🔍 Visualizar ocorrência
     function verOcorrencia(titulo, detalhes) {
