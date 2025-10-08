@@ -2,52 +2,78 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Offline - Sistema ROTAM</title>
 
-  <!-- ✅ Ícone da aba (favicon) -->
+  <!-- Caminho base (GitHub Pages) -->
+  <base href="/rotam-frontend/">
+
+  <!-- Estilos -->
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/style.css">
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #121212;
+      background-color: #0d0d0d;
       color: #fff;
-      display: grid;
-      place-items: center;
-      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       text-align: center;
       padding: 20px;
-      margin: 0;
     }
-    .card {
-      background: #1e1e1e;
-      padding: 20px;
+
+    .offline-box {
+      background-color: #1a1a1a;
+      border: 1px solid #333;
       border-radius: 10px;
+      padding: 40px 25px;
       max-width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
     }
-    img {
+
+    .offline-box img {
       width: 90px;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      font-weight: bold;
       margin-bottom: 10px;
+      color: #ffc107;
     }
-    a {
-      display: inline-block;
-      margin-top: 10px;
-      color: #0d6efd;
-      text-decoration: none;
+
+    p {
+      font-size: 16px;
+      margin-bottom: 25px;
+      color: #ccc;
     }
-    a:hover {
-      text-decoration: underline;
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 25px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #218838;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <img src="./assets/icon-192.png" alt="ROTAM">
+  <div class="offline-box">
+    <img src="assets/logo-rotam-frontend.png" alt="Logo ROTAM">
     <h2>Você está offline</h2>
-    <p>Sem conexão no momento.<br>Algumas funções do sistema não estão disponíveis.</p>
-    <a href="./index.html">Voltar ao início</a>
+    <p>Não foi possível conectar ao servidor.<br>
+    Verifique sua conexão com a internet e tente novamente.</p>
+    <button onclick="window.location.reload()">🔄 Tentar Novamente</button>
   </div>
-  <script src="js/pwa.js"></script>
 </body>
 </html>
