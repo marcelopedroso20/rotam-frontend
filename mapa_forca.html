@@ -117,6 +117,26 @@
       display: block;
       margin: 10px auto;
     }
+
+    .search-box {
+      margin: 10px auto 20px;
+      max-width: 400px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .search-box i {
+      color: #555;
+      font-size: 20px;
+    }
   </style>
 </head>
 <body>
@@ -124,6 +144,12 @@
     <button class="btn btn-voltar" onclick="window.location.href='index.html'">⬅ Voltar</button>
 
     <h2>🧭 Mapa da Força ROTAM</h2>
+
+    <!-- Campo de busca -->
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input type="text" id="busca" placeholder="Buscar por nome, patente ou função...">
+    </div>
 
     <!-- Formulário -->
     <form id="formMilitar" class="mb-4">
@@ -193,6 +219,7 @@
   <script>
     const form = document.getElementById('formMilitar');
     const btnPDF = document.getElementById('btnPDF');
+    const busca = document.getElementById('busca');
 
     document.addEventListener('DOMContentLoaded', renderizarEfetivo);
 
@@ -223,7 +250,7 @@
       renderizarEfetivo();
     });
 
-    function renderizarEfetivo() {
+    function renderizarEfetivo(filtro = '') {
       const militares = JSON.parse(localStorage.getItem('mapaForcaROTAM')) || [];
 
       const setores = {
@@ -234,18 +261,29 @@
 
       for (let key in setores) setores[key].innerHTML = '<p class="text-muted">Nenhum militar cadastrado.</p>';
 
+      const termo = filtro.toLowerCase();
+
       militares.forEach((m, index) => {
-        const card = document.createElement('div');
-        card.classList.add('card-militar');
-        card.innerHTML = `
-          <button class="delete-btn" onclick="excluirMilitar(${index})"><i class='bi bi-x-circle'></i></button>
-          <img src="${m.foto || 'assets/sem_foto.png'}" alt="${m.nome}">
-          <h5>${m.patente} ${m.nome}</h5>
-          <p>${m.funcao}</p>
-        `;
-        setores[m.setor].appendChild(card);
+        if (
+          !termo ||
+          m.nome.toLowerCase().includes(termo) ||
+          m.patente.toLowerCase().includes(termo) ||
+          m.funcao.toLowerCase().includes(termo)
+        ) {
+          const card = document.createElement('div');
+          card.classList.add('card-militar');
+          card.innerHTML = `
+            <button class="delete-btn" onclick="excluirMilitar(${index})"><i class='bi bi-x-circle'></i></button>
+            <img src="${m.foto || 'assets/sem_foto.png'}" alt="${m.nome}">
+            <h5>${m.patente} ${m.nome}</h5>
+            <p>${m.funcao}</p>
+          `;
+          setores[m.setor].appendChild(card);
+        }
       });
     }
+
+    busca.addEventListener('input', (e) => renderizarEfetivo(e.target.value));
 
     function excluirMilitar(index) {
       if (confirm('Deseja realmente remover este militar?')) {
@@ -288,9 +326,9 @@
 
       pdf.addImage(imgData, 'PNG', 0, 60, pdfWidth, pdfHeight - 20);
 
-      const dataHora = new Date().toLocaleString().replace(/[/:]/g, '-');
       pdf.text(`Quartel do Batalhão ROTAM — Cuiabá/MT, ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
 
+      const dataHora = new Date().toLocaleString().replace(/[/:]/g, '-');
       pdf.save(`Mapa_Forca_ROTAM_${dataHora}.pdf`);
     });
 
