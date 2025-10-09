@@ -230,7 +230,7 @@
     const btnPDF = document.getElementById('btnPDF');
     const busca = document.getElementById('busca');
 
-    document.addEventListener('DOMContentLoaded', renderizarEfetivo);
+    document.addEventListener('DOMContentLoaded', () => renderizarEfetivo(''));
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
