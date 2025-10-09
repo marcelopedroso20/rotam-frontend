@@ -266,7 +266,7 @@
         Operacional: document.getElementById('listaOperacional'),
       };
 
-      for (let key in setores) setores[key].innerHTML = '<p class="text-muted">Nenhum militar cadastrado.</p>';
+      Object.values(setores).forEach(div => div.innerHTML = '');
 
       const termo = filtro.toLowerCase();
 
@@ -285,9 +285,15 @@
             <h5>${m.patente} ${m.nome}</h5>
             <p>${m.funcao}</p>
           `;
-          setores[m.setor].appendChild(card);
+          if (setores[m.setor]) setores[m.setor].appendChild(card);
         }
       });
+
+      for (let key in setores) {
+        if (setores[key].children.length === 0) {
+          setores[key].innerHTML = '<p class="text-muted">Nenhum militar cadastrado.</p>';
+        }
+      }
     }
 
     busca.addEventListener('input', (e) => renderizarEfetivo(e.target.value));
