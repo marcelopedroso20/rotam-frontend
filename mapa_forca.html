@@ -3,353 +3,333 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mapa da Força - Sistema ROTAM</title>
+  <title>Mapa da Força - Organograma ROTAM</title>
 
+  <!-- Opcional: ícone e base (GitHub Pages) -->
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <base href="/rotam-frontend/">
 
   <style>
-    body {
-      background: #f4f4f4;
+    :root{
+      --box-bg:#eeeeee;     /* cinza claro */
+      --box-bd:#000000;     /* borda preta */
+      --ink:#111;
+      --accent:#111;        /* cor das linhas */
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
       font-family: Arial, sans-serif;
+      background:#f5f5f5;
+      color:var(--ink);
     }
 
-    .container {
-      max-width: 1100px;
-      margin: 30px auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    header{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:16px;
+      background:#1e1e1e;color:#fff;padding:14px 18px;
+    }
+    header .left{
+      display:flex;align-items:center;gap:12px;
+    }
+    header img.logo{
+      width:44px;height:44px;object-fit:contain;
+      filter: drop-shadow(0 0 0 rgba(0,0,0,0));
+    }
+    header h1{font-size:20px;margin:0}
+    header button{
+      background:#6c757d;border:2px solid #000;color:#fff;
+      padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:bold;
+    }
+    header button:hover{background:#5a6268}
+
+    main{padding:20px}
+    .organograma{
+      max-width:1200px;margin:0 auto;
+      display:flex;flex-direction:column;align-items:center;gap:14px;
     }
 
-    h2 {
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 25px;
+    /* Linhas (conectores) */
+    .v-line{width:2px;background:var(--accent)}
+    .h-line{height:2px;background:var(--accent)}
+    .v-16{height:16px}.v-24{height:24px}.v-32{height:32px}
+    .h-24{width:24px}.h-40{width:40px}.h-100{width:100%}
+
+    /* Caixas */
+    .node{
+      background:var(--box-bg);
+      border:2px solid var(--box-bd);
+      border-radius:6px;
+      padding:10px 14px;
+      text-align:center;
+      min-width: 220px;
+      box-shadow: 0 0 0 2px #000 inset;
+    }
+    .node .title{font-weight:800;text-transform:uppercase;font-size:14px}
+    .node .subtitle{font-size:12px;opacity:.8;margin-top:2px}
+
+    /* Contêiner de pessoas dentro das caixas de nível (listas) */
+    .people{
+      margin-top:8px;
+      display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+    }
+    .person{
+      background:#fff;border:2px solid #000;border-radius:6px;
+      padding:6px 8px;min-width:160px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .avatar{
+      width:40px;height:40px;border-radius:50%;object-fit:cover;
+      border:2px solid #000;background:#ddd;
+      flex:0 0 auto;
+    }
+    .p-info{display:flex;flex-direction:column;text-align:left}
+    .p-name{font-weight:700;font-size:12px;line-height:1.2}
+    .p-role{font-size:11px;opacity:.85}
+
+    /* Linhas horizontais de branches */
+    .row-branches{display:flex;align-items:center;gap:14px;width:100%;justify-content:center}
+
+    /* Conjunto “Operacional” e “Administrativa” lado a lado */
+    .pair{
+      display:flex;gap:80px;align-items:flex-start;flex-wrap:wrap;justify-content:center;
+      margin-top:6px;
     }
 
-    .btn-voltar {
-      background: #6c757d;
-      color: white;
-      border: none;
-      margin-bottom: 20px;
+    /* Grids internos (pelotões / setores) */
+    .grid{
+      display:grid;gap:10px;
     }
+    .grid-ops{grid-template-columns: repeat(5, minmax(180px, 1fr))}
+    .grid-adm{grid-template-columns: repeat(6, minmax(160px, 1fr))}
 
-    .btn-voltar:hover { background: #5a6268; }
-
-    .nav-tabs .nav-link.active {
-      background-color: #212529;
-      color: #fff;
+    /* Caixas de grupos (Operacional/Admin) maiores */
+    .group{
+      display:flex;flex-direction:column;align-items:center;gap:8px;
+      max-width:520px;
     }
+    .group .node{min-width:260px}
 
-    .efetivo {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      margin-top: 25px;
+    /* Responsivo */
+    @media (max-width: 1100px){
+      .grid-ops{grid-template-columns: repeat(3, minmax(180px, 1fr))}
+      .grid-adm{grid-template-columns: repeat(3, minmax(160px, 1fr))}
+      .pair{gap:28px}
     }
-
-    .card-militar {
-      background: #fafafa;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      width: 180px;
-      text-align: center;
-      padding: 10px;
-      transition: transform 0.2s ease;
-      position: relative;
-    }
-
-    .card-militar:hover { transform: scale(1.05); }
-
-    .card-militar img {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 8px;
-      border: 2px solid #444;
-    }
-
-    .card-militar h5 {
-      font-size: 16px;
-      margin-bottom: 4px;
-      font-weight: bold;
-    }
-
-    .card-militar p {
-      margin: 0;
-      font-size: 13px;
-      color: #555;
-    }
-
-    .delete-btn {
-      position: absolute;
-      top: 5px;
-      right: 8px;
-      background: transparent;
-      border: none;
-      color: #d00;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    .delete-btn:hover { color: #a00; }
-
-    .btn-success { margin-top: 10px; }
-
-    hr { margin: 30px 0; }
-
-    #mural {
-      padding: 10px;
-      border-radius: 10px;
-      background: white;
-    }
-
-    .logo-header {
-      width: 80px;
-      display: block;
-      margin: 10px auto;
-    }
-
-    .search-box {
-      margin: 10px auto 20px;
-      max-width: 400px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .search-box input {
-      flex: 1;
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    .search-box i {
-      color: #555;
-      font-size: 20px;
+    @media (max-width: 700px){
+      .grid-ops{grid-template-columns: repeat(2, minmax(160px, 1fr))}
+      .grid-adm{grid-template-columns: repeat(2, minmax(150px, 1fr))}
+      .node{min-width: 200px}
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <button class="btn btn-voltar" onclick="window.location.href='index.html'">⬅ Voltar</button>
-
-    <h2>🧭 Mapa da Força ROTAM</h2>
-
-    <!-- Campo de busca -->
-    <div class="search-box">
-      <i class="bi bi-search"></i>
-      <input type="text" id="busca" placeholder="Buscar por nome, patente ou função...">
+  <header>
+    <div class="left">
+      <!-- use sua logo existente -->
+      <img class="logo" src="assets/logo-rotam.png" alt="ROTAM">
+      <h1>Mapa da Força — Batalhão ROTAM</h1>
     </div>
+    <button onclick="window.location.href='index.html'">⬅ Voltar</button>
+  </header>
 
-    <!-- Formulário -->
-    <form id="formMilitar" class="mb-4">
-      <div class="row">
-        <div class="col-md-3">
-          <label>Nome:</label>
-          <input type="text" id="nome" class="form-control" placeholder="Ex: Cb Nunes" required>
+  <main>
+    <div class="organograma" id="organograma">
+
+      <!-- Topo: BATALHÃO -->
+      <div class="node">
+        <div class="title">Batalhão ROTAM</div>
+        <div class="subtitle">Organograma do Efetivo</div>
+      </div>
+
+      <div class="v-line v-24"></div>
+
+      <!-- COMANDO -->
+      <div class="node">
+        <div class="title">Comando ROTAM</div>
+        <div class="people" id="slot-comando"><!-- pessoas do comando --></div>
+      </div>
+
+      <div class="v-line v-24"></div>
+
+      <!-- SUBCOMANDO -->
+      <div class="node">
+        <div class="title">Subcomando ROTAM</div>
+        <div class="people" id="slot-subcomando"><!-- pessoas do subcomando --></div>
+      </div>
+
+      <div class="v-line v-32"></div>
+
+      <!-- Ramificação Operacional x Administrativa -->
+      <div class="row-branches" style="gap:0;width:100%;max-width:900px;">
+        <div class="h-line h-40"></div>
+        <div class="v-line v-16"></div>
+        <div class="h-line h-100"></div>
+        <div class="v-line v-16"></div>
+        <div class="h-line h-40"></div>
+      </div>
+
+      <div class="pair">
+        <!-- OPERACIONAL -->
+        <div class="group">
+          <div class="node">
+            <div class="title">Coordenação Operacional</div>
+          </div>
+          <div class="grid grid-ops">
+            <div class="node">
+              <div class="title">1º Pelotão</div>
+              <div class="people" id="slot-op-1"></div>
+            </div>
+            <div class="node">
+              <div class="title">2º Pelotão</div>
+              <div class="people" id="slot-op-2"></div>
+            </div>
+            <div class="node">
+              <div class="title">3º Pelotão</div>
+              <div class="people" id="slot-op-3"></div>
+            </div>
+            <div class="node">
+              <div class="title">4º Pelotão</div>
+              <div class="people" id="slot-op-4"></div>
+            </div>
+            <div class="node">
+              <div class="title">Intel ROTAM</div>
+              <div class="people" id="slot-op-intel"></div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-2">
-          <label>Patente:</label>
-          <select id="patente" class="form-select" required>
-            <option value="">Selecione</option>
-            <option>Ten Cel</option>
-            <option>Major</option>
-            <option>Capitão</option>
-            <option>1º Sgt</option>
-            <option>2º Sgt</option>
-            <option>Cb</option>
-            <option>Sd</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label>Função / Setor:</label>
-          <input type="text" id="funcao" class="form-control" placeholder="Ex: Equipe Alfa 01" required>
-        </div>
-        <div class="col-md-2">
-          <label>Setor:</label>
-          <select id="setor" class="form-select" required>
-            <option value="">Selecione</option>
-            <option>Comando</option>
-            <option>Administração</option>
-            <option>Operacional</option>
-          </select>
-        </div>
-        <div class="col-md-2">
-          <label>Foto:</label>
-          <input type="file" id="foto" class="form-control" accept="image/*">
+
+        <!-- ADMINISTRATIVA -->
+        <div class="group">
+          <div class="node">
+            <div class="title">Coordenação Administrativa</div>
+          </div>
+          <div class="grid grid-adm">
+            <div class="node">
+              <div class="title">P1</div>
+              <div class="people" id="slot-adm-p1"></div>
+            </div>
+            <div class="node">
+              <div class="title">P2</div>
+              <div class="people" id="slot-adm-p2"></div>
+            </div>
+            <div class="node">
+              <div class="title">P3</div>
+              <div class="people" id="slot-adm-p3"></div>
+            </div>
+            <div class="node">
+              <div class="title">P4</div>
+              <div class="people" id="slot-adm-p4"></div>
+            </div>
+            <div class="node">
+              <div class="title">SIESP</div>
+              <div class="people" id="slot-adm-siesp"></div>
+            </div>
+            <div class="node">
+              <div class="title">SD</div>
+              <div class="people" id="slot-adm-sd"></div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="text-center mt-3">
-        <button type="submit" class="btn btn-success">
-          <i class="bi bi-person-plus"></i> Adicionar Militar
-        </button>
-        <button type="button" id="btnPDF" class="btn btn-danger ms-2">
-          <i class="bi bi-file-earmark-pdf"></i> Gerar PDF
-        </button>
+      <!-- (Opcional) Não classificados -->
+      <div id="nao-classificados-wrapper" style="display:none;align-items:center;flex-direction:column;gap:6px;margin-top:18px;">
+        <div class="v-line v-24"></div>
+        <div class="node">
+          <div class="title">Outros / A classificar</div>
+          <div class="people" id="slot-outros"></div>
+        </div>
       </div>
-    </form>
 
-    <hr>
-
-    <!-- Abas dos Setores -->
-    <ul class="nav nav-tabs" id="setoresTabs">
-      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#comando">👮‍♂️ Comando</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#administracao">📋 Administração</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#operacional">⚔️ Operacional</button></li>
-    </ul>
-
-    <div class="tab-content mt-3" id="mural">
-      <div class="tab-pane fade show active" id="comando"><div class="efetivo" id="listaComando"></div></div>
-      <div class="tab-pane fade" id="administracao"><div class="efetivo" id="listaAdministracao"></div></div>
-      <div class="tab-pane fade" id="operacional"><div class="efetivo" id="listaOperacional"></div></div>
     </div>
-  </div>
+  </main>
 
   <script>
-    const form = document.getElementById('formMilitar');
-    const btnPDF = document.getElementById('btnPDF');
-    const busca = document.getElementById('busca');
+    // Lê do mesmo storage do cadastro_militar.html
+    const militares = JSON.parse(localStorage.getItem('mapaForcaROTAM')) || [];
 
-    document.addEventListener('DOMContentLoaded', renderizarEfetivo);
+    // Mapeia cada militar para um "slot" do organograma, baseado em palavras-chave
+    function bucketDoMilitar(m){
+      const nome = (m.nome||'').toLowerCase();
+      const pat  = (m.patente||'').toLowerCase();
+      const func = (m.funcao||'').toLowerCase();
+      const setor= (m.setor||'').toLowerCase();
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const nome = document.getElementById('nome').value.trim();
-      const patente = document.getElementById('patente').value;
-      const funcao = document.getElementById('funcao').value.trim();
-      const setor = document.getElementById('setor').value;
-      const fotoInput = document.getElementById('foto');
+      // COMANDO / SUBCOMANDO
+      if ( /subcomand/.test(func) || /sub.?comand/.test(func) ) return 'slot-subcomando';
+      if ( setor.includes('comando') || /comand/.test(func) || /comand/.test(nome) ) return 'slot-comando';
 
-      if (!nome || !patente || !funcao || !setor) {
-        alert('Preencha todos os campos obrigatórios.');
-        return;
+      // OPERACIONAL – pelotões
+      const isOperacional = setor.includes('operacion') || /pelot[aã]o|pelotao/.test(func) || /alpha|bravo|alfa|charlie|delta/.test(func);
+      if (isOperacional){
+        if ( /(1º|1o|1°|^1\b|pelot[aã]o.*1)/.test(func) ) return 'slot-op-1';
+        if ( /(2º|2o|2°|^2\b|pelot[aã]o.*2)/.test(func) ) return 'slot-op-2';
+        if ( /(3º|3o|3°|^3\b|pelot[aã]o.*3)/.test(func) ) return 'slot-op-3';
+        if ( /(4º|4o|4°|^4\b|pelot[aã]o.*4)/.test(func) ) return 'slot-op-4';
+        if ( /intel|intelig[êe]ncia/.test(func) ) return 'slot-op-intel';
+      }
+      // Administrativa
+      const isAdm = setor.includes('admin') || /(p1|p2|p3|p4|siesp|sd)/.test(func);
+      if (isAdm){
+        if (/[^a-z0-9]p1[^a-z0-9]?|^p1$/.test(' '+func+' ')) return 'slot-adm-p1';
+        if (/[^a-z0-9]p2[^a-z0-9]?|^p2$/.test(' '+func+' ')) return 'slot-adm-p2';
+        if (/[^a-z0-9]p3[^a-z0-9]?|^p3$/.test(' '+func+' ')) return 'slot-adm-p3';
+        if (/[^a-z0-9]p4[^a-z0-9]?|^p4$/.test(' '+func+' ')) return 'slot-adm-p4';
+        if (/siesp/.test(func)) return 'slot-adm-siesp';
+        if (/[^a-z0-9]sd[^a-z0-9]?|^sd$/.test(' '+func+' ')) return 'slot-adm-sd';
       }
 
-      let fotoBase64 = '';
-      if (fotoInput.files.length > 0) {
-        fotoBase64 = await converterParaBase64(fotoInput.files[0]);
-      }
+      // Intel pode vir sem setor explícito
+      if (/intel|intelig[êe]ncia/.test(func)) return 'slot-op-intel';
 
-      const militar = { nome, patente, funcao, setor, foto: fotoBase64 };
-      const listaSalva = JSON.parse(localStorage.getItem('mapaForcaROTAM')) || [];
-      listaSalva.push(militar);
-      localStorage.setItem('mapaForcaROTAM', JSON.stringify(listaSalva));
+      // Sem correspondência -> Outros
+      return 'slot-outros';
+    }
 
-      form.reset();
-      renderizarEfetivo();
-    });
+    function criaCardPessoa(m){
+      const div = document.createElement('div');
+      div.className = 'person';
+      const imgSrc = m.foto || 'assets/sem_foto.png';
+      div.innerHTML = `
+        <img class="avatar" src="${imgSrc}" alt="${m.nome||''}">
+        <div class="p-info">
+          <div class="p-name">${(m.patente||'').toUpperCase()} ${(m.nome||'')}</div>
+          <div class="p-role">${m.funcao||''}</div>
+        </div>
+      `;
+      return div;
+    }
 
-    function renderizarEfetivo(filtro = '') {
-      const militares = JSON.parse(localStorage.getItem('mapaForcaROTAM')) || [];
+    function render(){
+      const ids = [
+        'slot-comando','slot-subcomando',
+        'slot-op-1','slot-op-2','slot-op-3','slot-op-4','slot-op-intel',
+        'slot-adm-p1','slot-adm-p2','slot-adm-p3','slot-adm-p4','slot-adm-siesp','slot-adm-sd',
+        'slot-outros'
+      ];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+      });
 
-      const setores = {
-        Comando: document.getElementById('listaComando'),
-        Administração: document.getElementById('listaAdministracao'),
-        Operacional: document.getElementById('listaOperacional'),
-      };
+      let temOutros = false;
 
-      for (let key in setores) setores[key].innerHTML = '<p class="text-muted">Nenhum militar cadastrado.</p>';
-
-      const termo = filtro.toLowerCase();
-
-      militares.forEach((m, index) => {
-        if (
-          !termo ||
-          m.nome.toLowerCase().includes(termo) ||
-          m.patente.toLowerCase().includes(termo) ||
-          m.funcao.toLowerCase().includes(termo)
-        ) {
-          const card = document.createElement('div');
-          card.classList.add('card-militar');
-          card.innerHTML = `
-            <button class="delete-btn" onclick="excluirMilitar(${index})"><i class='bi bi-x-circle'></i></button>
-            <img src="${m.foto || 'assets/sem_foto.png'}" alt="${m.nome}">
-            <h5>${m.patente} ${m.nome}</h5>
-            <p>${m.funcao}</p>
-          `;
-          setores[m.setor].appendChild(card);
+      militares.forEach(m => {
+        const slot = bucketDoMilitar(m);
+        const el = document.getElementById(slot);
+        if (el){
+          el.appendChild(criaCardPessoa(m));
+          if (slot === 'slot-outros') temOutros = true;
         }
       });
+
+      // Mostrar bloco "Outros" somente se necessário
+      const wrapOutros = document.getElementById('nao-classificados-wrapper');
+      if (wrapOutros) wrapOutros.style.display = temOutros ? 'flex' : 'none';
     }
 
-    busca.addEventListener('input', (e) => renderizarEfetivo(e.target.value));
-
-    function excluirMilitar(index) {
-      if (confirm('Deseja realmente remover este militar?')) {
-        const militares = JSON.parse(localStorage.getItem('mapaForcaROTAM')) || [];
-        militares.splice(index, 1);
-        localStorage.setItem('mapaForcaROTAM', JSON.stringify(militares));
-        renderizarEfetivo();
-      }
-    }
-
-    function converterParaBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-      });
-    }
-
-    // Geração de PDF com logotipo ROTAM
-    btnPDF.addEventListener('click', async () => {
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const logoUrl = 'assets/logo-rotam.png';
-      const logo = await carregarImagem(logoUrl);
-
-      if (logo) pdf.addImage(logo, 'PNG', 90, 8, 30, 30);
-
-      pdf.setFontSize(12);
-      pdf.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, 45, { align: "center" });
-      pdf.text("BATALHÃO ROTAM - MAPA DA FORÇA", 105, 52, { align: "center" });
-
-      const mural = document.getElementById('mural');
-      const canvas = await html2canvas(mural, { scale: 2 });
-      const imgData = canvas.toDataURL('image/png');
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      pdf.addImage(imgData, 'PNG', 0, 60, pdfWidth, pdfHeight - 20);
-
-      pdf.text(`Quartel do Batalhão ROTAM — Cuiabá/MT, ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-
-      const dataHora = new Date().toLocaleString().replace(/[/:]/g, '-');
-      pdf.save(`Mapa_Forca_ROTAM_${dataHora}.pdf`);
-    });
-
-    function carregarImagem(url) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.onload = function () {
-          const canvas = document.createElement("canvas");
-          canvas.width = this.width;
-          canvas.height = this.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(this, 0, 0);
-          resolve(canvas.toDataURL("image/png"));
-        };
-        img.onerror = () => resolve(null);
-        img.src = url;
-      });
-    }
+    document.addEventListener('DOMContentLoaded', render);
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
