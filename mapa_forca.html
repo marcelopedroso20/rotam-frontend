@@ -5,216 +5,241 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mapa da Força — Batalhão ROTAM</title>
 
-  <!-- Mantém o mesmo base do cadastro -->
-  <base href="/rotam-frontend/">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
   <style>
+    :root {
+      --box-bg: #f2f2f2;
+      --box-bd: #000;
+      --ink: #111;
+    }
+
+    * { box-sizing: border-box; }
     body {
-      background: #f7f7f7;
+      margin: 0;
       font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 30px;
+      background: #f5f5f5;
+      color: var(--ink);
     }
 
     header {
-      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1e1e1e;
       color: #fff;
-      padding: 10px;
-      font-weight: bold;
-      font-size: 16px;
-      letter-spacing: 0.8px;
+      padding: 12px 18px;
     }
 
-    main {
-      padding: 20px;
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 600;
     }
+
+    header button {
+      background: #6c757d;
+      border: 2px solid #000;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    header button:hover {
+      background: #5a6268;
+    }
+
+    main { padding: 25px; }
 
     .titulo-cabecalho {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
 
     .titulo-cabecalho h2 {
-      font-size: 32px;
+      font-size: 30px;
       font-weight: 900;
       text-transform: uppercase;
-      margin-bottom: 5px;
+      margin: 0;
       color: #000;
-      letter-spacing: 1px;
+      letter-spacing: 1.2px;
     }
 
     .linha-separadora {
       width: 280px;
-      height: 3px;
+      height: 2px;
       background: #000;
       margin: 6px auto 0;
       border-radius: 2px;
     }
 
-    .bloco {
-      background: #fff;
-      border: 2px solid #000;
-      border-radius: 8px;
-      padding: 10px 20px;
-      margin: 15px auto;
-      display: inline-block;
-    }
-
-    .bloco-interno {
-      border: 2px solid #000;
-      border-radius: 8px;
-      padding: 10px 20px;
-      margin-top: 25px;
-      display: inline-block;
-    }
-
-    .bloco-interno h5 {
-      background: #fff;
-      display: inline-block;
-      padding: 0 10px;
-      position: relative;
-      top: -25px;
-      font-weight: 700;
-    }
-
-    .subblocos {
+    .organograma {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
     }
 
-    .subblocos .box {
-      border: 1px solid #000;
+    .node {
+      background: var(--box-bg);
+      border: 2px solid var(--box-bd);
       border-radius: 6px;
-      padding: 8px 15px;
-      background: #fff;
-      min-width: 110px;
+      padding: 10px 14px;
       text-align: center;
-      transition: 0.2s;
-    }
-
-    .subblocos .box:hover {
-      background: #f1f1f1;
-      transform: scale(1.05);
-    }
-
-    .box img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid #333;
-      margin-bottom: 5px;
-    }
-
-    .box h6 {
-      font-size: 13px;
-      margin: 0;
+      min-width: 220px;
       font-weight: bold;
+      text-transform: uppercase;
     }
 
-    .box p {
-      font-size: 12px;
-      margin: 0;
-      color: #555;
+    .grupo {
+      border: 2px solid var(--box-bd);
+      border-radius: 6px;
+      padding: 15px;
+      background: #fff;
+      box-shadow: 0 0 0 2px #000 inset;
+      margin-top: 10px;
+    }
+
+    .titulo-grupo {
+      display: inline-block;
+      background: #f2f2f2;
+      padding: 4px 12px;
+      border: 2px solid #000;
+      border-radius: 6px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      position: relative;
+      top: -20px;
+      left: 20px;
+    }
+
+    .linha-base {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .caixa {
+      border: 2px solid #000;
+      border-radius: 6px;
+      background: #f2f2f2;
+      padding: 10px;
+      text-align: center;
+      min-width: 130px;
+      font-weight: bold;
+      text-transform: uppercase;
     }
 
     footer {
-      margin-top: 40px;
+      text-align: center;
+      margin-top: 30px;
       font-size: 13px;
       color: #555;
+    }
+
+    @media (max-width: 1000px) {
+      .linha-base { flex-direction: column; align-items: center; }
     }
   </style>
 </head>
 <body>
-  <header>Mapa da Força — Batalhão ROTAM</header>
+  <header>
+    <button onclick="window.location.href='./cadastro_militar.html'">⬅ Voltar</button>
+    <h1>Mapa da Força — Batalhão ROTAM</h1>
+  </header>
 
   <main>
-    <div class="titulo-cabecalho">
-      <h2>BATALHÃO ROTAM</h2>
-      <div class="linha-separadora"></div>
-    </div>
+    <div class="organograma">
 
-    <div>
-      <div class="bloco"><strong>COMANDO ROTAM</strong></div>
-    </div>
+      <!-- 🔰 Título principal -->
+      <div class="titulo-cabecalho">
+        <h2>BATALHÃO ROTAM</h2>
+        <div class="linha-separadora"></div>
+      </div>
 
-    <div>
-      <div class="bloco"><strong>SUBCOMANDO ROTAM</strong></div>
-    </div>
+      <!-- COMANDO -->
+      <div class="node">Comando ROTAM</div>
+      <div class="node">Subcomando ROTAM</div>
 
-    <!-- Coordenação Operacional -->
-    <div class="bloco-interno" id="operacional-bloco">
-      <h5>Coordenação Operacional</h5>
-      <div class="subblocos" id="operacional">
-        <div class="box">1º PELOTÃO</div>
-        <div class="box">2º PELOTÃO</div>
-        <div class="box">3º PELOTÃO</div>
-        <div class="box">4º PELOTÃO</div>
-        <div class="box">INTEL ROTAM</div>
+      <!-- 🟨 Coordenação Operacional -->
+      <div class="grupo">
+        <div class="titulo-grupo">Coordenação Operacional</div>
+        <div class="linha-base">
+          <div class="caixa">1º Pelotão <div class="people" id="slot-op-1"></div></div>
+          <div class="caixa">2º Pelotão <div class="people" id="slot-op-2"></div></div>
+          <div class="caixa">3º Pelotão <div class="people" id="slot-op-3"></div></div>
+          <div class="caixa">4º Pelotão <div class="people" id="slot-op-4"></div></div>
+          <div class="caixa">Intel ROTAM <div class="people" id="slot-op-intel"></div></div>
+        </div>
+      </div>
+
+      <!-- 🟦 Coordenação Administrativa -->
+      <div class="grupo">
+        <div class="titulo-grupo">Coordenação Administrativa</div>
+        <div class="linha-base">
+          <div class="caixa">P1 <div class="people" id="slot-adm-p1"></div></div>
+          <div class="caixa">P3 <div class="people" id="slot-adm-p3"></div></div>
+          <div class="caixa">P4 <div class="people" id="slot-adm-p4"></div></div>
+          <div class="caixa">P5 <div class="people" id="slot-adm-p5"></div></div>
+          <div class="caixa">SIESP <div class="people" id="slot-adm-siesp"></div></div>
+          <div class="caixa">SD <div class="people" id="slot-adm-sd"></div></div>
+        </div>
       </div>
     </div>
 
-    <!-- Coordenação Administrativa -->
-    <div class="bloco-interno" id="administrativo-bloco">
-      <h5>Coordenação Administrativa</h5>
-      <div class="subblocos" id="administrativo">
-        <div class="box">P1</div>
-        <div class="box">P2</div>
-        <div class="box">P3</div>
-        <div class="box">P4</div>
-        <div class="box">P5</div>
-        <div class="box">SIESP</div>
-        <div class="box">SD</div>
-      </div>
-    </div>
+    <footer>Quartel do Batalhão ROTAM — Cuiabá/MT</footer>
   </main>
 
-  <footer>
-    Quartel do Batalhão ROTAM — Cuiabá/MT
-  </footer>
-
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const militares = JSON.parse(localStorage.getItem("mapaForcaROTAM")) || [];
+    const militares = JSON.parse(localStorage.getItem('mapaForcaROTAM')) || [];
 
-      if (militares.length === 0) return;
+    function criaCardPessoa(m) {
+      const div = document.createElement('div');
+      div.style.fontSize = '12px';
+      div.style.marginTop = '4px';
+      div.innerHTML = `<b>${m.patente}</b> ${m.nome}`;
+      return div;
+    }
 
-      militares.forEach((m) => {
-        const blocoId =
-          m.setor === "Comando"
-            ? "operacional-bloco"
-            : m.setor === "Administração"
-            ? "administrativo-bloco"
-            : "operacional-bloco";
+    function bucketDoMilitar(m) {
+      const func = (m.funcao || '').toLowerCase();
+      const setor = (m.setor || '').toLowerCase();
 
-        const bloco = document.getElementById(blocoId);
+      if (setor.includes('comando')) return null;
 
-        if (bloco) {
-          const box = document.createElement("div");
-          box.classList.add("box");
+      // Operacional
+      if (/1º|1o|1°/.test(func)) return 'slot-op-1';
+      if (/2º|2o|2°/.test(func)) return 'slot-op-2';
+      if (/3º|3o|3°/.test(func)) return 'slot-op-3';
+      if (/4º|4o|4°/.test(func)) return 'slot-op-4';
+      if (/intel|intelig/.test(func)) return 'slot-op-intel';
 
-          box.innerHTML = `
-            <img src="${m.foto || 'assets/sem_foto.png'}" alt="${m.nome}">
-            <h6>${m.patente} ${m.nome}</h6>
-            <p>${m.funcao}</p>
-          `;
+      // Administração
+      if (/p1/.test(func)) return 'slot-adm-p1';
+      if (/p3/.test(func)) return 'slot-adm-p3';
+      if (/p4/.test(func)) return 'slot-adm-p4';
+      if (/p5/.test(func)) return 'slot-adm-p5';
+      if (/siesp/.test(func)) return 'slot-adm-siesp';
+      if (/sd/.test(func)) return 'slot-adm-sd';
 
-          // Decide onde inserir (Comando / Administrativo / Operacional)
-          if (m.setor === "Comando") {
-            bloco.querySelector("#operacional").appendChild(box);
-          } else if (m.setor === "Administração") {
-            bloco.querySelector("#administrativo").appendChild(box);
-          } else if (m.setor === "Operacional") {
-            bloco.querySelector("#operacional").appendChild(box);
-          }
+      return null;
+    }
+
+    function render() {
+      militares.forEach(m => {
+        const slot = bucketDoMilitar(m);
+        if (slot) {
+          const el = document.getElementById(slot);
+          if (el) el.appendChild(criaCardPessoa(m));
         }
       });
-    });
+    }
+
+    document.addEventListener('DOMContentLoaded', render);
   </script>
 </body>
 </html>
