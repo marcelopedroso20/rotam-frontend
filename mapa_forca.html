@@ -5,128 +5,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mapa da Força - Organograma ROTAM</title>
 
-  <!-- Opcional: ícone e base (GitHub Pages) -->
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
   <base href="/rotam-frontend/">
 
   <style>
-    :root{
-      --box-bg:#eeeeee;     /* cinza claro */
-      --box-bd:#000000;     /* borda preta */
-      --ink:#111;
-      --accent:#111;        /* cor das linhas */
+    :root {
+      --box-bg: #f2f2f2;
+      --box-bd: #000;
+      --ink: #111;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background:#f5f5f5;
-      color:var(--ink);
+      background: #f5f5f5;
+      color: var(--ink);
     }
 
-    header{
-      display:flex;align-items:center;justify-content:space-between;
-      gap:16px;
-      background:#1e1e1e;color:#fff;padding:14px 18px;
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: #1e1e1e;
+      color: #fff;
+      padding: 14px 18px;
     }
-    header .left{
-      display:flex;align-items:center;gap:12px;
+    header .left { display: flex; align-items: center; gap: 12px; }
+    header img.logo { width: 44px; height: 44px; object-fit: contain; }
+    header h1 { font-size: 20px; margin: 0; }
+    header button {
+      background: #6c757d; border: 2px solid #000; color: #fff;
+      padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;
     }
-    header img.logo{
-      width:44px;height:44px;object-fit:contain;
-      filter: drop-shadow(0 0 0 rgba(0,0,0,0));
-    }
-    header h1{font-size:20px;margin:0}
-    header button{
-      background:#6c757d;border:2px solid #000;color:#fff;
-      padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:bold;
-    }
-    header button:hover{background:#5a6268}
+    header button:hover { background: #5a6268; }
 
-    main{padding:20px}
-    .organograma{
-      max-width:1200px;margin:0 auto;
-      display:flex;flex-direction:column;align-items:center;gap:14px;
+    main { padding: 20px; }
+    .organograma {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
     }
 
-    /* Linhas (conectores) */
-    .v-line{width:2px;background:var(--accent)}
-    .h-line{height:2px;background:var(--accent)}
-    .v-16{height:16px}.v-24{height:24px}.v-32{height:32px}
-    .h-24{width:24px}.h-40{width:40px}.h-100{width:100%}
-
-    /* Caixas */
-    .node{
-      background:var(--box-bg);
-      border:2px solid var(--box-bd);
-      border-radius:6px;
-      padding:10px 14px;
-      text-align:center;
+    /* Blocos principais */
+    .node {
+      background: var(--box-bg);
+      border: 2px solid var(--box-bd);
+      border-radius: 6px;
+      padding: 10px 14px;
+      text-align: center;
       min-width: 220px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    /* Grupos horizontais */
+    .grupo {
+      border: 2px solid var(--box-bd);
+      border-radius: 6px;
+      padding: 15px;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
       box-shadow: 0 0 0 2px #000 inset;
     }
-    .node .title{font-weight:800;text-transform:uppercase;font-size:14px}
-    .node .subtitle{font-size:12px;opacity:.8;margin-top:2px}
 
-    /* Contêiner de pessoas dentro das caixas de nível (listas) */
-    .people{
-      margin-top:8px;
-      display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
-    }
-    .person{
-      background:#fff;border:2px solid #000;border-radius:6px;
-      padding:6px 8px;min-width:160px;
-      display:flex;align-items:center;gap:8px;
-    }
-    .avatar{
-      width:40px;height:40px;border-radius:50%;object-fit:cover;
-      border:2px solid #000;background:#ddd;
-      flex:0 0 auto;
-    }
-    .p-info{display:flex;flex-direction:column;text-align:left}
-    .p-name{font-weight:700;font-size:12px;line-height:1.2}
-    .p-role{font-size:11px;opacity:.85}
-
-    /* Linhas horizontais de branches */
-    .row-branches{display:flex;align-items:center;gap:14px;width:100%;justify-content:center}
-
-    /* Conjunto “Operacional” e “Administrativa” lado a lado */
-    .pair{
-      display:flex;gap:80px;align-items:flex-start;flex-wrap:wrap;justify-content:center;
-      margin-top:6px;
+    .grupo .titulo-grupo {
+      background: #f2f2f2;
+      padding: 4px 12px;
+      border: 2px solid #000;
+      border-radius: 6px;
+      font-weight: 800;
+      margin-bottom: 10px;
     }
 
-    /* Grids internos (pelotões / setores) */
-    .grid{
-      display:grid;gap:10px;
+    .linha-base {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .grid-ops{grid-template-columns: repeat(5, minmax(180px, 1fr))}
-    .grid-adm{grid-template-columns: repeat(6, minmax(160px, 1fr))}
 
-    /* Caixas de grupos (Operacional/Admin) maiores */
-    .group{
-      display:flex;flex-direction:column;align-items:center;gap:8px;
-      max-width:520px;
+    .caixa {
+      border: 2px solid #000;
+      border-radius: 6px;
+      background: #f2f2f2;
+      padding: 10px;
+      text-align: center;
+      min-width: 130px;
+      font-weight: bold;
+      text-transform: uppercase;
     }
-    .group .node{min-width:260px}
 
-    /* Responsivo */
-    @media (max-width: 1100px){
-      .grid-ops{grid-template-columns: repeat(3, minmax(180px, 1fr))}
-      .grid-adm{grid-template-columns: repeat(3, minmax(160px, 1fr))}
-      .pair{gap:28px}
+    .people {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
     }
-    @media (max-width: 700px){
-      .grid-ops{grid-template-columns: repeat(2, minmax(160px, 1fr))}
-      .grid-adm{grid-template-columns: repeat(2, minmax(150px, 1fr))}
-      .node{min-width: 200px}
+
+    .person {
+      background: #fff;
+      border: 1px solid #000;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      width: 120px;
+    }
+
+    @media (max-width: 1000px) {
+      .linha-base { flex-direction: column; align-items: center; }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="left">
-      <!-- use sua logo existente -->
       <img class="logo" src="assets/logo-rotam.png" alt="ROTAM">
       <h1>Mapa da Força — Batalhão ROTAM</h1>
     </div>
@@ -134,111 +134,73 @@
   </header>
 
   <main>
-    <div class="organograma" id="organograma">
+    <div class="organograma">
 
-      <!-- Topo: BATALHÃO -->
-      <div class="node">
-        <div class="title">Batalhão ROTAM</div>
-        <div class="subtitle">Organograma do Efetivo</div>
-      </div>
+      <!-- topo -->
+      <div class="node">Batalhão ROTAM</div>
+      <div class="node">Comando ROTAM</div>
+      <div class="node">Subcomando ROTAM</div>
 
-      <div class="v-line v-24"></div>
-
-      <!-- COMANDO -->
-      <div class="node">
-        <div class="title">Comando ROTAM</div>
-        <div class="people" id="slot-comando"><!-- pessoas do comando --></div>
-      </div>
-
-      <div class="v-line v-24"></div>
-
-      <!-- SUBCOMANDO -->
-      <div class="node">
-        <div class="title">Subcomando ROTAM</div>
-        <div class="people" id="slot-subcomando"><!-- pessoas do subcomando --></div>
-      </div>
-
-      <div class="v-line v-32"></div>
-
-      <!-- Ramificação Operacional x Administrativa -->
-      <div class="row-branches" style="gap:0;width:100%;max-width:900px;">
-        <div class="h-line h-40"></div>
-        <div class="v-line v-16"></div>
-        <div class="h-line h-100"></div>
-        <div class="v-line v-16"></div>
-        <div class="h-line h-40"></div>
-      </div>
-
-      <div class="pair">
-        <!-- OPERACIONAL -->
-        <div class="group">
-          <div class="node">
-            <div class="title">Coordenação Operacional</div>
-          </div>
-          <div class="grid grid-ops">
-            <div class="node">
-              <div class="title">1º Pelotão</div>
+      <!-- coordenações -->
+      <div class="linha-base">
+        <div class="grupo">
+          <div class="titulo-grupo">Coordenação Operacional</div>
+          <div class="linha-base">
+            <div class="caixa">
+              1º Pelotão
               <div class="people" id="slot-op-1"></div>
             </div>
-            <div class="node">
-              <div class="title">2º Pelotão</div>
+            <div class="caixa">
+              2º Pelotão
               <div class="people" id="slot-op-2"></div>
             </div>
-            <div class="node">
-              <div class="title">3º Pelotão</div>
+            <div class="caixa">
+              3º Pelotão
               <div class="people" id="slot-op-3"></div>
             </div>
-            <div class="node">
-              <div class="title">4º Pelotão</div>
+            <div class="caixa">
+              4º Pelotão
               <div class="people" id="slot-op-4"></div>
             </div>
-            <div class="node">
-              <div class="title">Intel ROTAM</div>
+            <div class="caixa">
+              Intel ROTAM
               <div class="people" id="slot-op-intel"></div>
             </div>
           </div>
         </div>
 
-        <!-- ADMINISTRATIVA -->
-        <div class="group">
-          <div class="node">
-            <div class="title">Coordenação Administrativa</div>
-          </div>
-          <div class="grid grid-adm">
-            <div class="node">
-              <div class="title">P1</div>
+        <div class="grupo">
+          <div class="titulo-grupo">Coordenação Administrativa</div>
+          <div class="linha-base">
+            <div class="caixa">
+              P1
               <div class="people" id="slot-adm-p1"></div>
             </div>
-            <div class="node">
-              <div class="title">P2</div>
+            <div class="caixa">
+              P2
               <div class="people" id="slot-adm-p2"></div>
             </div>
-            <div class="node">
-              <div class="title">P3</div>
+            <div class="caixa">
+              P3
               <div class="people" id="slot-adm-p3"></div>
             </div>
-            <div class="node">
-              <div class="title">P4</div>
+            <div class="caixa">
+              P4
               <div class="people" id="slot-adm-p4"></div>
             </div>
-            <div class="node">
-              <div class="title">SIESP</div>
+            <div class="caixa">
+              P5
+              <div class="people" id="slot-adm-p5"></div>
+            </div>
+            <div class="caixa">
+              SIESP
               <div class="people" id="slot-adm-siesp"></div>
             </div>
-            <div class="node">
-              <div class="title">SD</div>
+            <div class="caixa">
+              SD
               <div class="people" id="slot-adm-sd"></div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- (Opcional) Não classificados -->
-      <div id="nao-classificados-wrapper" style="display:none;align-items:center;flex-direction:column;gap:6px;margin-top:18px;">
-        <div class="v-line v-24"></div>
-        <div class="node">
-          <div class="title">Outros / A classificar</div>
-          <div class="people" id="slot-outros"></div>
         </div>
       </div>
 
@@ -246,87 +208,45 @@
   </main>
 
   <script>
-    // Lê do mesmo storage do cadastro_militar.html
+    // Leitura do armazenamento local
     const militares = JSON.parse(localStorage.getItem('mapaForcaROTAM')) || [];
 
-    // Mapeia cada militar para um "slot" do organograma, baseado em palavras-chave
-    function bucketDoMilitar(m){
-      const nome = (m.nome||'').toLowerCase();
-      const pat  = (m.patente||'').toLowerCase();
-      const func = (m.funcao||'').toLowerCase();
-      const setor= (m.setor||'').toLowerCase();
-
-      // COMANDO / SUBCOMANDO
-      if ( /subcomand/.test(func) || /sub.?comand/.test(func) ) return 'slot-subcomando';
-      if ( setor.includes('comando') || /comand/.test(func) || /comand/.test(nome) ) return 'slot-comando';
-
-      // OPERACIONAL – pelotões
-      const isOperacional = setor.includes('operacion') || /pelot[aã]o|pelotao/.test(func) || /alpha|bravo|alfa|charlie|delta/.test(func);
-      if (isOperacional){
-        if ( /(1º|1o|1°|^1\b|pelot[aã]o.*1)/.test(func) ) return 'slot-op-1';
-        if ( /(2º|2o|2°|^2\b|pelot[aã]o.*2)/.test(func) ) return 'slot-op-2';
-        if ( /(3º|3o|3°|^3\b|pelot[aã]o.*3)/.test(func) ) return 'slot-op-3';
-        if ( /(4º|4o|4°|^4\b|pelot[aã]o.*4)/.test(func) ) return 'slot-op-4';
-        if ( /intel|intelig[êe]ncia/.test(func) ) return 'slot-op-intel';
-      }
-      // Administrativa
-      const isAdm = setor.includes('admin') || /(p1|p2|p3|p4|siesp|sd)/.test(func);
-      if (isAdm){
-        if (/[^a-z0-9]p1[^a-z0-9]?|^p1$/.test(' '+func+' ')) return 'slot-adm-p1';
-        if (/[^a-z0-9]p2[^a-z0-9]?|^p2$/.test(' '+func+' ')) return 'slot-adm-p2';
-        if (/[^a-z0-9]p3[^a-z0-9]?|^p3$/.test(' '+func+' ')) return 'slot-adm-p3';
-        if (/[^a-z0-9]p4[^a-z0-9]?|^p4$/.test(' '+func+' ')) return 'slot-adm-p4';
-        if (/siesp/.test(func)) return 'slot-adm-siesp';
-        if (/[^a-z0-9]sd[^a-z0-9]?|^sd$/.test(' '+func+' ')) return 'slot-adm-sd';
-      }
-
-      // Intel pode vir sem setor explícito
-      if (/intel|intelig[êe]ncia/.test(func)) return 'slot-op-intel';
-
-      // Sem correspondência -> Outros
-      return 'slot-outros';
-    }
-
-    function criaCardPessoa(m){
+    function criaCardPessoa(m) {
       const div = document.createElement('div');
       div.className = 'person';
-      const imgSrc = m.foto || 'assets/sem_foto.png';
-      div.innerHTML = `
-        <img class="avatar" src="${imgSrc}" alt="${m.nome||''}">
-        <div class="p-info">
-          <div class="p-name">${(m.patente||'').toUpperCase()} ${(m.nome||'')}</div>
-          <div class="p-role">${m.funcao||''}</div>
-        </div>
-      `;
+      div.innerHTML = `<b>${(m.patente || '').toUpperCase()}</b> ${m.nome || ''}`;
       return div;
     }
 
-    function render(){
-      const ids = [
-        'slot-comando','slot-subcomando',
-        'slot-op-1','slot-op-2','slot-op-3','slot-op-4','slot-op-intel',
-        'slot-adm-p1','slot-adm-p2','slot-adm-p3','slot-adm-p4','slot-adm-siesp','slot-adm-sd',
-        'slot-outros'
-      ];
-      ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = '';
-      });
+    function bucketDoMilitar(m) {
+      const func = (m.funcao || '').toLowerCase();
+      const setor = (m.setor || '').toLowerCase();
 
-      let temOutros = false;
+      if (/1º|1o|1°/.test(func)) return 'slot-op-1';
+      if (/2º|2o|2°/.test(func)) return 'slot-op-2';
+      if (/3º|3o|3°/.test(func)) return 'slot-op-3';
+      if (/4º|4o|4°/.test(func)) return 'slot-op-4';
+      if (/intel|intelig/.test(func)) return 'slot-op-intel';
 
+      if (/p1/.test(func)) return 'slot-adm-p1';
+      if (/p2/.test(func)) return 'slot-adm-p2';
+      if (/p3/.test(func)) return 'slot-adm-p3';
+      if (/p4/.test(func)) return 'slot-adm-p4';
+      if (/p5/.test(func)) return 'slot-adm-p5';
+      if (/siesp/.test(func)) return 'slot-adm-siesp';
+      if (/sd/.test(func)) return 'slot-adm-sd';
+
+      return null;
+    }
+
+    function render() {
       militares.forEach(m => {
         const slot = bucketDoMilitar(m);
-        const el = document.getElementById(slot);
-        if (el){
-          el.appendChild(criaCardPessoa(m));
-          if (slot === 'slot-outros') temOutros = true;
+        if (slot) {
+          const el = document.getElementById(slot);
+          if (el) el.appendChild(criaCardPessoa(m));
         }
       });
-
-      // Mostrar bloco "Outros" somente se necessário
-      const wrapOutros = document.getElementById('nao-classificados-wrapper');
-      if (wrapOutros) wrapOutros.style.display = temOutros ? 'flex' : 'none';
     }
 
     document.addEventListener('DOMContentLoaded', render);
