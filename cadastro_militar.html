@@ -1,48 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cadastro Militar - Sistema ROTAM</title>
 
-  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 
   <style>
     body {
       background: #f4f4f4;
       font-family: Arial, sans-serif;
     }
+
     .container {
       max-width: 1100px;
       margin: 30px auto;
       background: #fff;
       padding: 25px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+
     h2 {
       text-align: center;
       font-weight: bold;
       margin-bottom: 25px;
     }
+
     .btn-voltar {
       background: #6c757d;
       color: white;
       border: none;
       margin-bottom: 20px;
     }
-    .btn-voltar:hover { background: #5a6268; }
+
+    .btn-voltar:hover {
+      background: #5a6268;
+    }
+
     .btn-mapa {
       float: right;
       background: #0d6efd;
       color: white;
       border: none;
     }
-    .btn-mapa:hover { background: #0b5ed7; }
+
+    .btn-mapa:hover {
+      background: #0b5ed7;
+    }
+
     .efetivo {
       display: flex;
       flex-wrap: wrap;
@@ -50,6 +59,7 @@
       justify-content: center;
       margin-top: 25px;
     }
+
     .card-militar {
       background: #fafafa;
       border: 1px solid #ccc;
@@ -60,7 +70,11 @@
       transition: transform 0.2s ease;
       position: relative;
     }
-    .card-militar:hover { transform: scale(1.05); }
+
+    .card-militar:hover {
+      transform: scale(1.05);
+    }
+
     .card-militar img {
       width: 90px;
       height: 90px;
@@ -69,16 +83,19 @@
       margin-bottom: 8px;
       border: 2px solid #444;
     }
+
     .card-militar h5 {
       font-size: 16px;
       margin-bottom: 4px;
       font-weight: bold;
     }
+
     .card-militar p {
       margin: 0;
       font-size: 13px;
       color: #555;
     }
+
     .delete-btn {
       position: absolute;
       top: 5px;
@@ -89,14 +106,25 @@
       font-size: 18px;
       cursor: pointer;
     }
-    .delete-btn:hover { color: #a00; }
-    .btn-success { margin-top: 10px; }
-    hr { margin: 30px 0; }
+
+    .delete-btn:hover {
+      color: #a00;
+    }
+
+    .btn-success {
+      margin-top: 10px;
+    }
+
+    hr {
+      margin: 30px 0;
+    }
+
     #mural {
       padding: 10px;
       border-radius: 10px;
       background: white;
     }
+
     .search-box {
       margin: 10px auto 20px;
       max-width: 400px;
@@ -104,16 +132,19 @@
       align-items: center;
       gap: 8px;
     }
+
     .search-box input {
       flex: 1;
       padding: 8px 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
+
     .search-box i {
       color: #555;
       font-size: 20px;
     }
+
     footer {
       text-align: center;
       margin-top: 30px;
@@ -122,27 +153,26 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="d-flex justify-content-between">
       <button class="btn btn-voltar" onclick="window.location.href='./index.html'">⬅ Voltar</button>
-      <button class="btn btn-mapa" onclick="window.location.href='./mapa_forca.html'">
-        📊 Ver Mapa da Força
-      </button>
+      <button class="btn btn-mapa" onclick="window.location.href='./mapa_forca.html'">📊 Ver Mapa da Força</button>
     </div>
 
     <h2>👮‍♂️ Cadastro de Efetivo ROTAM</h2>
 
     <div class="search-box">
       <i class="bi bi-search"></i>
-      <input type="text" id="busca" placeholder="Buscar por nome, patente ou função...">
+      <input type="text" id="busca" placeholder="Buscar por nome, patente ou função..." />
     </div>
 
     <form id="formMilitar" class="mb-4">
       <div class="row">
         <div class="col-md-3">
           <label>Nome:</label>
-          <input type="text" id="nome" class="form-control" placeholder="Ex: Cb Nunes" required>
+          <input type="text" id="nome" class="form-control" placeholder="Ex: Cb Nunes" required />
         </div>
         <div class="col-md-2">
           <label>Patente:</label>
@@ -159,7 +189,7 @@
         </div>
         <div class="col-md-3">
           <label>Função / Setor:</label>
-          <input type="text" id="funcao" class="form-control" placeholder="Ex: Equipe Alfa 01" required>
+          <input type="text" id="funcao" class="form-control" placeholder="Ex: Equipe Alfa 01" required />
         </div>
         <div class="col-md-2">
           <label>Setor:</label>
@@ -172,7 +202,7 @@
         </div>
         <div class="col-md-2">
           <label>Foto:</label>
-          <input type="file" id="foto" class="form-control" accept="image/*">
+          <input type="file" id="foto" class="form-control" accept="image/*" />
         </div>
       </div>
 
@@ -180,18 +210,21 @@
         <button type="submit" class="btn btn-success">
           <i class="bi bi-person-plus"></i> Adicionar Militar
         </button>
-        <button type="button" id="btnPDF" class="btn btn-danger ms-2">
-          <i class="bi bi-file-earmark-pdf"></i> Gerar PDF
-        </button>
       </div>
     </form>
 
-    <hr>
+    <hr />
 
     <ul class="nav nav-tabs" id="setoresTabs">
-      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#comando">👮‍✈️ Comando</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#administracao">📋 Administração</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#operacional">⚔️ Operacional</button></li>
+      <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#comando">👮‍✈️ Comando</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#administracao">📋 Administração</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#operacional">⚔️ Operacional</button>
+      </li>
     </ul>
 
     <div class="tab-content mt-3" id="mural">
@@ -200,18 +233,14 @@
       <div class="tab-pane fade" id="operacional"><div class="efetivo" id="listaOperacional"></div></div>
     </div>
 
-    <footer>
-      Quartel do Batalhão ROTAM — Cuiabá/MT
-    </footer>
+    <footer>Quartel do Batalhão ROTAM — Cuiabá/MT</footer>
   </div>
 
   <script>
     const API_URL = "https://rotam-backend-production.up.railway.app/api/efetivo";
-    const form = document.getElementById("formMilitar");
-    const busca = document.getElementById("busca");
 
-    // Carregar militares do servidor
-    document.addEventListener("DOMContentLoaded", () => renderizarEfetivo());
+    document.addEventListener("DOMContentLoaded", carregarEfetivo);
+    const form = document.getElementById("formMilitar");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -232,74 +261,45 @@
         fotoBase64 = await converterParaBase64(fotoInput.files[0]);
       }
 
-      const militar = { nome, patente, funcao, setor, foto: fotoBase64 };
+      const novoMilitar = { nome, patente, funcao, setor, foto: fotoBase64 };
 
-      try {
-        const resp = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(militar),
-        });
+      const resposta = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(novoMilitar),
+      });
 
-        if (resp.ok) {
-          alert("Militar cadastrado com sucesso!");
-          form.reset();
-          renderizarEfetivo();
-        } else {
-          alert("Erro ao salvar militar no servidor.");
-        }
-      } catch (err) {
-        console.error(err);
-        alert("Erro de conexão com o servidor.");
+      if (resposta.ok) {
+        alert("✅ Militar cadastrado com sucesso!");
+        form.reset();
+        carregarEfetivo();
+      } else {
+        alert("❌ Erro ao cadastrar militar!");
       }
     });
 
-    async function renderizarEfetivo(filtro = "") {
+    async function carregarEfetivo() {
+      const resposta = await fetch(API_URL);
+      const militares = await resposta.json();
+
       const setores = {
         Comando: document.getElementById("listaComando"),
         Administração: document.getElementById("listaAdministracao"),
         Operacional: document.getElementById("listaOperacional"),
       };
-      Object.values(setores).forEach(div => (div.innerHTML = ""));
 
-      try {
-        const resp = await fetch(API_URL);
-        const militares = await resp.json();
+      Object.values(setores).forEach((div) => (div.innerHTML = ""));
 
-        const termo = filtro.toLowerCase();
-        militares.forEach((m) => {
-          if (
-            !filtro ||
-            m.nome.toLowerCase().includes(termo) ||
-            m.patente.toLowerCase().includes(termo) ||
-            m.funcao.toLowerCase().includes(termo)
-          ) {
-            const card = document.createElement("div");
-            card.classList.add("card-militar");
-            card.innerHTML = `
-              <button class="delete-btn" onclick="excluirMilitar(${m.id})"><i class='bi bi-x-circle'></i></button>
-              <img src="${m.foto || 'assets/sem_foto.png'}" alt="${m.nome}">
-              <h5>${m.patente} ${m.nome}</h5>
-              <p>${m.funcao}</p>
-            `;
-            if (setores[m.setor]) setores[m.setor].appendChild(card);
-          }
-        });
-      } catch (err) {
-        console.error("Erro ao carregar efetivo:", err);
-      }
-    }
-
-    async function excluirMilitar(id) {
-      if (confirm("Deseja realmente remover este militar?")) {
-        try {
-          const resp = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-          if (resp.ok) renderizarEfetivo();
-          else alert("Erro ao excluir militar.");
-        } catch (err) {
-          console.error(err);
-        }
-      }
+      militares.forEach((m) => {
+        const card = document.createElement("div");
+        card.classList.add("card-militar");
+        card.innerHTML = `
+          <img src="${m.foto || "assets/sem_foto.png"}" alt="${m.nome}">
+          <h5>${m.patente} ${m.nome}</h5>
+          <p>${m.funcao}</p>
+        `;
+        if (setores[m.setor]) setores[m.setor].appendChild(card);
+      });
     }
 
     function converterParaBase64(file) {
