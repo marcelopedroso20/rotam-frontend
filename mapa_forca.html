@@ -82,6 +82,20 @@
 
     .btn-voltar:hover { background: #5a6268; }
 
+    .btn-atualizar {
+      position: absolute;
+      right: 30px;
+      top: 25px;
+      background: #198754;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-atualizar:hover { background: #157347; }
+
     footer {
       margin-top: 30px;
       font-size: 13px;
@@ -99,6 +113,7 @@
 <body>
 
   <button class="btn-voltar" onclick="window.location.href='./cadastro_militar.html'">⬅ Voltar</button>
+  <button class="btn-atualizar" onclick="carregarMapa()">🔁 Atualizar Dados</button>
 
   <div class="titulo-cabecalho">
     <h2>BATALHÃO ROTAM</h2>
@@ -138,29 +153,49 @@
   <script>
     const API_URL = "https://rotam-backend-production.up.railway.app/api/efetivo";
 
-    document.addEventListener("DOMContentLoaded", async () => {
+    async function carregarMapa() {
       try {
+        // Mostra carregando
+        document.body.style.cursor = "wait";
+
+        // Limpa áreas antigas
+        limparSetores();
+
+        // Busca militares do banco
         const resposta = await fetch(API_URL);
         const militares = await resposta.json();
 
-        // Agrupando militares por setor
+        // Agrupa por setor
         const comando = militares.filter(m => m.setor === "Comando");
         const admin = militares.filter(m => m.setor === "Administração");
         const oper = militares.filter(m => m.setor === "Operacional");
 
-        // Montando DOM
-        preencherSetor(comando, "COMANDO ROTAM");
+        // Preenche DOM
+        preencherSetor(comando, "comando-rotam");
         preencherSetor(admin, "administrativo");
         preencherSetor(oper, "operacional");
 
       } catch (err) {
         console.error("Erro ao carregar efetivo:", err);
+        alert("❌ Erro ao carregar dados do banco!");
+      } finally {
+        document.body.style.cursor = "default";
       }
-    });
+    }
+
+    function limparSetores() {
+      ["operacional", "administrativo"].forEach(id => {
+        const div = document.getElementById(id);
+        if (div) {
+          const caixasFixas = div.querySelectorAll(".caixa");
+          div.innerHTML = "";
+          caixasFixas.forEach(caixa => div.appendChild(caixa)); // mantém estrutura base
+        }
+      });
+    }
 
     function preencherSetor(lista, idContainer) {
       const container = document.getElementById(idContainer);
-
       if (!container) return;
 
       lista.forEach(m => {
@@ -173,6 +208,9 @@
         container.appendChild(div);
       });
     }
+
+    // Carrega mapa ao abrir a página
+    document.addEventListener("DOMContentLoaded", carregarMapa);
   </script>
 </body>
 </html>
