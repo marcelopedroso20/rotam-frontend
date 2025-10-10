@@ -68,6 +68,13 @@
       top: -25px;
     }
 
+    .contador {
+      font-size: 14px;
+      font-weight: bold;
+      color: #444;
+      margin-bottom: 10px;
+    }
+
     .btn-voltar {
       position: absolute;
       left: 30px;
@@ -96,6 +103,32 @@
 
     .btn-atualizar:hover { background: #157347; }
 
+    .alerta {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: none;
+      min-width: 300px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      animation: fadeInOut 4s ease-in-out forwards;
+    }
+
+    .alerta.sucesso { background: #198754; }
+    .alerta.erro { background: #dc3545; }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translate(-50%, -10px); }
+      10% { opacity: 1; transform: translate(-50%, 0); }
+      90% { opacity: 1; transform: translate(-50%, 0); }
+      100% { opacity: 0; transform: translate(-50%, -10px); }
+    }
+
     footer {
       margin-top: 30px;
       font-size: 13px;
@@ -115,6 +148,9 @@
   <button class="btn-voltar" onclick="window.location.href='./cadastro_militar.html'">⬅ Voltar</button>
   <button class="btn-atualizar" onclick="carregarMapa()">🔁 Atualizar Dados</button>
 
+  <!-- Alerta de status -->
+  <div id="alerta" class="alerta"></div>
+
   <div class="titulo-cabecalho">
     <h2>BATALHÃO ROTAM</h2>
     <div class="linha-separadora"></div>
@@ -125,8 +161,10 @@
     <div class="caixa">SUBCOMANDO ROTAM</div>
   </div>
 
+  <!-- BLOCO OPERACIONAL -->
   <div class="container-bloco">
     <div class="titulo-bloco">Coordenação Operacional</div>
+    <div id="contador-operacional" class="contador">Militares: 0</div>
     <div id="operacional">
       <div class="caixa">1º PELOTÃO</div>
       <div class="caixa">2º PELOTÃO</div>
@@ -136,8 +174,10 @@
     </div>
   </div>
 
+  <!-- BLOCO ADMINISTRATIVO -->
   <div class="container-bloco">
     <div class="titulo-bloco">Coordenação Administrativa</div>
+    <div id="contador-admin" class="contador">Militares: 0</div>
     <div id="administrativo">
       <div class="caixa">P1</div>
       <div class="caixa">P3</div>
@@ -148,6 +188,13 @@
     </div>
   </div>
 
+  <!-- BLOCO COMANDO -->
+  <div class="container-bloco">
+    <div class="titulo-bloco">Comando Geral</div>
+    <div id="contador-comando" class="contador">Militares: 0</div>
+    <div id="comando-rotam"></div>
+  </div>
+
   <footer>Quartel do Batalhão ROTAM — Cuiabá/MT</footer>
 
   <script>
@@ -155,13 +202,13 @@
 
     async function carregarMapa() {
       try {
-        // Mostra carregando
         document.body.style.cursor = "wait";
+        mostrarAlerta("🔄 Atualizando dados...", "sucesso");
 
-        // Limpa áreas antigas
+        // Limpa os setores
         limparSetores();
 
-        // Busca militares do banco
+        // Busca militares
         const resposta = await fetch(API_URL);
         const militares = await resposta.json();
 
@@ -170,27 +217,31 @@
         const admin = militares.filter(m => m.setor === "Administração");
         const oper = militares.filter(m => m.setor === "Operacional");
 
-        // Preenche DOM
+        // Renderiza
         preencherSetor(comando, "comando-rotam");
         preencherSetor(admin, "administrativo");
         preencherSetor(oper, "operacional");
 
+        // Atualiza contadores
+        atualizarContadores({
+          comando: comando.length,
+          admin: admin.length,
+          oper: oper.length
+        });
+
+        mostrarAlerta("✅ Dados atualizados com sucesso!", "sucesso");
       } catch (err) {
         console.error("Erro ao carregar efetivo:", err);
-        alert("❌ Erro ao carregar dados do banco!");
+        mostrarAlerta("❌ Erro ao carregar dados!", "erro");
       } finally {
         document.body.style.cursor = "default";
       }
     }
 
     function limparSetores() {
-      ["operacional", "administrativo"].forEach(id => {
+      ["comando-rotam", "operacional", "administrativo"].forEach(id => {
         const div = document.getElementById(id);
-        if (div) {
-          const caixasFixas = div.querySelectorAll(".caixa");
-          div.innerHTML = "";
-          caixasFixas.forEach(caixa => div.appendChild(caixa)); // mantém estrutura base
-        }
+        if (div) div.innerHTML = "";
       });
     }
 
@@ -209,7 +260,21 @@
       });
     }
 
-    // Carrega mapa ao abrir a página
+    function atualizarContadores(contagem) {
+      document.getElementById("contador-comando").textContent = `Militares: ${contagem.comando}`;
+      document.getElementById("contador-admin").textContent = `Militares: ${contagem.admin}`;
+      document.getElementById("contador-operacional").textContent = `Militares: ${contagem.oper}`;
+    }
+
+    function mostrarAlerta(mensagem, tipo) {
+      const alerta = document.getElementById("alerta");
+      alerta.textContent = mensagem;
+      alerta.className = `alerta ${tipo}`;
+      alerta.style.display = "block";
+      setTimeout(() => alerta.style.display = "none", 4000);
+    }
+
+    // Carrega mapa ao abrir
     document.addEventListener("DOMContentLoaded", carregarMapa);
   </script>
 </body>
