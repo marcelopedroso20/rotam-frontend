@@ -16,7 +16,6 @@
       background: #f4f4f4;
       font-family: Arial, sans-serif;
     }
-
     .container {
       max-width: 1100px;
       margin: 30px auto;
@@ -25,31 +24,25 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     h2 {
       text-align: center;
       font-weight: bold;
       margin-bottom: 25px;
     }
-
     .btn-voltar {
       background: #6c757d;
       color: white;
       border: none;
       margin-bottom: 20px;
     }
-
     .btn-voltar:hover { background: #5a6268; }
-
     .btn-mapa {
       float: right;
       background: #0d6efd;
       color: white;
       border: none;
     }
-
     .btn-mapa:hover { background: #0b5ed7; }
-
     .efetivo {
       display: flex;
       flex-wrap: wrap;
@@ -57,7 +50,6 @@
       justify-content: center;
       margin-top: 25px;
     }
-
     .card-militar {
       background: #fafafa;
       border: 1px solid #ccc;
@@ -68,9 +60,7 @@
       transition: transform 0.2s ease;
       position: relative;
     }
-
     .card-militar:hover { transform: scale(1.05); }
-
     .card-militar img {
       width: 90px;
       height: 90px;
@@ -79,19 +69,16 @@
       margin-bottom: 8px;
       border: 2px solid #444;
     }
-
     .card-militar h5 {
       font-size: 16px;
       margin-bottom: 4px;
       font-weight: bold;
     }
-
     .card-militar p {
       margin: 0;
       font-size: 13px;
       color: #555;
     }
-
     .delete-btn {
       position: absolute;
       top: 5px;
@@ -102,25 +89,14 @@
       font-size: 18px;
       cursor: pointer;
     }
-
     .delete-btn:hover { color: #a00; }
-
     .btn-success { margin-top: 10px; }
-
     hr { margin: 30px 0; }
-
     #mural {
       padding: 10px;
       border-radius: 10px;
       background: white;
     }
-
-    .logo-header {
-      width: 80px;
-      display: block;
-      margin: 10px auto;
-    }
-
     .search-box {
       margin: 10px auto 20px;
       max-width: 400px;
@@ -128,19 +104,16 @@
       align-items: center;
       gap: 8px;
     }
-
     .search-box input {
       flex: 1;
       padding: 8px 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
-
     .search-box i {
       color: #555;
       font-size: 20px;
     }
-
     footer {
       text-align: center;
       margin-top: 30px;
@@ -160,13 +133,11 @@
 
     <h2>👮‍♂️ Cadastro de Efetivo ROTAM</h2>
 
-    <!-- Campo de busca -->
     <div class="search-box">
       <i class="bi bi-search"></i>
       <input type="text" id="busca" placeholder="Buscar por nome, patente ou função...">
     </div>
 
-    <!-- Formulário -->
     <form id="formMilitar" class="mb-4">
       <div class="row">
         <div class="col-md-3">
@@ -217,7 +188,6 @@
 
     <hr>
 
-    <!-- Abas dos Setores -->
     <ul class="nav nav-tabs" id="setoresTabs">
       <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#comando">👮‍✈️ Comando</button></li>
       <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#administracao">📋 Administração</button></li>
@@ -236,86 +206,99 @@
   </div>
 
   <script>
-    const form = document.getElementById('formMilitar');
-    const btnPDF = document.getElementById('btnPDF');
-    const busca = document.getElementById('busca');
+    const API_URL = "https://rotam-backend-production.up.railway.app/api/efetivo";
+    const form = document.getElementById("formMilitar");
+    const busca = document.getElementById("busca");
 
-    document.addEventListener('DOMContentLoaded', () => renderizarEfetivo(''));
+    // Carregar militares do servidor
+    document.addEventListener("DOMContentLoaded", () => renderizarEfetivo());
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const nome = document.getElementById('nome').value.trim();
-      const patente = document.getElementById('patente').value;
-      const funcao = document.getElementById('funcao').value.trim();
-      const setor = document.getElementById('setor').value;
-      const fotoInput = document.getElementById('foto');
+
+      const nome = document.getElementById("nome").value.trim();
+      const patente = document.getElementById("patente").value;
+      const funcao = document.getElementById("funcao").value.trim();
+      const setor = document.getElementById("setor").value;
+      const fotoInput = document.getElementById("foto");
 
       if (!nome || !patente || !funcao || !setor) {
-        alert('Preencha todos os campos obrigatórios.');
+        alert("Preencha todos os campos obrigatórios.");
         return;
       }
 
-      let fotoBase64 = '';
+      let fotoBase64 = "";
       if (fotoInput.files.length > 0) {
         fotoBase64 = await converterParaBase64(fotoInput.files[0]);
       }
 
       const militar = { nome, patente, funcao, setor, foto: fotoBase64 };
-      const listaSalva = JSON.parse(localStorage.getItem('mapaForcaROTAM')) || [];
-      listaSalva.push(militar);
-      localStorage.setItem('mapaForcaROTAM', JSON.stringify(listaSalva));
 
-      form.reset();
-      renderizarEfetivo('');
+      try {
+        const resp = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(militar),
+        });
+
+        if (resp.ok) {
+          alert("Militar cadastrado com sucesso!");
+          form.reset();
+          renderizarEfetivo();
+        } else {
+          alert("Erro ao salvar militar no servidor.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Erro de conexão com o servidor.");
+      }
     });
 
-    function renderizarEfetivo(filtro = '') {
-      const militares = JSON.parse(localStorage.getItem('mapaForcaROTAM')) || [];
-
+    async function renderizarEfetivo(filtro = "") {
       const setores = {
-        Comando: document.getElementById('listaComando'),
-        Administração: document.getElementById('listaAdministracao'),
-        Operacional: document.getElementById('listaOperacional'),
+        Comando: document.getElementById("listaComando"),
+        Administração: document.getElementById("listaAdministracao"),
+        Operacional: document.getElementById("listaOperacional"),
       };
+      Object.values(setores).forEach(div => (div.innerHTML = ""));
 
-      Object.values(setores).forEach(div => div.innerHTML = '');
+      try {
+        const resp = await fetch(API_URL);
+        const militares = await resp.json();
 
-      const termo = (typeof filtro === 'string') ? filtro.toLowerCase() : '';
-
-      militares.forEach((m, index) => {
-        if (
-          !termo ||
-          m.nome.toLowerCase().includes(termo) ||
-          m.patente.toLowerCase().includes(termo) ||
-          m.funcao.toLowerCase().includes(termo)
-        ) {
-          const card = document.createElement('div');
-          card.classList.add('card-militar');
-          card.innerHTML = `
-            <button class="delete-btn" onclick="excluirMilitar(${index})"><i class='bi bi-x-circle'></i></button>
-            <img src="${m.foto || 'assets/sem_foto.png'}" alt="${m.nome}">
-            <h5>${m.patente} ${m.nome}</h5>
-            <p>${m.funcao}</p>
-          `;
-          if (setores[m.setor]) setores[m.setor].appendChild(card);
-        }
-      });
-
-      for (let key in setores) {
-        if (setores[key].children.length === 0) {
-          setores[key].innerHTML = '<p class="text-muted">Nenhum militar cadastrado.</p>';
-        }
+        const termo = filtro.toLowerCase();
+        militares.forEach((m) => {
+          if (
+            !filtro ||
+            m.nome.toLowerCase().includes(termo) ||
+            m.patente.toLowerCase().includes(termo) ||
+            m.funcao.toLowerCase().includes(termo)
+          ) {
+            const card = document.createElement("div");
+            card.classList.add("card-militar");
+            card.innerHTML = `
+              <button class="delete-btn" onclick="excluirMilitar(${m.id})"><i class='bi bi-x-circle'></i></button>
+              <img src="${m.foto || 'assets/sem_foto.png'}" alt="${m.nome}">
+              <h5>${m.patente} ${m.nome}</h5>
+              <p>${m.funcao}</p>
+            `;
+            if (setores[m.setor]) setores[m.setor].appendChild(card);
+          }
+        });
+      } catch (err) {
+        console.error("Erro ao carregar efetivo:", err);
       }
     }
 
-    busca.addEventListener('input', (e) => renderizarEfetivo(e.target.value));
-
-    function excluirMilitar(index) {
-      if (confirm('Deseja realmente remover este militar?')) {
-        const militares = JSON.parse(localStorage.getItem('mapaForcaROTAM')) || [];
-        militares.splice(index, 1);
-        localStorage.setItem('mapaForcaROTAM', JSON.stringify(militares));
-        renderizarEfetivo('');
+    async function excluirMilitar(id) {
+      if (confirm("Deseja realmente remover este militar?")) {
+        try {
+          const resp = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+          if (resp.ok) renderizarEfetivo();
+          else alert("Erro ao excluir militar.");
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
 
@@ -325,51 +308,6 @@
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
         reader.onerror = (error) => reject(error);
-      });
-    }
-
-    // Geração de PDF
-    btnPDF.addEventListener('click', async () => {
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const logoUrl = 'assets/logo-rotam.png';
-      const logo = await carregarImagem(logoUrl);
-
-      if (logo) pdf.addImage(logo, 'PNG', 90, 8, 30, 30);
-
-      pdf.setFontSize(12);
-      pdf.text("POLÍCIA MILITAR DO ESTADO DE MATO GROSSO", 105, 45, { align: "center" });
-      pdf.text("BATALHÃO ROTAM - CADASTRO DE EFETIVO", 105, 52, { align: "center" });
-
-      const mural = document.getElementById('mural');
-      const canvas = await html2canvas(mural, { scale: 2 });
-      const imgData = canvas.toDataURL('image/png');
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      pdf.addImage(imgData, 'PNG', 0, 60, pdfWidth, pdfHeight - 20);
-      pdf.text(`Quartel ROTAM — Cuiabá/MT, ${new Date().toLocaleDateString()}`, 105, 290, { align: "center" });
-
-      const dataHora = new Date().toLocaleString().replace(/[/:]/g, '-');
-      pdf.save(`Cadastro_Efetivo_ROTAM_${dataHora}.pdf`);
-    });
-
-    function carregarImagem(url) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.onload = function () {
-          const canvas = document.createElement("canvas");
-          canvas.width = this.width;
-          canvas.height = this.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(this, 0, 0);
-          resolve(canvas.toDataURL("image/png"));
-        };
-        img.onerror = () => resolve(null);
-        img.src = url;
       });
     }
   </script>
