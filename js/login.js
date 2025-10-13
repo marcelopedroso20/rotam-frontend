@@ -14,37 +14,41 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const usuario = document.getElementById("username").value.trim();
+    const senha = document.getElementById("password").value.trim();
 
     try {
-      const res = await fetch(CONFIG.ENDPOINTS.login, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      // ✅ Envia dados para o backend ajustado
+      const res = await fetch(
+        "https://rotam-backend-production.up.railway.app/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ usuario, senha }),
+        }
+      );
 
       const data = await res.json();
 
-      if (res.ok && data.token) {
-        // 🔑 Salva token e usuário
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", username);
+      // 🔍 Verifica resposta
+      if (res.ok && data.success) {
+        // 🔑 Salva informações básicas (sem token ainda)
+        localStorage.setItem("usuario", data.usuario);
+        localStorage.setItem("logado", "true");
 
-        // ✅ Redireciona para o painel
+        // ✅ Redireciona para o painel principal
         window.location.href = "index.html";
       } else {
         if (errorMsg) {
           errorMsg.style.display = "block";
-          errorMsg.textContent =
-            data.error || "Usuário ou senha incorretos.";
+          errorMsg.textContent = data.error || "Usuário ou senha incorretos.";
         }
       }
     } catch (err) {
-      console.error("Erro no login:", err);
+      console.error("❌ Erro no login:", err);
       if (errorMsg) {
         errorMsg.style.display = "block";
-        errorMsg.textContent = "❌ Erro ao conectar com o servidor.";
+        errorMsg.textContent = "Erro ao conectar com o servidor.";
       }
     }
   });
