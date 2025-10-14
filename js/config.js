@@ -1,34 +1,6 @@
-// ===============================
-// 🌐 Configuração Global do Sistema ROTAM
-// ===============================
-
-// URL base do backend
-const API_BASE_URL = "https://rotam-backend-production.up.railway.app";
-
-// Endpoints principais
-const ENDPOINTS = {
-  login: `${API_BASE_URL}/auth/login`,
-  occurrences: `${API_BASE_URL}/occurrences`,
-};
-
-// Função para pegar token salvo
-function getAuthToken() {
-  return localStorage.getItem("token");
-}
-
-// Função para montar headers autenticados
-function getAuthHeaders() {
-  const token = getAuthToken();
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
-
-// Exporta tudo em um objeto global
-window.CONFIG = {
-  API_BASE_URL,
-  ENDPOINTS,
-  getAuthToken,
-  getAuthHeaders,
-};
+// js/config.js
+const API_BASE = "https://rotam-backend-v2-production.up.railway.app/api";
+const BACKEND_MAP_URL = "https://rotam-backend-v2-production.up.railway.app/public/maps/mapa.html";
+function getToken(){ return localStorage.getItem('token'); }
+function authHeaders(){ const t=getToken(); return { 'Content-Type':'application/json', ...(t?{Authorization:`Bearer ${t}`}:{}) }; }
+window.CONFIG = { API_BASE, BACKEND_MAP_URL, getToken, authHeaders };
