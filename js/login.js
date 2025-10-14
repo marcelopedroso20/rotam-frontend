@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const usuario = document.getElementById("username").value.trim();
-    const senha = document.getElementById("password").value.trim();
+    const usuario = document.getElementById("usuario").value.trim();
+    const senha = document.getElementById("senha").value.trim();
 
     try {
       // ✅ Envia dados para o backend ajustado
