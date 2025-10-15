@@ -1,18 +1,24 @@
 // ===============================
-// 🔐 Login ROTAM - v2 Aprimorado
+// 🔐 Login ROTAM - Versão aprimorada
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
-  const errorMsg = document.getElementById("errorMsg");
   const usernameInput = document.getElementById("username");
   const passwordInput = document.getElementById("password");
-  const btn = form.querySelector("button[type='submit']");
+  const errorMsg = document.getElementById("errorMsg");
+  const submitBtn = form ? form.querySelector("button[type='submit']") : null;
 
-  if (!form) return;
+  const API_URL = "https://rotam-backend-production.up.railway.app/api/auth/login";
+
+  if (!form) {
+    console.error("⚠️ Formulário de login não encontrado no DOM.");
+    return;
+  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const username = usernameInput.value.trim();
     const password = passwordInput.value.trim();
 
@@ -21,55 +27,47 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    btn.disabled = true;
-    btn.innerText = "⏳ Conectando...";
-
     try {
-      const res = await fetch(`${CONFIG.API_BASE}/auth/login`, {
+      if (submitBtn) submitBtn.disabled = true;
+      showError("⏳ Conectando ao servidor...");
+
+      const response = await fetch(API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ usuario: username, senha: password }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password })
       });
 
-      if (res.status === 404) {
-        showError("❌ Rota de login não encontrada (404).");
-      } else if (res.status === 401) {
-        showError("🔒 Usuário ou senha incorretos.");
-      } else if (res.status === 500) {
-        showError("💥 Erro interno no servidor. Tente novamente.");
-      } else if (!res.ok) {
-        showError(`⚠️ Erro inesperado (${res.status}).`);
-      } else {
-        const data = await res.json();
-        if (data && data.token) {
-          localStorage.setItem("token", data.token);
-          window.location.href = "index.html";
-        } else {
-          showError("⚠️ Resposta inválida do servidor.");
-        }
+      const data = await response.json();
+
+      if (!response.ok) {
+        showError(`❌ Erro: ${data.error || response.statusText}`);
+        if (submitBtn) submitBtn.disabled = false;
+        return;
       }
+
+      if (data.success) {
+        showError("✅ Login realizado com sucesso!");
+        localStorage.setItem("token", data.token);
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1000);
+      } else {
+        showError("❌ Usuário ou senha inválidos.");
+        if (submitBtn) submitBtn.disabled = false;
+      }
+
     } catch (err) {
-      console.error("Erro ao conectar:", err);
-      showError("🌐 Servidor indisponível. Verifique sua conexão.");
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Entrar";
+      console.error("Erro de conexão:", err);
+      showError("🚨 Erro ao conectar com o servidor.");
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 
-  function showError(msg) {
-    if (errorMsg) {
-      errorMsg.textContent = msg;
-      errorMsg.style.display = "block";
-      errorMsg.style.background = "#fee";
-      errorMsg.style.color = "#b00";
-      errorMsg.style.padding = "6px 10px";
-      errorMsg.style.borderRadius = "6px";
-      errorMsg.style.marginTop = "10px";
-      errorMsg.style.textAlign = "center";
-      errorMsg.style.fontWeight = "500";
-    } else {
-      alert(msg);
-    }
+  function showError(message) {
+    if (!errorMsg) return;
+    errorMsg.style.display = "block";
+    errorMsg.textContent = message;
   }
 });
