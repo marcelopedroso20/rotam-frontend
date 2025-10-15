@@ -1,5 +1,5 @@
 // ===============================
-// 🔐 Login ROTAM - Versão 2025 aprimorada
+// 🔐 Login ROTAM - Corrigido e aprimorado
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = passwordInput.value.trim();
 
     if (!username || !password) {
-      showError("⚠️ Informe o usuário e a senha.");
+      showError("⚠️ Usuário e senha obrigatórios.");
       return;
     }
 
