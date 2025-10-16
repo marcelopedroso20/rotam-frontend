@@ -1,5 +1,5 @@
 // ===============================
-// 🚪 ROTAM - Cabeçalho Global com Logout e Usuário Logado
+// 🚓 ROTAM - Cabeçalho Global com Logo, Usuário e Logout
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!token) {
     spanUsuario.textContent = "⚠️ Sessão expirada. Faça login novamente.";
-    window.location.href = "login.html";
+    setTimeout(() => (window.location.href = "login.html"), 1500);
     return;
   }
 
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const payload = JSON.parse(atob(token.split(".")[1]));
     const exp = payload.exp * 1000;
 
-    // Se o token expirou
+    // 🔒 Verifica expiração
     if (Date.now() > exp) {
       localStorage.removeItem("token");
       alert("Sessão expirada. Faça login novamente.");
@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Mostra o usuário logado
-    spanUsuario.textContent = `👮 Bem-vindo, ${payload.usuario.toUpperCase()} (${payload.role})`;
+    // ✅ Exibe informações do usuário logado
+    spanUsuario.textContent = `👮 ${payload.usuario.toUpperCase()} (${payload.role.toUpperCase()})`;
 
   } catch (err) {
     console.error("Erro ao decodificar token:", err);
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "login.html";
   }
 
-  // Logout global
+  // 🚪 Botão de logout
   if (btnLogout) {
     btnLogout.addEventListener("click", () => {
       if (confirm("Deseja realmente sair do sistema?")) {
@@ -43,8 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Efeito hover visual
-    btnLogout.addEventListener("mouseover", () => btnLogout.style.background = "#c9302c");
-    btnLogout.addEventListener("mouseout", () => btnLogout.style.background = "#d9534f");
+    // 💅 Efeito visual do botão
+    btnLogout.addEventListener("mouseover", () => (btnLogout.style.background = "#c9302c"));
+    btnLogout.addEventListener("mouseout", () => (btnLogout.style.background = "#d9534f"));
   }
 });
