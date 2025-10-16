@@ -3,28 +3,138 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROTAM - Painel Principal</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="icon" href="img/logo-rotam.png" />
+  <title>🚓 Sistema ROTAM - Painel Principal</title>
+
+  <!-- ✅ Ícone da aba -->
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+  <base href="/rotam-frontend/">
+
+  <!-- ✅ Bootstrap -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="./assets/style.css" />
 </head>
+
 <body>
-  <aside class="sidebar">
-    <img src="img/logo-rotam.png" class="logo" alt="Logo ROTAM">
-    <h2>ROTAM</h2>
-    <p id="userInfo">👮 Usuário: <b>Carregando...</b></p>
-    <nav>
-      <a href="cadastro_militar.html">🪖 Efetivo</a>
-      <a href="relatorios.html">📊 Relatórios</a>
-      <a href="mapa.html" target="_blank">🗺️ Mapa Real</a>
-    </nav>
-    <button id="logoutBtn" class="logout">🚪 Sair</button>
-  </aside>
+  <!-- ===============================
+       🚓 Cabeçalho Global ROTAM
+       =============================== -->
+  <header
+    id="topoRotam"
+    class="d-flex align-items-center justify-content-between bg-black text-white px-3 py-2 shadow sticky-top"
+  >
+    <div class="d-flex align-items-center">
+      <img
+        src="assets/logo-rotam.png"
+        alt="Logo ROTAM"
+        style="height: 40px; width: auto; margin-right: 10px"
+      />
+      <h5 class="m-0">BATALHÃO ROTAM</h5>
+    </div>
+    <div class="text-center flex-grow-1">
+      <span id="usuarioLogado" style="font-weight: 500"
+        >👮 Carregando usuário...</span
+      >
+    </div>
+    <button id="logoutGlobal" class="btn btn-danger btn-sm fw-bold px-3">
+      🚪 Sair
+    </button>
+  </header>
 
-  <main class="content">
-    <h1>Bem-vindo</h1>
-    <p>Utilize o menu ao lado para navegar.</p>
-  </main>
+  <!-- ===============================
+       🧭 MENU LATERAL
+       =============================== -->
+  <div class="sidebar">
+    <img src="assets/logo-rotam-120.png" alt="Logo ROTAM" />
+    <h4>PAINEL ROTAM</h4>
 
-  <script src="js/main.js"></script>
+    <button onclick="window.location.href='mapa_forca.html'">
+      🗺️ Mapa da Força
+    </button>
+    <button onclick="window.location.href='cadastro_militar.html'">
+      🪖 Cadastro Efetivo
+    </button>
+    <button onclick="window.location.href='relatorios.html'">
+      📊 Relatórios
+    </button>
+
+    <button
+      class="btn-logout"
+      onclick="if(confirm('Deseja realmente sair?')){localStorage.removeItem('token');window.location.href='login.html';}"
+    >
+      🚪 Sair
+    </button>
+  </div>
+
+  <!-- ===============================
+       📊 CONTEÚDO PRINCIPAL
+       =============================== -->
+  <div class="content">
+    <h2>Bem-vindo ao Sistema ROTAM</h2>
+
+    <p>
+      Este painel permite visualizar e gerenciar as informações operacionais da
+      <strong>Companhia ROTAM</strong> de forma ágil e centralizada.
+    </p>
+
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <div class="card text-center bg-dark text-light shadow-sm p-3">
+          <h5>🗺️ Mapa da Força</h5>
+          <p>Visualize a distribuição atual do efetivo e das viaturas.</p>
+          <button
+            onclick="window.location.href='mapa_forca.html'"
+            class="btn btn-outline-light w-100"
+          >
+            Acessar
+          </button>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card text-center bg-dark text-light shadow-sm p-3">
+          <h5>🪖 Efetivo</h5>
+          <p>Cadastre, edite e acompanhe os militares disponíveis.</p>
+          <button
+            onclick="window.location.href='cadastro_militar.html'"
+            class="btn btn-outline-light w-100"
+          >
+            Acessar
+          </button>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card text-center bg-dark text-light shadow-sm p-3">
+          <h5>📊 Relatórios</h5>
+          <p>Consulte e filtre as ocorrências registradas no sistema.</p>
+          <button
+            onclick="window.location.href='relatorios.html'"
+            class="btn btn-outline-light w-100"
+          >
+            Acessar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="text-center mt-5 text-muted">
+      <hr />
+      <p>
+        © 2025 Batalhão ROTAM — Cuiabá/MT <br />
+        Desenvolvido por <strong>Marcelo Pedroso</strong>
+      </p>
+    </footer>
+  </div>
+
+  <!-- ===============================
+       📎 SCRIPTS
+       =============================== -->
+  <script src="js/config.js"></script>
+  <script src="js/topo-rotam.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
