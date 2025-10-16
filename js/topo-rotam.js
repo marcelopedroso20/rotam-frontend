@@ -1,50 +1,39 @@
 // ===============================
-// 🚓 ROTAM - Cabeçalho Global com Logo, Usuário e Logout
+// 🎖️ topo-rotam.js — Cabeçalho global dinâmico
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
-  const spanUsuario = document.getElementById("usuarioLogado");
-  const btnLogout = document.getElementById("logoutGlobal");
-  const token = localStorage.getItem("token");
+  const topo = document.getElementById("topoRotam");
+  const usuarioSpan = document.getElementById("usuarioLogado");
 
-  if (!token) {
-    spanUsuario.textContent = "⚠️ Sessão expirada. Faça login novamente.";
-    setTimeout(() => (window.location.href = "login.html"), 1500);
-    return;
-  }
+  // Caso o cabeçalho não exista (por segurança)
+  if (!topo || !usuarioSpan) return;
 
   try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const exp = payload.exp * 1000;
-
-    // 🔒 Verifica expiração
-    if (Date.now() > exp) {
-      localStorage.removeItem("token");
-      alert("Sessão expirada. Faça login novamente.");
-      window.location.href = "login.html";
+    const token = localStorage.getItem("token");
+    if (!token) {
+      usuarioSpan.textContent = "⚠️ Usuário não autenticado";
+      setTimeout(() => (window.location.href = "./login.html"), 1500);
       return;
     }
 
-    // ✅ Exibe informações do usuário logado
-    spanUsuario.textContent = `👮 ${payload.usuario.toUpperCase()} (${payload.role.toUpperCase()})`;
+    // Decodifica o token JWT para extrair dados do usuário
+    const payload = JSON.parse(atob(token.split(".")[1] || "{}"));
+    const usuario = payload?.usuario || "Desconhecido";
+    const role = payload?.role || "user";
+
+    // Atualiza cabeçalho com nome e perfil formatados
+    usuarioSpan.innerHTML = `
+      👮 <strong>${usuario}</strong>
+      <small class="text-warning">(${role.toUpperCase()})</small>
+    `;
+
+    // Remove texto lateral antigo (caso ainda exista)
+    const duplicado = document.querySelector(".usuario-info-lateral");
+    if (duplicado) duplicado.remove();
 
   } catch (err) {
-    console.error("Erro ao decodificar token:", err);
-    localStorage.removeItem("token");
-    window.location.href = "login.html";
-  }
-
-  // 🚪 Botão de logout
-  if (btnLogout) {
-    btnLogout.addEventListener("click", () => {
-      if (confirm("Deseja realmente sair do sistema?")) {
-        localStorage.removeItem("token");
-        window.location.href = "login.html";
-      }
-    });
-
-    // 💅 Efeito visual do botão
-    btnLogout.addEventListener("mouseover", () => (btnLogout.style.background = "#c9302c"));
-    btnLogout.addEventListener("mouseout", () => (btnLogout.style.background = "#d9534f"));
+    console.error("Erro ao carregar topo ROTAM:", err);
+    usuarioSpan.textContent = "Erro ao carregar usuário";
   }
 });
