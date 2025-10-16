@@ -1,39 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Cadastro de Efetivo</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"></head>
-<body class="container py-4">
-  <h2>Cadastro de Efetivo</h2>
-  <form id="form-efetivo" class="row g-3">
-    <div class="col-md-4"><label class="form-label">Nome</label><input id="nome" class="form-control" required></div>
-    <div class="col-md-2"><label class="form-label">Patente</label><input id="patente" class="form-control" required></div>
-    <div class="col-md-3"><label class="form-label">Função</label><input id="funcao" class="form-control"></div>
-    <div class="col-md-3"><label class="form-label">Setor</label><input id="setor" class="form-control"></div>
-    <div class="col-md-2"><label class="form-label">Turno</label><input id="turno" class="form-control"></div>
-    <div class="col-md-3"><label class="form-label">Viatura</label><input id="viatura" class="form-control"></div>
-    <div class="col-md-3"><label class="form-label">Placa</label><input id="placa" class="form-control"></div>
-    <div class="col-md-2"><label class="form-label">Status</label><input id="status" class="form-control" placeholder="Disponível/Patrulha/Folga"></div>
-    <div class="col-md-2"><label class="form-label">Latitude</label><input id="latitude" class="form-control" readonly></div>
-    <div class="col-md-2"><label class="form-label">Longitude</label><input id="longitude" class="form-control" readonly></div>
-    <div class="col-md-4"><label class="form-label">Foto</label><input id="foto" type="file" accept="image/*" class="form-control"><img id="foto-preview" style="display:none;max-height:80px;margin-top:8px;border-radius:6px"/></div>
-    <div class="col-12">
-      <button id="btn-salvar" class="btn btn-success">Salvar</button>
-      <button id="btn-cancelar" type="button" class="btn btn-secondary">Cancelar</button>
-      <a href="index.html" class="btn btn-outline-dark">Voltar</a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>🪖 Cadastro de Efetivo - ROTAM</title>
+
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <base href="/rotam-frontend/">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-dark text-light">
+
+  <!-- 🔝 Cabeçalho Global ROTAM -->
+  <header id="topoRotam" class="d-flex justify-content-between align-items-center px-3 py-2 bg-black text-white sticky-top shadow">
+    <span id="usuarioLogado">👮 Carregando usuário...</span>
+    <button id="logoutGlobal" class="btn btn-danger btn-sm fw-bold">🚪 Sair</button>
+  </header>
+
+  <div class="container py-4">
+    <h2 class="mb-3">🪖 Cadastro de Efetivo</h2>
+
+    <form id="form-efetivo" class="row g-3">
+      <div class="col-md-4"><label class="form-label">Nome</label><input id="nome" class="form-control" required></div>
+      <div class="col-md-2"><label class="form-label">Patente</label><input id="patente" class="form-control" required></div>
+      <div class="col-md-3"><label class="form-label">Função</label><input id="funcao" class="form-control"></div>
+      <div class="col-md-3"><label class="form-label">Setor</label><input id="setor" class="form-control"></div>
+      <div class="col-md-2"><label class="form-label">Turno</label><input id="turno" class="form-control"></div>
+      <div class="col-md-3"><label class="form-label">Viatura</label><input id="viatura" class="form-control"></div>
+      <div class="col-md-3"><label class="form-label">Placa</label><input id="placa" class="form-control"></div>
+      <div class="col-md-2"><label class="form-label">Status</label><input id="status" class="form-control" placeholder="Disponível/Patrulha/Folga"></div>
+      <div class="col-md-2"><label class="form-label">Latitude</label><input id="latitude" class="form-control" readonly></div>
+      <div class="col-md-2"><label class="form-label">Longitude</label><input id="longitude" class="form-control" readonly></div>
+      <div class="col-md-4">
+        <label class="form-label">Foto</label>
+        <input id="foto" type="file" accept="image/*" class="form-control">
+        <img id="foto-preview" style="display:none;max-height:80px;margin-top:8px;border-radius:6px"/>
+      </div>
+      <div class="col-12">
+        <button id="btn-salvar" class="btn btn-success">Salvar</button>
+        <button id="btn-cancelar" type="button" class="btn btn-secondary">Cancelar</button>
+        <a href="index.html" class="btn btn-outline-light">Voltar</a>
+      </div>
+    </form>
+
+    <hr class="border-light">
+    <h3>Efetivo Cadastrado</h3>
+    <div class="table-responsive">
+      <table id="tabela-efetivo" class="table table-dark table-striped table-hover">
+        <thead>
+          <tr>
+            <th>ID</th><th>Nome</th><th>Patente</th><th>Função</th><th>Setor</th>
+            <th>Turno</th><th>Viatura</th><th>Status</th><th>GPS</th><th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
-  </form>
-  <hr>
-  <h3>Efetivo Cadastrado</h3>
-  <div class="table-responsive">
-    <table id="tabela-efetivo" class="table table-striped">
-      <thead><tr>
-        <th>ID</th><th>Nome</th><th>Patente</th><th>Função</th><th>Setor</th><th>Turno</th><th>Viatura</th><th>Status</th><th>GPS</th><th>Ações</th>
-      </tr></thead>
-      <tbody></tbody>
-    </table>
   </div>
+
+  <!-- 🔗 Scripts -->
   <script src="js/config.js"></script>
-  <script src="js/auth-guard.js"></script>
+  <script src="js/topo-rotam.js"></script>
   <script src="js/cadastro_militar.js"></script>
-</body></html>
+</body>
+</html>
