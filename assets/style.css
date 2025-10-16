@@ -1,4 +1,6 @@
-/* ========== RESET ========== */
+/* ===============================
+   🔄 RESET GERAL
+   =============================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -16,7 +18,9 @@ body {
   overflow: hidden;
 }
 
-/* ========== SIDEBAR ========== */
+/* ===============================
+   🚪 SIDEBAR (Painel Lateral)
+   =============================== */
 .sidebar {
   width: 240px;
   background: #1e1e1e;
@@ -69,7 +73,9 @@ body {
   background: #b02a37;
 }
 
-/* ========== CONTENT ========== */
+/* ===============================
+   📄 CONTEÚDO PRINCIPAL
+   =============================== */
 .content {
   flex: 1;
   padding: 25px;
@@ -83,7 +89,9 @@ body {
   font-size: 1.8rem;
 }
 
-/* ========== TABELAS ========== */
+/* ===============================
+   📊 TABELAS
+   =============================== */
 table {
   color: #fff;
 }
@@ -97,7 +105,9 @@ table {
   border-color: #333;
 }
 
-/* ========== FORMULÁRIOS ========== */
+/* ===============================
+   📝 FORMULÁRIOS
+   =============================== */
 form label {
   font-weight: bold;
 }
@@ -137,7 +147,9 @@ form select:focus {
   background: #0b5ed7;
 }
 
-/* Fundo do login */
+/* ===============================
+   🔐 TELA DE LOGIN
+   =============================== */
 .login-body {
   display: grid;
   place-items: center;
@@ -146,7 +158,6 @@ form select:focus {
   background-size: cover;
 }
 
-/* Card do login */
 .login-card {
   background: rgba(18, 19, 24, 0.9);
   border-radius: 12px;
@@ -154,7 +165,62 @@ form select:focus {
   text-align: center;
 }
 
-/* ========== MOBILE (mantém o layout vertical) ========== */
+/* ===============================
+   🧭 CABEÇALHO GLOBAL ROTAM
+   =============================== */
+#topoRotam {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(90deg, #000 0%, #222 100%);
+  color: #fff;
+  border-bottom: 2px solid #d32f2f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+#topoRotam img {
+  height: 40px;
+  width: auto;
+  margin-right: 10px;
+  border-radius: 4px;
+  filter: drop-shadow(0 0 3px #d32f2f);
+}
+
+#topoRotam h5 {
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+#usuarioLogado {
+  font-size: 0.95rem;
+  color: #ffc107;
+  font-weight: 500;
+}
+
+#logoutGlobal {
+  background: #d9534f;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#logoutGlobal:hover {
+  background: #c9302c;
+}
+
+/* ===============================
+   📱 MOBILE (Layout Responsivo)
+   =============================== */
 @media (max-width: 768px) {
   body {
     flex-direction: column;
@@ -211,5 +277,14 @@ form select:focus {
   form textarea,
   form select {
     width: 100%;
+  }
+
+  #topoRotam {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  #topoRotam img {
+    margin-bottom: 6px;
   }
 }
