@@ -1,290 +1,200 @@
 /* ===============================
-   🔄 RESET GERAL
+   🎨 SISTEMA ROTAM - CSS MODERNO 2025
    =============================== */
+
+/* RESET */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #121212;
-  color: #fff;
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
-  overflow: hidden;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f5f5f5;
+  color: #222;
 }
 
 /* ===============================
-   🚪 SIDEBAR (Painel Lateral)
+   🧭 CABEÇALHO SUPERIOR
+   =============================== */
+header {
+  background: #111;
+  color: #fff;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #d32f2f;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+header h5 {
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+#usuarioLogado {
+  font-weight: 600;
+  color: #ffc107;
+  font-size: 0.95rem;
+}
+
+/* ===============================
+   📂 SIDEBAR LATERAL
    =============================== */
 .sidebar {
   width: 240px;
-  background: #1e1e1e;
-  padding: 20px 10px;
+  background: #1a1a1a;
+  color: #fff;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: space-between;
+  padding: 20px 10px;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.3);
 }
 
 .sidebar img {
-  width: 120px;
-  margin-bottom: 10px;
+  display: block;
+  margin: 0 auto 10px;
+  width: 100px;
+  border-radius: 4px;
 }
 
-.sidebar h4 {
-  font-size: 16px;
+.sidebar h6 {
+  text-align: center;
+  color: #aaa;
+  font-size: 0.9rem;
   margin-bottom: 20px;
-  color: #ccc;
 }
 
 .sidebar button {
-  width: 100%;
-  margin: 5px 0;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  text-align: left;
-  font-weight: bold;
   background: #2c2c2c;
   color: #fff;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  border: none;
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  text-align: left;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.sidebar button i {
+  margin-right: 6px;
 }
 
 .sidebar button:hover {
   background: #444;
-  transform: scale(1.02);
+  transform: scale(1.03);
 }
 
-.sidebar button.active {
-  background: #0d6efd;
+.sidebar .btn-danger {
+  background: #c62828;
 }
 
-.sidebar .btn-logout {
-  background: #dc3545;
-  margin-top: auto;
-}
-
-.sidebar .btn-logout:hover {
-  background: #b02a37;
+.sidebar .btn-danger:hover {
+  background: #b71c1c;
 }
 
 /* ===============================
-   📄 CONTEÚDO PRINCIPAL
+   📊 CONTEÚDO PRINCIPAL
    =============================== */
 .content {
   flex: 1;
   padding: 25px;
   overflow-y: auto;
   background: #f5f5f5;
-  color: #000;
 }
 
-.content h2 {
-  margin-bottom: 20px;
-  font-size: 1.8rem;
+.content h4 {
+  font-weight: 700;
+  color: #111;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card h6 {
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 
 /* ===============================
-   📊 TABELAS
+   🧾 BOTÕES GERAIS
    =============================== */
-table {
+.btn-outline-dark:hover {
+  background: #111;
   color: #fff;
 }
 
-.table-dark {
-  background: #1e1e1e;
+.btn-dark {
+  background: #212121 !important;
+  border: none !important;
 }
 
-.table-dark th,
-.table-dark td {
-  border-color: #333;
+.btn-dark:hover {
+  background: #333 !important;
 }
 
-/* ===============================
-   📝 FORMULÁRIOS
-   =============================== */
-form label {
-  font-weight: bold;
+.btn-danger {
+  background: #d32f2f !important;
+  border: none !important;
 }
 
-form input,
-form textarea,
-form select {
-  background: #1e1e1e !important;
-  color: #fff !important;
-  border: 1px solid #333 !important;
-  border-radius: 6px;
-}
-
-form input:focus,
-form textarea:focus,
-form select:focus {
-  outline: none !important;
-  border-color: #0d6efd !important;
-  box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
-}
-
-.btn-success {
-  background: #198754;
-  border: none;
-}
-
-.btn-success:hover {
-  background: #157347;
-}
-
-.btn-primary {
-  background: #0d6efd;
-  border: none;
-}
-
-.btn-primary:hover {
-  background: #0b5ed7;
+.btn-danger:hover {
+  background: #b71c1c !important;
 }
 
 /* ===============================
-   🔐 TELA DE LOGIN
-   =============================== */
-.login-body {
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-  background: #000 url("./logo-rotam-bg-1920x1080.png") no-repeat center center;
-  background-size: cover;
-}
-
-.login-card {
-  background: rgba(18, 19, 24, 0.9);
-  border-radius: 12px;
-  padding: 24px;
-  text-align: center;
-}
-
-/* ===============================
-   🧭 CABEÇALHO GLOBAL ROTAM
-   =============================== */
-#topoRotam {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: linear-gradient(90deg, #000 0%, #222 100%);
-  color: #fff;
-  border-bottom: 2px solid #d32f2f;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-}
-
-#topoRotam img {
-  height: 40px;
-  width: auto;
-  margin-right: 10px;
-  border-radius: 4px;
-  filter: drop-shadow(0 0 3px #d32f2f);
-}
-
-#topoRotam h5 {
-  font-weight: bold;
-  letter-spacing: 1px;
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-#usuarioLogado {
-  font-size: 0.95rem;
-  color: #ffc107;
-  font-weight: 500;
-}
-
-#logoutGlobal {
-  background: #d9534f;
-  border: none;
-  color: #fff;
-  font-weight: bold;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-#logoutGlobal:hover {
-  background: #c9302c;
-}
-
-/* ===============================
-   📱 MOBILE (Layout Responsivo)
+   📱 RESPONSIVIDADE
    =============================== */
 @media (max-width: 768px) {
   body {
     flex-direction: column;
-    overflow: auto;
   }
 
   .sidebar {
     width: 100%;
-    height: auto;
-    padding: 15px;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-around;
     align-items: center;
-    background: #1e1e1e;
+    padding: 10px;
   }
 
   .sidebar img {
-    width: 100px;
-    margin-bottom: 8px;
-  }
-
-  .sidebar h4 {
-    margin-bottom: 12px;
+    width: 60px;
+    margin-bottom: 0;
   }
 
   .sidebar button {
-    width: 90%;
-    text-align: center;
-    margin: 6px 0;
-    font-size: 15px;
+    font-size: 14px;
+    margin: 4px;
   }
 
-  .sidebar .btn-logout {
-    width: 90%;
-    margin-top: 10px;
+  header h5 {
+    font-size: 1rem;
   }
+}
 
-  .content {
-    padding: 15px;
-  }
-
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  table th,
-  table td {
-    font-size: 13px;
-    padding: 5px;
-  }
-
-  form input,
-  form textarea,
-  form select {
-    width: 100%;
-  }
-
-  #topoRotam {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  #topoRotam img {
-    margin-bottom: 6px;
-  }
+/* ===============================
+   🧠 RODAPÉ
+   =============================== */
+footer {
+  font-size: 0.85rem;
+  color: #666;
+  background: #f1f1f1;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
 }
