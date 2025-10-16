@@ -1,13 +1,17 @@
 // ===============================
-// 🔐 Login ROTAM (Versão aprimorada)
+// 🔐 Login ROTAM - Versão Final Aprimorada (2025)
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
   const errorMsg = document.getElementById("errorMsg");
-  const button = form.querySelector("button");
 
-  if (!form) return console.error("⚠️ loginForm não encontrado no DOM.");
+  if (!form) {
+    console.error("⚠️ loginForm não encontrado no DOM.");
+    return;
+  }
+
+  const button = form.querySelector("button");
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -16,15 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const senha = document.getElementById("password").value.trim();
 
     if (!usuario || !senha) {
-      showError("Usuário e senha obrigatórios");
-      return;
+      return showError("Usuário e senha obrigatórios.");
     }
 
-    try {
-      button.disabled = true;
-      button.textContent = "🔄 Entrando...";
-      errorMsg.textContent = "";
+    button.disabled = true;
+    button.textContent = "🔄 Entrando...";
+    errorMsg.style.display = "none";
 
+    try {
       const res = await fetch("https://rotam-backend-production.up.railway.app/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -33,29 +36,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await res.json();
 
+      // Verifica se o servidor respondeu corretamente
       if (!res.ok) {
-        showError(data.error || "Erro interno no servidor");
-        return;
+        console.warn("⚠️ Resposta do servidor:", data);
+        if (res.status === 401) return showError("Usuário ou senha inválidos.");
+        if (res.status === 500) return showError("Erro interno no servidor.");
+        return showError(data.error || "Falha desconhecida ao fazer login.");
       }
 
-      if (data.success) {
+      // Se o login for bem-sucedido
+      if (data.success && data.token) {
         localStorage.setItem("token", data.token);
-        button.textContent = "✅ Sucesso!";
-        setTimeout(() => (window.location.href = "index.html"), 1000);
+
+        button.textContent = "✅ Login realizado!";
+        button.style.backgroundColor = "#28a745";
+
+        // Redireciona para o painel principal
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 800);
       } else {
-        showError(data.error || "Usuário ou senha inválidos");
+        showError(data.error || "Usuário ou senha inválidos.");
       }
     } catch (err) {
-      console.error("Erro ao conectar:", err);
-      showError("Falha ao conectar ao servidor");
+      console.error("❌ Erro ao conectar:", err);
+      showError("Falha na conexão com o servidor.");
     } finally {
-      button.disabled = false;
-      button.textContent = "Entrar";
+      setTimeout(() => {
+        button.disabled = false;
+        button.textContent = "Entrar";
+      }, 1000);
     }
   });
 
+  // Função para exibir mensagens de erro de forma elegante
   function showError(msg) {
     errorMsg.textContent = `❌ ${msg}`;
     errorMsg.style.display = "block";
+    errorMsg.style.background = "#f8d7da";
+    errorMsg.style.color = "#842029";
+    errorMsg.style.padding = "8px";
+    errorMsg.style.borderRadius = "6px";
+    errorMsg.style.marginTop = "10px";
   }
 });
