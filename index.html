@@ -3,84 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel ROTAM</title>
-  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/style.css">
+  <title>ROTAM - Painel Principal</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="img/logo-rotam.png" />
 </head>
 <body>
-  <div class="d-flex" style="height:100vh; overflow:hidden;">
-    <!-- Sidebar -->
-    <div class="sidebar d-flex flex-column justify-content-between p-3 bg-dark text-white" style="width:240px;">
-      <div>
-        <div class="text-center mb-3">
-          <img src="assets/logo-rotam-frontend.png" alt="Logo ROTAM" style="width:100px;">
-          <h6 class="mt-2">PAINEL ROTAM</h6>
-        </div>
-        <button class="btn btn-dark w-100 mb-2" onclick="window.location.href='mapa_forca.html'">
-          <i class="bi bi-geo-alt"></i> Mapa da Força
-        </button>
-        <button class="btn btn-dark w-100 mb-2" onclick="window.location.href='cadastro_militar.html'">
-          <i class="bi bi-person-badge"></i> Cadastro Efetivo
-        </button>
-        <button class="btn btn-dark w-100" onclick="window.location.href='relatorios.html'">
-          <i class="bi bi-bar-chart"></i> Relatórios
-        </button>
-      </div>
-      <div>
-        <button class="btn btn-danger w-100" id="btnSair"><i class="bi bi-box-arrow-right"></i> Sair</button>
-      </div>
-    </div>
+  <aside class="sidebar">
+    <img src="img/logo-rotam.png" class="logo" alt="Logo ROTAM">
+    <h2>ROTAM</h2>
+    <p id="userInfo">👮 Usuário: <b>Carregando...</b></p>
+    <nav>
+      <a href="cadastro_militar.html">🪖 Efetivo</a>
+      <a href="relatorios.html">📊 Relatórios</a>
+      <a href="mapa.html" target="_blank">🗺️ Mapa Real</a>
+    </nav>
+    <button id="logoutBtn" class="logout">🚪 Sair</button>
+  </aside>
 
-    <!-- Conteúdo principal -->
-    <div class="content flex-grow-1 p-4 bg-light">
-      <header class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-        <h4 class="m-0">Bem-vindo ao Sistema ROTAM</h4>
-        <div class="d-flex align-items-center">
-          <i class="bi bi-person-circle text-warning fs-4 me-2"></i>
-          <span id="usuarioLogado" class="fw-bold text-dark">adm</span>
-        </div>
-      </header>
+  <main class="content">
+    <h1>Bem-vindo</h1>
+    <p>Utilize o menu ao lado para navegar.</p>
+  </main>
 
-      <p class="text-muted">Este painel permite visualizar e gerenciar as informações operacionais da <strong>Companhia ROTAM</strong> de forma ágil e centralizada.</p>
-
-      <div class="row g-4 mt-2">
-        <div class="col-md-4">
-          <div class="card shadow-sm text-center p-3">
-            <h6><i class="bi bi-geo-alt"></i> Mapa da Força</h6>
-            <p class="text-muted">Visualize a distribuição atual do efetivo e das viaturas.</p>
-            <button class="btn btn-outline-dark w-100" onclick="window.location.href='mapa_forca.html'">Acessar</button>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card shadow-sm text-center p-3">
-            <h6><i class="bi bi-person-badge"></i> Efetivo</h6>
-            <p class="text-muted">Cadastre, edite e acompanhe os militares disponíveis.</p>
-            <button class="btn btn-outline-dark w-100" onclick="window.location.href='cadastro_militar.html'">Acessar</button>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card shadow-sm text-center p-3">
-            <h6><i class="bi bi-bar-chart"></i> Relatórios</h6>
-            <p class="text-muted">Consulte e filtre as ocorrências registradas no sistema.</p>
-            <button class="btn btn-outline-dark w-100" onclick="window.location.href='relatorios.html'">Acessar</button>
-          </div>
-        </div>
-      </div>
-
-      <footer class="text-center mt-5 text-muted small">
-        © 2025 Batalhão ROTAM — Cuiabá/MT<br>
-        Desenvolvido por <strong>Marcelo Pedroso</strong>
-      </footer>
-    </div>
-  </div>
-
-  <script>
-    document.getElementById('btnSair').addEventListener('click', () => {
-      localStorage.removeItem('token');
-      window.location.href = 'login.html';
-    });
-  </script>
+  <script src="js/main.js"></script>
 </body>
 </html>
