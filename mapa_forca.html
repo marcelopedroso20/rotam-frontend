@@ -45,7 +45,19 @@
 </head>
 
 <body>
+  
   <!-- 🔝 Cabeçalho Global ROTAM -->
+  <header id="topoRotam" class="d-flex align-items-center justify-content-between bg-black text-white px-3 py-2 shadow sticky-top">
+    <div class="d-flex align-items-center">
+      <img src="assets/logo-rotam.png" alt="Logo ROTAM" style="height:40px;width:auto;margin-right:10px;">
+      <h5 class="m-0">BATALHÃO ROTAM</h5>
+    </div>
+    <div class="text-center flex-grow-1">
+      <span id="usuarioLogado" style="font-weight:500;">👮 Carregando usuário...</span>
+    </div>
+    <button id="logoutGlobal" class="btn btn-danger btn-sm fw-bold px-3">🚪 Sair</button>
+  </header>
+  
   <header id="topoRotam" class="d-flex justify-content-between align-items-center px-3 py-2 bg-black text-white sticky-top shadow">
     <span id="usuarioLogado">👮 Carregando usuário...</span>
     <button id="logoutGlobal" class="btn btn-danger btn-sm fw-bold">🚪 Sair</button>
