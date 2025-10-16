@@ -1,1 +1,30 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ROTAM - Painel</title><base href="/rotam-frontend/"><link rel="icon" href="assets/favicon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"><link rel="stylesheet" href="assets/style.css"></head><body><div class="sidebar"><img src="assets/logo-rotam-frontend.png"><h4>ROTAM</h4><button onclick="location.href='cadastro.html'">➕ Cadastrar Ocorrência</button><button onclick="location.href='cadastro_militar.html'">👮 Efetivo</button><button onclick="location.href='relatorios.html'">📊 Relatórios</button><button onclick="window.open(CONFIG.BACKEND_MAP_URL,'_blank')">🗺️ Mapa Real</button><button class='btn-logout' onclick='logout()'>Sair</button></div><div class="content"><h2>Bem-vindo</h2><p>Utilize o menu ao lado para navegar.</p></div><script src="js/config.js"></script><script src="js/auth-guard.js"></script><script src="js/logout.js"></script><script src="js/pwa.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROTAM - Painel Principal</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="img/logo-rotam.png" />
+</head>
+<body>
+  <aside class="sidebar">
+    <img src="img/logo-rotam.png" class="logo" alt="Logo ROTAM">
+    <h2>ROTAM</h2>
+    <p id="userInfo">👮 Usuário: <b>Carregando...</b></p>
+    <nav>
+      <a href="cadastro_militar.html">🪖 Efetivo</a>
+      <a href="relatorios.html">📊 Relatórios</a>
+      <a href="mapa.html" target="_blank">🗺️ Mapa Real</a>
+    </nav>
+    <button id="logoutBtn" class="logout">🚪 Sair</button>
+  </aside>
+
+  <main class="content">
+    <h1>Bem-vindo</h1>
+    <p>Utilize o menu ao lado para navegar.</p>
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
