@@ -2,12 +2,12 @@
 // ⚙️ ROTAM App - Configuração Frontend
 // ===============================
 
-// URL base da API hospedada no Railway
-// 🔹 Se mudar o nome do backend no Railway, atualize este link:
-const API_BASE = "https://rotam-backend-production.up.railway.app/api";
+// URL base da API hospedada no Render
+// 🔹 Se mudar o nome do backend no Render, atualize este link:
+const API_BASE = "https://rotam-backend.onrender.com/api/";
 
 // 🔹 (Opcional) URL pública do mapa real (Leaflet) hospedado no backend
-const BACKEND_MAP_URL = "https://rotam-backend-production.up.railway.app/public/maps/mapa.html";
+const BACKEND_MAP_URL = "https://rotam-backend.onrender.com/public/maps/mapa.html";
 
 // ===============================
 // 🔑 Funções utilitárias globais
