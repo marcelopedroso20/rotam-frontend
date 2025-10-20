@@ -6,7 +6,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Arial, sans-serif;
-  background: #000 url('./assets/logo-rotam-bg-1920x1080.png') no-repeat center center fixed;
+  background: #000 url('./logo-rotam-bg-1920x1080.png') no-repeat center center fixed;
   background-size: cover;
   display: flex;
   justify-content: center;
