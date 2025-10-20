@@ -1,5 +1,5 @@
 // ===============================
-// 🔐 Login ROTAM - Versão Final Aprimorada (2025)
+// 🔐 Login ROTAM - Versão Render Estável (2025)
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -13,6 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const button = form.querySelector("button");
 
+  // ===============================
+  // 🌍 Detecta ambiente automaticamente
+  // ===============================
+  const API_URL = window.location.hostname.includes("github.io")
+    ? "https://rotam-backend.onrender.com" // 🔹 Produção (Render)
+    : "http://localhost:3000";              // 🔹 Desenvolvimento local
+
+  // ===============================
+  // 🚀 Evento de envio do formulário
+  // ===============================
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -28,25 +38,34 @@ document.addEventListener("DOMContentLoaded", () => {
     errorMsg.style.display = "none";
 
     try {
-      const res = await fetch("https://rotam-backend.onrender.com/api/auth/login", {
+      // ===============================
+      // 🔐 Envio da requisição de login
+      // ===============================
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ usuario, senha }),
       });
 
-      const data = await res.json();
+      // ===============================
+      // 📦 Tratamento da resposta
+      // ===============================
+      const data = await res.json().catch(() => ({})); // evita erro se resposta for vazia
 
-      // Verifica se o servidor respondeu corretamente
       if (!res.ok) {
         console.warn("⚠️ Resposta do servidor:", data);
         if (res.status === 401) return showError("Usuário ou senha inválidos.");
+        if (res.status === 404) return showError("Rota não encontrada no servidor.");
         if (res.status === 500) return showError("Erro interno no servidor.");
-        return showError(data.error || "Falha desconhecida ao fazer login.");
+        return showError(data.error || `Falha desconhecida (${res.status}).`);
       }
 
-      // Se o login for bem-sucedido
+      // ===============================
+      // ✅ Login bem-sucedido
+      // ===============================
       if (data.success && data.token) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("usuario", usuario);
 
         button.textContent = "✅ Login realizado!";
         button.style.backgroundColor = "#28a745";
@@ -59,8 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
         showError(data.error || "Usuário ou senha inválidos.");
       }
     } catch (err) {
-      console.error("❌ Erro ao conectar:", err);
-      showError("Falha na conexão com o servidor.");
+      console.error("❌ Erro de conexão:", err);
+      showError("Falha na conexão com o servidor. Verifique sua internet ou tente novamente.");
     } finally {
       setTimeout(() => {
         button.disabled = false;
@@ -69,7 +88,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Função para exibir mensagens de erro de forma elegante
+  // ===============================
+  // ⚠️ Função elegante para exibir erros
+  // ===============================
   function showError(msg) {
     errorMsg.textContent = `❌ ${msg}`;
     errorMsg.style.display = "block";
@@ -78,5 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
     errorMsg.style.padding = "8px";
     errorMsg.style.borderRadius = "6px";
     errorMsg.style.marginTop = "10px";
+    errorMsg.style.fontWeight = "500";
   }
 });
