@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     errorMsg.style.display = "none";
 
     try {
-      const res = await fetch("https://rotam-backend-production.up.railway.app/api/auth/login", {
+      const res = await fetch("https://rotam-backend.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ usuario, senha }),
