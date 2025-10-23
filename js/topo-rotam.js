@@ -1,39 +1,36 @@
 // ===============================
-// 🎖️ topo-rotam.js — Cabeçalho global dinâmico
+// 🎖️ topo-rotam.js — Cabeçalho global dinâmico (corrigido)
 // ===============================
-
 document.addEventListener("DOMContentLoaded", () => {
-  const topo = document.getElementById("topoRotam");
+  const headers = document.querySelectorAll("#topoRotam");
+  const topo = headers.length ? headers[0] : null;
   const usuarioSpan = document.getElementById("usuarioLogado");
 
-  // Caso o cabeçalho não exista (por segurança)
   if (!topo || !usuarioSpan) return;
 
   try {
     const token = localStorage.getItem("token");
     if (!token) {
-      usuarioSpan.textContent = "⚠️ Usuário não autenticado";
-      setTimeout(() => (window.location.href = "./login.html"), 1500);
+      usuarioSpan.textContent = "⚠️ Sessão expirada. Redirecionando...";
+      setTimeout(() => (window.location.href = "login.html"), 1500);
       return;
     }
 
-    // Decodifica o token JWT para extrair dados do usuário
+    // Decodifica payload do JWT
     const payload = JSON.parse(atob(token.split(".")[1] || "{}"));
-    const usuario = payload?.usuario || "Desconhecido";
-    const role = payload?.role || "user";
+    const usuario = payload?.usuario || "Usuário";
+    const role = payload?.role || "Padrão";
 
-    // Atualiza cabeçalho com nome e perfil formatados
+    // Atualiza cabeçalho
     usuarioSpan.innerHTML = `
       👮 <strong>${usuario}</strong>
-      <small class="text-warning">(${role.toUpperCase()})</small>
+      <small class="text-warning usuario-info">(${role.toUpperCase()})</small>
     `;
 
-    // Remove texto lateral antigo (caso ainda exista)
-    const duplicado = document.querySelector(".usuario-info-lateral");
-    if (duplicado) duplicado.remove();
-
+    // Remove duplicações (se existirem)
+    document.querySelectorAll(".usuario-info-lateral").forEach(el => el.remove());
   } catch (err) {
-    console.error("Erro ao carregar topo ROTAM:", err);
-    usuarioSpan.textContent = "Erro ao carregar usuário";
+    console.error("[Topo ROTAM] Erro ao carregar usuário:", err);
+    usuarioSpan.textContent = "Erro ao carregar sessão.";
   }
 });
