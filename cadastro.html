@@ -4,13 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <!-- ✅ Define o caminho base para o GitHub Pages -->
+  <!-- ✅ Caminho base único (GitHub Pages compatível) -->
   <base href="/rotam-frontend/">
 
   <title>Cadastro de Ocorrência - ROTAM</title>
-
-  <!-- ✅ Caminho base para o GitHub Pages -->
-  <base href="/rotam-frontend/">
 
   <!-- ✅ Ícone da aba (favicon) -->
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
@@ -33,40 +30,49 @@
   <div class="content container mt-4">
     <button onclick="window.location.href='index.html'" class="btn btn-secondary btn-voltar">⬅ Voltar</button>
 
-    <div class="card p-4 mt-3">
-      <h2 class="mb-4">📑 Cadastro de Ocorrência</h2>
+    <div class="card p-4 mt-3 shadow-sm">
+      <h2 class="mb-4 text-center">📑 Cadastro de Ocorrência</h2>
+
       <form id="cadastroForm">
         <div class="mb-3">
           <label for="agente" class="form-label">Nome do Agente</label>
           <input type="text" id="agente" class="form-control" required />
         </div>
+
         <div class="mb-3">
           <label for="comunicante" class="form-label">Nome do Comunicante</label>
           <input type="text" id="comunicante" class="form-control" required />
         </div>
+
         <div class="mb-3">
           <label for="local" class="form-label">Local da Ocorrência</label>
           <input type="text" id="local" class="form-control" required />
         </div>
+
         <div class="mb-3">
           <label for="tipo" class="form-label">Tipo de Ocorrência</label>
           <select id="tipo" class="form-control" required>
+            <option value="">Selecione...</option>
             <option value="Furto">Furto</option>
             <option value="Roubo">Roubo</option>
             <option value="Agressão">Agressão</option>
             <option value="Outro">Outro</option>
           </select>
         </div>
+
         <div class="mb-3">
           <label for="descricao" class="form-label">Descrição</label>
           <textarea id="descricao" class="form-control" rows="4" required></textarea>
         </div>
-        <button type="submit" class="btn btn-success w-100">Salvar Ocorrência</button>
+
+        <button type="submit" class="btn btn-success w-100 fw-bold">
+          💾 Salvar Ocorrência
+        </button>
       </form>
     </div>
   </div>
 
-  <!-- ✅ Scripts (sem ./) -->
+  <!-- ✅ Scripts (sem ./ e ordem correta) -->
   <script src="js/config.js"></script>
   <script src="js/cadastro.js"></script>
   <script src="js/pwa.js"></script>
