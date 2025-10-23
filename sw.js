@@ -2,7 +2,7 @@
 // ROTAM - SERVICE WORKER (PWA CACHE MANAGER)
 // ============================================
 
-const CACHE_NAME = 'rotam-cache-v5';
+const CACHE_NAME = 'rotam-cache-v6';
 const BASE = '/rotam-frontend';
 
 const ASSETS = [
@@ -19,7 +19,7 @@ const ASSETS = [
   // CSS e imagens
   `${BASE}/assets/style.css`,
   `${BASE}/assets/favicon.ico`,
-  `${BASE}/assets/logo-rotam-frontend.png`,
+  `${BASE}/assets/logo-rotam.png`,
   `${BASE}/assets/logo-rotam.jpg`,
   `${BASE}/assets/logo-rotam-bg.png`,
 
@@ -38,19 +38,7 @@ self.addEventListener('install', event => {
   console.log('[SW] Instalando e criando cache...');
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        return Promise.allSettled(
-          ASSETS.map(url =>
-            fetch(url).then(resp => {
-              if (resp.ok) {
-                return cache.put(url, resp.clone());
-              } else {
-                console.warn('[SW] Falha ao buscar:', url);
-              }
-            }).catch(() => console.warn('[SW] Não foi possível armazenar:', url))
-          )
-        );
-      })
+      .then(cache => cache.addAll(ASSETS))
       .then(() => self.skipWaiting())
   );
 });
@@ -63,11 +51,11 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys.filter(key => key !== CACHE_NAME)
-            .map(key => caches.delete(key))
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
       )
     )
   );
+  self.clients.claim();
 });
 
 // ============================
