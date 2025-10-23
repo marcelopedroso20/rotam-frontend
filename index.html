@@ -19,7 +19,7 @@
     <aside class="sidebar bg-dark text-white d-flex flex-column justify-content-between p-3" style="width: 240px;">
       <div>
         <div class="text-center mb-3">
-          <img src="assets/logo-rotam-frontend.png" alt="Logo ROTAM" style="width:100px;">
+          <img src="assets/logo-rotam.png" alt="Logo ROTAM" style="width:100px;">
           <h6 class="mt-2">PAINEL ROTAM</h6>
         </div>
 
@@ -31,8 +31,12 @@
           <i class="bi bi-person-badge"></i> Cadastro Efetivo
         </button>
 
-        <button class="btn btn-dark w-100" onclick="window.location.href='relatorios.html'">
-          <i class="bi bi-bar-chart"></i> Relatórios
+        <button class="btn btn-dark w-100 mb-2" onclick="window.location.href='livro_rt90.html'">
+          <i class="bi bi-book"></i> Livro RT90
+        </button>
+
+        <button class="btn btn-dark w-100" onclick="window.location.href='historico_rt90.html'">
+          <i class="bi bi-clock-history"></i> Histórico RT90
         </button>
       </div>
 
@@ -49,7 +53,7 @@
         <h5 class="m-0">🚔 Sistema ROTAM</h5>
         <div class="d-flex align-items-center">
           <i class="bi bi-person-circle text-warning fs-4 me-2"></i>
-          <span id="usuarioLogado" class="fw-bold">adm (ADMIN)</span>
+          <span id="usuarioLogado" class="fw-bold">👮 Usuário Logado</span>
         </div>
       </header>
 
@@ -74,9 +78,9 @@
           </div>
           <div class="col-md-4">
             <div class="card shadow-sm text-center p-3">
-              <h6><i class="bi bi-bar-chart"></i> Relatórios</h6>
-              <p class="text-muted">Visualize e filtre as ocorrências registradas.</p>
-              <button class="btn btn-outline-dark w-100" onclick="window.location.href='relatorios.html'">Acessar</button>
+              <h6><i class="bi bi-book"></i> Livro RT90</h6>
+              <p class="text-muted">Preencha e gere relatórios diários do serviço.</p>
+              <button class="btn btn-outline-dark w-100" onclick="window.location.href='livro_rt90.html'">Acessar</button>
             </div>
           </div>
         </div>
@@ -94,5 +98,6 @@
       window.location.href = "login.html";
     });
   </script>
+  <script src="js/ux-fixes.js"></script>
 </body>
 </html>
