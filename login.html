@@ -1,1 +1,48 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Login - ROTAM</title><base href="/rotam-frontend/"><link rel="icon" href="assets/favicon.ico"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#121212"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"><link rel="stylesheet" href="assets/style.css"></head><body class="login-body"><div class="login-box login-card"><img src="assets/logo-rotam-frontend.png" alt="ROTAM" width="120" class="mb-3"><h2 class="mb-3">🔐 Login ROTAM</h2><form id="loginForm"><input id="username" class="form-control mb-2" placeholder="Usuário" required><input id="password" type="password" class="form-control mb-2" placeholder="Senha" required><button class="btn btn-success w-100">Entrar</button></form><p id="errorMsg" class="alert alert-danger mt-3" style="display:none"></p></div><script src="js/config.js"></script><script src="js/login.js"></script><script src="js/pwa.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - ROTAM</title>
+
+  <!-- Caminho base GitHub Pages -->
+  <base href="/rotam-frontend/">
+
+  <!-- Ícone e Manifest -->
+  <link rel="icon" href="assets/favicon.ico" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+  <!-- Estilo local -->
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body class="login-body bg-dark text-light d-flex justify-content-center align-items-center" style="min-height:100vh;">
+
+  <div class="login-box bg-black text-center p-4 rounded shadow" style="width:100%;max-width:380px;">
+    <img src="assets/logo-rotam.png" alt="Logo ROTAM" width="120" class="mb-3">
+    <h2 class="mb-4 fw-bold text-warning">🔐 Login ROTAM</h2>
+
+    <form id="loginForm" autocomplete="off">
+      <input id="username" class="form-control mb-2" placeholder="Usuário" required>
+      <input id="password" type="password" class="form-control mb-3" placeholder="Senha" required>
+      <button type="submit" class="btn btn-success w-100 fw-bold">Entrar</button>
+    </form>
+
+    <p id="errorMsg" class="alert alert-danger mt-3 py-2" style="display:none;"></p>
+
+    <footer class="text-muted small mt-4">
+      © 2025 Batalhão ROTAM — Desenvolvido por <strong>Marcelo Pedroso</strong>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/login.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/ux-fixes.js"></script>
+</body>
+</html>
