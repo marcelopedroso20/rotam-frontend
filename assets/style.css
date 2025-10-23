@@ -1,5 +1,5 @@
 /* ===============================
-   🔐 Login ROTAM - Tema Escuro Moderno
+   🎖️ ROTAM APP - Tema Escuro Moderno
    =============================== */
 
 body {
@@ -8,10 +8,15 @@ body {
   font-family: 'Segoe UI', Arial, sans-serif;
   background: #000 url('./logo-rotam-bg-1920x1080.png') no-repeat center center fixed;
   background-size: cover;
+  color: #fff;
+}
+
+/* Login principal */
+.login-body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .login-card {
@@ -86,6 +91,29 @@ body {
   font-size: 0.9rem;
 }
 
+/* Tabelas e cartões globais */
+.card {
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid #333;
+  border-radius: 10px;
+}
+
+.table-dark th {
+  background-color: #111 !important;
+}
+
+.table-dark td {
+  color: #e0e0e0 !important;
+}
+
+footer {
+  color: #bbb;
+  font-size: 13px;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Responsividade */
 @media (max-width: 480px) {
   .login-card {
     padding: 25px 20px;
