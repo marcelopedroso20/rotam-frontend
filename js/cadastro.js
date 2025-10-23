@@ -1,15 +1,23 @@
-// js/cadastro.js
+// ===============================
+// 📋 ROTAM - Cadastro de Ocorrência
+// ===============================
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("cadastroForm");
   if (!form) return;
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const agente = document.getElementById("agente")?.value?.trim();
     const comunicante = document.getElementById("comunicante")?.value?.trim();
     const local = document.getElementById("local")?.value?.trim();
     const tipo = document.getElementById("tipo")?.value;
     const descricao = document.getElementById("descricao")?.value?.trim();
-    if (!agente || !comunicante || !local || !descricao) return alert("Preencha todos os campos obrigatórios!");
+
+    if (!agente || !comunicante || !local || !descricao) {
+      return alert("⚠️ Preencha todos os campos obrigatórios!");
+    }
+
     const payload = {
       titulo: `${tipo || "Ocorrência"} - ${local}`,
       descricao,
@@ -21,11 +29,18 @@ document.addEventListener("DOMContentLoaded", () => {
       observacoes: `Comunicante: ${comunicante}`,
       registrado_por: localStorage.getItem("usuario") || "anônimo"
     };
+
     try {
-      const resp = await fetch(`${CONFIG.API_BASE}/occurrences`, { method:'POST', headers: CONFIG.authHeaders(), body: JSON.stringify(payload) });
-      if (!resp.ok) throw 0;
+      const resp = await fetch(`${CONFIG.API_BASE}/occurrences`, {
+        method: 'POST',
+        headers: CONFIG.authHeaders(),
+        body: JSON.stringify(payload)
+      });
+      if (!resp.ok) throw new Error();
       alert("✅ Ocorrência registrada!");
       form.reset();
-    } catch { alert("❌ Erro ao registrar ocorrência."); }
+    } catch {
+      alert("❌ Erro ao registrar ocorrência.");
+    }
   });
 });
