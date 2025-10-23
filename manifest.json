@@ -1,11 +1,12 @@
 {
   "name": "ROTAM - Sistema de Ocorrências",
   "short_name": "ROTAM",
-  "start_url": "index.html",
-  "scope": "./",
+  "start_url": "/rotam-frontend/index.html",
+  "scope": "/rotam-frontend/",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#121212",
+  "description": "Sistema Operacional ROTAM - Registro de Ocorrências, Efetivo e Relatórios RT90",
   "icons": [
     {
       "src": "./assets/icon-192.png",
