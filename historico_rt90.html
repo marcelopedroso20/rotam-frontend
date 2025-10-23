@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Histórico RT90 - Sistema ROTAM</title>
+  <title>🕒 Histórico RT90 - Sistema ROTAM</title>
 
-  <!-- Ícone da aba -->
+  <!-- Caminho base (GitHub Pages) -->
+  <base href="/rotam-frontend/">
+
+  <!-- Ícone e Bootstrap -->
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
-
-  <!-- Estilos -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -64,14 +65,6 @@
       font-size: 18px;
     }
 
-    table {
-      width: 100%;
-    }
-
-    .table th, .table td {
-      vertical-align: middle !important;
-    }
-
     .btn-ver {
       background: #198754;
       color: #fff;
@@ -98,24 +91,23 @@
       margin: 0 auto 10px;
     }
 
-    /* 📱 Mobile */
     @media (max-width: 768px) {
       table {
         display: block;
         overflow-x: auto;
         white-space: nowrap;
       }
-
       .table th, .table td {
         font-size: 14px;
       }
     }
   </style>
 </head>
+
 <body>
   <header>
     <h1><i class="bi bi-clock-history"></i> Histórico RT90</h1>
-    <button onclick="voltarPainel()"><i class="bi bi-arrow-left"></i> Voltar ao Painel</button>
+    <button onclick="window.location.href='index.html'"><i class="bi bi-arrow-left"></i> Voltar ao Painel</button>
   </header>
 
   <main>
@@ -125,7 +117,7 @@
       COMANDO DE POLICIAMENTO ESPECIALIZADO<br>
       BATALHÃO ROTAM<br>
       <u>HISTÓRICO DE RELATÓRIOS E OCORRÊNCIAS</u></p>
-      <h2>HISTÓRICO RT 90</h2>
+      <h2>HISTÓRICO RT90</h2>
     </div>
 
     <div id="historicoContainer">
@@ -151,16 +143,11 @@
   </footer>
 
   <script>
-    function voltarPainel() {
-      window.location.href = "index.html";
-    }
-
     document.addEventListener("DOMContentLoaded", () => {
       const historicoBody = document.getElementById("historicoBody");
       const historicoPDF = JSON.parse(localStorage.getItem("rotam_historico_rt90")) || [];
       const ocorrencias = JSON.parse(localStorage.getItem("ocorrenciasROTAM")) || [];
 
-      // Unifica PDF + Ocorrências
       const lista = [
         ...historicoPDF.map(h => ({
           tipo: "PDF",
@@ -200,35 +187,30 @@
             <td>
               ${
                 item.tipo === "PDF"
-                  ? `<button class="btn-ver" onclick="abrirPDF('${item.link}')"><i class="bi bi-file-earmark-pdf"></i> Abrir</button>`
-                  : `<button class="btn-ver" onclick="verOcorrencia('${item.descricao}', '${item.detalhes.replace(/'/g, "\\'")}')"><i class="bi bi-eye"></i> Ver</button>`
+                  ? `<button class="btn-ver" onclick="abrirPDF('${item.link}')"><i class='bi bi-file-earmark-pdf'></i> Abrir</button>`
+                  : `<button class="btn-ver" onclick="verOcorrencia('${item.descricao}', '${item.detalhes.replace(/'/g, "\\'")}')"><i class='bi bi-eye'></i> Ver</button>`
               }
             </td>
           `;
-
           historicoBody.appendChild(tr);
         });
     });
 
-    // 📄 Abrir PDF no navegador ou baixar automaticamente
-  function abrirPDF(nome) {
-    // Caminho padrão onde os PDFs ficam gerados localmente
-    const fileUrl = `${window.location.origin}/rotam-frontend/${nome}`;
-
-    // Tenta abrir o PDF direto
-    fetch(fileUrl)
-      .then(response => {
-        if (response.ok) {
-          window.open(fileUrl, "_blank");
-        } else {
-          // Caso o arquivo não esteja hospedado (como no GitHub Pages)
-          alert("📁 O arquivo está salvo apenas localmente no seu navegador.\nPara baixá-lo novamente, gere o PDF outra vez no Livro RT90.");
-        }
-      })
-      .catch(() => {
-        alert("⚠️ O arquivo PDF não está disponível no servidor.\nGere novamente o relatório no Livro RT90.");
-      });
-  }
+    // 📄 Abrir PDF no navegador
+    function abrirPDF(nome) {
+      const fileUrl = `${window.location.origin}/rotam-frontend/${nome}`;
+      fetch(fileUrl)
+        .then(response => {
+          if (response.ok) {
+            window.open(fileUrl, "_blank");
+          } else {
+            alert("📁 O arquivo está salvo apenas localmente.\nPara acessá-lo novamente, gere o PDF outra vez no Livro RT90.");
+          }
+        })
+        .catch(() => {
+          alert("⚠️ O arquivo PDF não foi encontrado.\nGere novamente o relatório no Livro RT90.");
+        });
+    }
 
     // 🔍 Visualizar ocorrência
     function verOcorrencia(titulo, detalhes) {
@@ -242,9 +224,11 @@
       modal.style.display = "flex";
       modal.style.justifyContent = "center";
       modal.style.alignItems = "center";
+      modal.style.zIndex = "2000";
+
       modal.innerHTML = `
-        <div style="background:#fff; color:#000; border-radius:10px; padding:20px; max-width:500px; text-align:left;">
-          <h4 style="margin-bottom:10px;">${titulo}</h4>
+        <div style="background:#fff;color:#000;border-radius:10px;padding:20px;max-width:500px;width:90%;text-align:left;">
+          <h4 class="mb-3">${titulo}</h4>
           <p>${detalhes}</p>
           <div class="text-end">
             <button class="btn btn-secondary" onclick="this.closest('div').parentElement.remove()">Fechar</button>
@@ -256,5 +240,6 @@
   </script>
 
   <script src="js/pwa.js"></script>
+  <script src="js/ux-fixes.js"></script>
 </body>
 </html>
