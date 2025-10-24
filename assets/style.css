@@ -1,5 +1,5 @@
 /* ===============================
-   🎖️ ROTAM APP - Tema Escuro Moderno
+   🎖️ ROTAM APP - Tema Escuro Moderno (v2.2.0)
    =============================== */
 
 body {
@@ -11,7 +11,9 @@ body {
   color: #fff;
 }
 
-/* Login principal */
+/* ===============================
+   🔐 Login principal
+   =============================== */
 .login-body {
   display: flex;
   justify-content: center;
@@ -95,29 +97,73 @@ body {
   font-size: 0.9rem;
 }
 
-/* Tabelas e cartões globais */
+/* ===============================
+   🧱 Cards principais (index.html)
+   =============================== */
 .card {
-  background: rgba(20, 20, 20, 0.9);
-  border: 1px solid #333;
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.6);         /* Preto translúcido 60% */
+  backdrop-filter: blur(6px);             /* Desfoque elegante */
+  -webkit-backdrop-filter: blur(6px);     /* Suporte Safari/Chrome */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+  color: #fff;                            /* Texto branco legível */
+  transition: all 0.3s ease-in-out;
 }
 
+/* Títulos e textos dentro dos cards */
+.card h6 {
+  color: #f8f9fa;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.card p {
+  color: #ccc;
+  font-size: 0.95rem;
+}
+
+/* Botões dentro dos cards */
+.card button {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.card button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #000;
+  transform: scale(1.03);
+}
+
+/* ===============================
+   📋 Tabelas e cartões globais (livro_rt90, relatórios etc.)
+   =============================== */
 .table-dark th {
-  background-color: #111 !important;
+  background-color: rgba(10, 10, 10, 0.9) !important;
 }
 
 .table-dark td {
   color: #e0e0e0 !important;
 }
 
+/* ===============================
+   🦶 Rodapé
+   =============================== */
 footer {
   color: #bbb;
   font-size: 13px;
   padding: 10px;
   text-align: center;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Responsividade */
+/* ===============================
+   📱 Responsividade
+   =============================== */
 @media (max-width: 480px) {
   .login-card {
     padding: 25px 20px;
@@ -128,5 +174,8 @@ footer {
   }
   .login-card h2 {
     font-size: 1.3rem;
+  }
+  .card {
+    margin-bottom: 15px;
   }
 }
