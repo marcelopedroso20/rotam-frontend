@@ -1,5 +1,5 @@
 /* ===============================
-   🎖️ ROTAM APP - Tema Escuro Moderno (v2.2.0)
+   🎖️ ROTAM APP - Tema Escuro Moderno (v2.2.0 Final)
    =============================== */
 
 body {
@@ -101,26 +101,28 @@ body {
    🧱 Cards principais (index.html)
    =============================== */
 .card {
-  background: rgba(0, 0, 0, 0.6);         /* Preto translúcido 60% */
-  backdrop-filter: blur(6px);             /* Desfoque elegante */
-  -webkit-backdrop-filter: blur(6px);     /* Suporte Safari/Chrome */
+  background: rgba(0, 0, 0, 0.7);         /* Transparência ajustada */
+  backdrop-filter: blur(6px);             /* Desfoque suave */
+  -webkit-backdrop-filter: blur(6px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-  color: #fff;                            /* Texto branco legível */
+  color: #fff;
   transition: all 0.3s ease-in-out;
 }
 
 /* Títulos e textos dentro dos cards */
 .card h6 {
-  color: #f8f9fa;
-  font-weight: 600;
+  color: #ffffff;                         /* Branco puro */
+  font-weight: 700;
   margin-bottom: 6px;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8); /* contraste em fundos claros */
 }
 
 .card p {
-  color: #ccc;
-  font-size: 0.95rem;
+  color: #e6e6e6;                         /* Cinza claro visível */
+  font-size: 0.96rem;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
 }
 
 /* Botões dentro dos cards */
@@ -169,12 +171,15 @@ footer {
     padding: 25px 20px;
     width: 90%;
   }
+
   .login-card img {
     width: 80px;
   }
+
   .login-card h2 {
     font-size: 1.3rem;
   }
+
   .card {
     margin-bottom: 15px;
   }
