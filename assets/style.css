@@ -116,13 +116,13 @@ body {
   color: #ffffff;                         /* Branco puro */
   font-weight: 700;
   margin-bottom: 6px;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8); /* contraste em fundos claros */
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.9); /* contorno leve para contraste */
 }
 
 .card p {
-  color: #e6e6e6;                         /* Cinza claro visível */
+  color: #ffffff;                         /* Branco puro */
   font-size: 0.96rem;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.9); /* garante leitura sobre o fundo */
 }
 
 /* Botões dentro dos cards */
@@ -145,17 +145,18 @@ body {
    =============================== */
 .table-dark th {
   background-color: rgba(10, 10, 10, 0.9) !important;
+  color: #fff !important;
 }
 
 .table-dark td {
-  color: #e0e0e0 !important;
+  color: #fff !important;
 }
 
 /* ===============================
    🦶 Rodapé
    =============================== */
 footer {
-  color: #bbb;
+  color: #fff;
   font-size: 13px;
   padding: 10px;
   text-align: center;
