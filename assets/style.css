@@ -1,5 +1,5 @@
 /* ===============================
-   🎖️ ROTAM APP - Tema Escuro Moderno (v2.2.1)
+   🎖️ ROTAM APP - Tema Escuro Moderno (v2.2.2)
    =============================== */
 
 body {
@@ -159,6 +159,19 @@ body {
 
 .table-dark td {
   color: #fff !important;
+}
+
+/* ===============================
+   💬 Texto descritivo abaixo do título principal
+   =============================== */
+.lead,
+.text-muted,
+.subtitulo,
+.descricao {
+  color: #ffffff !important;        /* Deixa o texto branco */
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8); /* melhora contraste */
+  font-weight: 500;
+  line-height: 1.6;
 }
 
 /* ===============================
