@@ -1,6 +1,6 @@
 // ===============================
-// 🪖 ROTAM - Cadastro de Efetivo (versão aprimorada)
-// Protegido com verificação JWT automática
+// 🪖 ROTAM - Cadastro de Efetivo (versão v2.3.0)
+// Protegido com verificação JWT e envio validado ao backend
 // ===============================
 
 const UI = { form: null, fields: {}, tableBody: null, btnSalvar: null, btnCancelar: null, preview: null };
@@ -32,9 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // ===============================
-  // 🌐 Inicialização da página
-  // ===============================
+  // 🌐 Inicialização
   UI.form = document.getElementById("form-efetivo");
   UI.tableBody = document.querySelector("#tabela-efetivo tbody");
   UI.btnSalvar = document.getElementById("btn-salvar");
@@ -179,18 +177,25 @@ function resetForm() {
 }
 
 // ===============================
-// 💾 Salvar ou atualizar
+// 💾 Salvar ou atualizar (corrigido)
 // ===============================
 async function onSubmit(e) {
   e.preventDefault();
 
   const payload = {};
-  for (const k of ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"])
-    payload[k] = UI.fields[k]?.value?.trim() || null;
+  for (const k of ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"]) {
+    payload[k] = UI.fields[k]?.value?.trim() || "";
+  }
 
   if (UI.fields.foto?.files?.[0]) {
-    try { payload.foto = await toBase64(UI.fields.foto.files[0]); } catch { payload.foto = null; }
+    try {
+      payload.foto = await toBase64(UI.fields.foto.files[0]);
+    } catch {
+      payload.foto = "";
+    }
   }
+
+  console.log("📤 Enviando payload:", payload);
 
   const url = EDIT_ID ? `${CONFIG.API_BASE}/efetivo/${EDIT_ID}` : `${CONFIG.API_BASE}/efetivo`;
   const method = EDIT_ID ? "PUT" : "POST";
@@ -198,15 +203,23 @@ async function onSubmit(e) {
   try {
     const r = await fetch(url, {
       method,
-      headers: CONFIG.authHeaders(),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      },
       body: JSON.stringify(payload)
     });
 
-    if (!r.ok) throw 0;
+    const text = await r.text();
+    console.log("📥 Resposta:", text);
+
+    if (!r.ok) throw new Error(`Erro ${r.status}: ${text}`);
+
     resetForm();
     await carregarLista();
+    alert("Registro salvo com sucesso!");
   } catch (e) {
-    console.error(e);
-    alert("Erro ao salvar registro.");
+    console.error("❌ Erro ao salvar:", e);
+    alert("Erro ao salvar registro. Veja o console para detalhes.");
   }
 }
