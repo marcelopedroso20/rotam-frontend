@@ -1,53 +1,140 @@
 // ===============================
-// 🗺️ ROTAM - Mapa da Força (com autenticação JWT)
+// 🗺️ Mapa da Força ROTAM (v1.0)
 // ===============================
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Sessão expirada. Faça login novamente.");
-    window.location.href = "login.html";
-    return;
-  }
+const API_URL = `${CONFIG.API_BASE}/mapa`;
+const token = localStorage.getItem("token");
 
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    if (Date.now() > payload.exp * 1000) {
-      alert("Sessão expirada. Faça login novamente.");
-      localStorage.removeItem("token");
-      window.location.href = "login.html";
-      return;
-    }
-  } catch {
-    alert("Token inválido. Faça login novamente.");
-    localStorage.removeItem("token");
-    window.location.href = "login.html";
-    return;
-  }
+// Exibe alerta flutuante
+function showAlert(tipo, msg) {
+  const el = tipo === "sucesso" ? document.getElementById("alertaSucesso") : document.getElementById("alertaErro");
+  el.textContent = msg;
+  el.style.display = "block";
+  setTimeout(() => (el.style.display = "none"), 4000);
+}
 
+// 🔹 Carrega todos os postos + militares
+async function carregarMapa() {
   try {
-    // 🔹 Busca os dados do efetivo no backend
-    const res = await fetch(`${CONFIG.API_BASE}/efetivo`, {
-      headers: CONFIG.authHeaders(),
+    const res = await fetch(API_URL, {
+      headers: { Authorization: `Bearer ${token}` },
     });
 
-    if (!res.ok) throw new Error(`Erro ${res.status}`);
+    if (!res.ok) throw new Error("Erro ao carregar o mapa da força");
 
-    const data = await res.json();
-    console.log("📡 Dados do Mapa da Força:", data);
-
-    // 🔹 Contagem por setor
-    const comando = data.filter(e => e.setor?.toLowerCase().includes("comando")).length;
-    const adm = data.filter(e => e.setor?.toLowerCase().includes("adm") || e.setor?.toLowerCase().includes("admin")).length;
-    const oper = data.filter(e => e.setor?.toLowerCase().includes("oper") || e.setor?.toLowerCase().includes("rotam")).length;
-
-    // 🔹 Atualiza os cards do mapa
-    document.getElementById("cardComando").textContent = comando;
-    document.getElementById("cardAdm").textContent = adm;
-    document.getElementById("cardOper").textContent = oper;
-
+    const dados = await res.json();
+    renderizarMapa(dados);
   } catch (err) {
-    console.error("⚠️ Erro ao carregar o mapa:", err);
-    alert("Erro ao carregar dados do Mapa da Força. Veja o console para detalhes.");
+    console.error("Erro:", err);
+    showAlert("erro", "❌ Falha ao carregar mapa da força.");
   }
-});
+}
+
+// 🔹 Renderiza os setores e postos
+async function renderizarMapa(dados) {
+  const container = document.getElementById("setoresContainer");
+  container.innerHTML = "";
+
+  // Agrupa por setor
+  const setores = {};
+  dados.forEach(p => {
+    if (!setores[p.setor]) setores[p.setor] = [];
+    setores[p.setor].push(p);
+  });
+
+  // Busca todos militares disponíveis
+  const militaresRes = await fetch(`${CONFIG.API_BASE}/efetivo`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const militares = await militaresRes.json();
+
+  Object.keys(setores).forEach(setor => {
+    const col = document.createElement("div");
+    col.classList.add("col-md-4");
+
+    const card = document.createElement("div");
+    card.classList.add("card", "border-dark", "shadow-sm");
+
+    const header = document.createElement("div");
+    header.classList.add("card-header", "bg-dark", "text-white", "fw-bold", "text-center");
+    header.textContent = setor;
+
+    const body = document.createElement("div");
+    body.classList.add("card-body");
+
+    setores[setor].forEach(posto => {
+      const div = document.createElement("div");
+      div.classList.add("mb-3", "text-start");
+
+      const label = document.createElement("label");
+      label.classList.add("fw-bold");
+      label.textContent = posto.nome_posto;
+
+      const select = document.createElement("select");
+      select.classList.add("form-select", "form-select-sm", "mt-1");
+      select.dataset.postoId = posto.posto_id;
+
+      const optionVazia = document.createElement("option");
+      optionVazia.value = "";
+      optionVazia.textContent = "-- Selecionar Militar --";
+      select.appendChild(optionVazia);
+
+      militares.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m.id;
+        opt.textContent = `${m.patente} ${m.nome}`;
+        if (posto.efetivo_id === m.id) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      div.appendChild(label);
+      div.appendChild(select);
+      body.appendChild(div);
+    });
+
+    card.appendChild(header);
+    card.appendChild(body);
+    col.appendChild(card);
+    container.appendChild(col);
+  });
+}
+
+// 🔹 Salva escala no banco
+async function salvarMapa() {
+  try {
+    const data = document.getElementById("dataEscala").value;
+    const turno = document.getElementById("turnoEscala").value;
+
+    if (!data || !turno) {
+      showAlert("erro", "⚠️ Informe a data e o turno.");
+      return;
+    }
+
+    const selects = document.querySelectorAll("select[data-posto-id]");
+    const alocacoes = Array.from(selects)
+      .filter(sel => sel.value)
+      .map(sel => ({
+        posto_id: parseInt(sel.dataset.postoId),
+        efetivo_id: parseInt(sel.value),
+      }));
+
+    const res = await fetch(`${API_URL}/salvar`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ data, turno, alocacoes }),
+    });
+
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || "Erro ao salvar escala.");
+
+    showAlert("sucesso", "✅ Escala salva com sucesso!");
+  } catch (err) {
+    console.error("Erro ao salvar:", err);
+    showAlert("erro", "❌ Falha ao salvar escala.");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", carregarMapa);
