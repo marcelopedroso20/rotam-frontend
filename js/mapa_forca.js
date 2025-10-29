@@ -1,5 +1,5 @@
 // ===============================
-// 🗺️ Mapa da Força ROTAM (v1.0)
+// 🗺️ Mapa da Força ROTAM (v2.0)
 // ===============================
 
 const API_URL = `${CONFIG.API_BASE}/mapa`;
@@ -13,10 +13,15 @@ function showAlert(tipo, msg) {
   setTimeout(() => (el.style.display = "none"), 4000);
 }
 
-// 🔹 Carrega todos os postos + militares
+// 🔹 Carrega o mapa da força (por data e turno)
 async function carregarMapa() {
+  const data = document.getElementById("dataEscala").value;
+  const turno = document.getElementById("turnoEscala").value;
+
+  if (!data || !turno) return;
+
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(`${API_URL}?data=${data}&turno=${turno}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -42,7 +47,7 @@ async function renderizarMapa(dados) {
     setores[p.setor].push(p);
   });
 
-  // Busca todos militares disponíveis
+  // Busca militares disponíveis
   const militaresRes = await fetch(`${CONFIG.API_BASE}/efetivo`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -131,10 +136,16 @@ async function salvarMapa() {
     if (!res.ok) throw new Error(json.error || "Erro ao salvar escala.");
 
     showAlert("sucesso", "✅ Escala salva com sucesso!");
+    carregarMapa(); // Atualiza logo após salvar
   } catch (err) {
     console.error("Erro ao salvar:", err);
     showAlert("erro", "❌ Falha ao salvar escala.");
   }
 }
 
-document.addEventListener("DOMContentLoaded", carregarMapa);
+// 🔹 Inicializa com data de hoje
+document.addEventListener("DOMContentLoaded", () => {
+  const hoje = new Date().toISOString().split("T")[0];
+  document.getElementById("dataEscala").value = hoje;
+  carregarMapa();
+});
