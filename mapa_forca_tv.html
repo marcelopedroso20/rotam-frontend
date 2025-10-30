@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📺 Mapa da Força — Exibição ROTAM</title>
+
+  <base href="/rotam-frontend/">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      background: #0b0b0b;
+      color: #fff;
+      font-family: "Segoe UI", Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    h2 {
+      text-align: center;
+      font-weight: 800;
+      color: #ffd700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 25px;
+    }
+
+    #infoEscala {
+      text-align: center;
+      color: #ccc;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .setor {
+      border: 2px solid #555;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      margin: 10px;
+      padding: 10px;
+    }
+
+    .setor-titulo {
+      background: #ffd700;
+      color: #000;
+      text-align: center;
+      padding: 8px;
+      font-weight: bold;
+      border-radius: 8px 8px 0 0;
+      text-transform: uppercase;
+    }
+
+    .posto {
+      text-align: center;
+      padding: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .posto:last-child {
+      border-bottom: none;
+    }
+
+    .posto strong {
+      display: block;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .posto span {
+      color: #9fd9ff;
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+      margin-top: 20px;
+    }
+
+    #recarregarBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #222;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      display: none; /* oculto por padrão */
+    }
+
+    #recarregarBtn:hover {
+      background: #333;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid text-center">
+    <h2>MAPA DA FORÇA ROTAM</h2>
+    <p id="infoEscala">Carregando escala...</p>
+
+    <div id="setoresContainer" class="row justify-content-center"></div>
+
+    <footer>Quartel do Batalhão ROTAM — Cuiabá/MT</footer>
+  </div>
+
+  <button id="recarregarBtn" onclick="carregarMapa()">🔄 Recarregar agora</button>
+
+  <script src="js/config.js"></script>
+  <script>
+    const API_URL = `${CONFIG.API_BASE}/mapa`;
+    const token = localStorage.getItem("token");
+
+    // 📅 Função que detecta o turno automaticamente
+    function detectarTurnoAtual() {
+      const hora = new Date().getHours();
+      if (hora >= 5 && hora < 12) return "Matutino";
+      if (hora >= 12 && hora < 19) return "Vespertino";
+      return "Noturno";
+    }
+
+    // 🔄 Atualiza a tela a cada 5 minutos (300.000 ms)
+    setInterval(() => {
+      carregarMapa(true);
+    }, 300000);
+
+    async function carregarMapa(silencioso = false) {
+      const hoje = new Date().toISOString().split("T")[0];
+      const turno = detectarTurnoAtual();
+
+      try {
+        const res = await fetch(`${API_URL}?data=${hoje}&turno=${turno}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Erro ao carregar dados");
+
+        const dados = await res.json();
+        renderizarMapa(dados, hoje, turno);
+
+        if (!silencioso)
+          console.log(`✅ Escala atualizada: ${hoje} - ${turno}`);
+      } catch (err) {
+        console.error("Erro:", err);
+      }
+    }
+
+    function renderizarMapa(dados, data, turno) {
+      const info = document.getElementById("infoEscala");
+      info.textContent = `📅 ${new Date(data).toLocaleDateString(
+        "pt-BR"
+      )} — 🕒 ${turno}`;
+
+      const container = document.getElementById("setoresContainer");
+      container.innerHTML = "";
+
+      const setores = {};
+      dados.forEach((p) => {
+        if (!setores[p.setor]) setores[p.setor] = [];
+        setores[p.setor].push(p);
+      });
+
+      Object.keys(setores).forEach((setor) => {
+        const col = document.createElement("div");
+        col.classList.add("col-md-3", "setor");
+
+        const titulo = document.createElement("div");
+        titulo.classList.add("setor-titulo");
+        titulo.textContent = setor;
+
+        const corpo = document.createElement("div");
+        setores[setor].forEach((posto) => {
+          const div = document.createElement("div");
+          div.classList.add("posto");
+          div.innerHTML = `
+            <strong>${posto.nome_posto}</strong>
+            <span>${
+              posto.militar_nome ? posto.militar_nome : "<em>— Vago —</em>"
+            }</span>
+          `;
+          corpo.appendChild(div);
+        });
+
+        col.appendChild(titulo);
+        col.appendChild(corpo);
+        container.appendChild(col);
+      });
+    }
+
+    // 🚀 Inicialização automática ao carregar a página
+    document.addEventListener("DOMContentLoaded", () => {
+      carregarMapa();
+      setTimeout(() => (document.getElementById("recarregarBtn").style.display = "block"), 10000);
+    });
+  </script>
+</body>
+</html>
