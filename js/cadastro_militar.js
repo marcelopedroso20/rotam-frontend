@@ -1,5 +1,6 @@
 // ===============================
-// 🪖 ROTAM - Cadastro de Efetivo (versão v2.3.0)
+// 🪖 ROTAM - Cadastro de Efetivo (v2.4.0)
+// ✅ ATUALIZADO: Suporte ao campo nome_completo
 // Protegido com verificação JWT e envio validado ao backend
 // ===============================
 
@@ -39,7 +40,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   UI.btnCancelar = document.getElementById("btn-cancelar");
   UI.preview = document.getElementById("foto-preview");
 
-  ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude", "foto"]
+  // ✅ ATUALIZADO: Adiciona nome_completo na lista de campos
+  ["nome", "nome_completo", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude", "foto"]
     .forEach(id => UI.fields[id] = document.getElementById(id));
 
   if (UI.form) UI.form.addEventListener("submit", onSubmit);
@@ -72,7 +74,7 @@ function toBase64(file) {
 }
 
 // ===============================
-// 📍 Preenche campos GPS
+// 🌍 Preenche campos GPS
 // ===============================
 function preencherGPS() {
   if (!("geolocation" in navigator)) return;
@@ -89,22 +91,29 @@ function preencherGPS() {
 
 // ===============================
 // 📋 Renderiza tabela de efetivo
+// ✅ ATUALIZADO: Exibe nome_completo na tabela
 // ===============================
 function renderLista(lista) {
   if (!UI.tableBody) return;
   UI.tableBody.innerHTML = (lista && lista.length)
     ? lista.map(i => `
       <tr>
-        <td>${i.id}</td><td>${i.nome || "-"}</td><td>${i.patente || "-"}</td>
-        <td>${i.funcao || "-"}</td><td>${i.setor || "-"}</td><td>${i.turno || "-"}</td>
-        <td>${i.viatura || "-"}</td><td>${i.status || "-"}</td>
+        <td>${i.id}</td>
+        <td>${i.nome || "-"}</td>
+        <td>${i.nome_completo || "-"}</td>
+        <td>${i.patente || "-"}</td>
+        <td>${i.funcao || "-"}</td>
+        <td>${i.setor || "-"}</td>
+        <td>${i.turno || "-"}</td>
+        <td>${i.viatura || "-"}</td>
+        <td>${i.status || "-"}</td>
         <td>${i.latitude && i.longitude ? `${i.latitude}, ${i.longitude}` : "-"}</td>
         <td>
           <button class="btn btn-sm btn-primary" data-edit="${i.id}">✏️ Editar</button>
           <button class="btn btn-sm btn-danger" data-del="${i.id}">🗑️ Excluir</button>
         </td>
       </tr>`).join("")
-    : `<tr><td colspan="10" class="text-center">Sem registros.</td></tr>`;
+    : `<tr><td colspan="11" class="text-center">Sem registros.</td></tr>`;
 
   UI.tableBody.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => carregarParaEdicao(Number(b.dataset.edit)));
   UI.tableBody.querySelectorAll("[data-del]").forEach(b => b.onclick = () => deletarRegistro(Number(b.dataset.del)));
@@ -127,6 +136,7 @@ async function carregarLista() {
 
 // ===============================
 // ✏️ Editar registro
+// ✅ ATUALIZADO: Carrega nome_completo para edição
 // ===============================
 async function carregarParaEdicao(id) {
   try {
@@ -136,7 +146,8 @@ async function carregarParaEdicao(id) {
     if (!it) return;
     EDIT_ID = id;
 
-    for (const k of ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"])
+    // ✅ ATUALIZADO: Inclui nome_completo
+    for (const k of ["nome", "nome_completo", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"])
       if (UI.fields[k]) UI.fields[k].value = it[k] ?? "";
 
     if (it.foto && UI.preview) {
@@ -177,13 +188,16 @@ function resetForm() {
 }
 
 // ===============================
-// 💾 Salvar ou atualizar (corrigido)
+// 💾 Salvar ou atualizar
+// ✅ ATUALIZADO: Envia nome_completo no payload
 // ===============================
 async function onSubmit(e) {
   e.preventDefault();
 
   const payload = {};
-  for (const k of ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"]) {
+  
+  // ✅ ATUALIZADO: Inclui nome_completo no payload
+  for (const k of ["nome", "nome_completo", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"]) {
     payload[k] = UI.fields[k]?.value?.trim() || "";
   }
 
@@ -217,7 +231,7 @@ async function onSubmit(e) {
 
     resetForm();
     await carregarLista();
-    alert("Registro salvo com sucesso!");
+    alert("✅ Registro salvo com sucesso!");
   } catch (e) {
     console.error("❌ Erro ao salvar:", e);
     alert("Erro ao salvar registro. Veja o console para detalhes.");
