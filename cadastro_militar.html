@@ -40,39 +40,49 @@
     </div>
 
     <form id="form-efetivo" class="row g-3">
+      
+      <!-- ✅ NOVO CAMPO: Nome Completo (Identificação Oficial) -->
+      <div class="col-md-6">
+        <label class="form-label">Nome Completo (Identificação Oficial)</label>
+        <input id="nome_completo" class="form-control" placeholder="Ex: João Silva Santos">
+        <small class="text-muted">Nome completo conforme documentação oficial</small>
+      </div>
+
+      <!-- Nome operacional (curto) -->
       <div class="col-md-4">
-        <label class="form-label">Nome</label>
-        <input id="nome" class="form-control" required>
+        <label class="form-label">Nome Operacional <span class="text-danger">*</span></label>
+        <input id="nome" class="form-control" required placeholder="Ex: Silva">
+        <small class="text-muted">Nome curto usado nas operações</small>
       </div>
 
       <div class="col-md-2">
-        <label class="form-label">Patente</label>
-        <input id="patente" class="form-control" required>
+        <label class="form-label">Patente <span class="text-danger">*</span></label>
+        <input id="patente" class="form-control" required placeholder="Ex: Soldado">
       </div>
 
       <div class="col-md-3">
         <label class="form-label">Função</label>
-        <input id="funcao" class="form-control">
+        <input id="funcao" class="form-control" placeholder="Ex: Motorista">
       </div>
 
       <div class="col-md-3">
         <label class="form-label">Setor</label>
-        <input id="setor" class="form-control">
+        <input id="setor" class="form-control" placeholder="Ex: Operações">
       </div>
 
       <div class="col-md-2">
         <label class="form-label">Turno</label>
-        <input id="turno" class="form-control">
+        <input id="turno" class="form-control" placeholder="Ex: Diurno">
       </div>
 
       <div class="col-md-3">
         <label class="form-label">Viatura</label>
-        <input id="viatura" class="form-control">
+        <input id="viatura" class="form-control" placeholder="Ex: ROTAM-01">
       </div>
 
       <div class="col-md-3">
         <label class="form-label">Placa</label>
-        <input id="placa" class="form-control">
+        <input id="placa" class="form-control" placeholder="Ex: ABC-1234">
       </div>
 
       <div class="col-md-2">
@@ -111,6 +121,7 @@
           <tr>
             <th>ID</th>
             <th>Nome</th>
+            <th>Nome Completo</th>
             <th>Patente</th>
             <th>Função</th>
             <th>Setor</th>
