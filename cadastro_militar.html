@@ -41,63 +41,100 @@
 
     <form id="form-efetivo" class="row g-3">
       
-      <!-- Nome operacional (curto) -->
+      <!-- ========== LINHA 1: Identificação Completa ========== -->
       <div class="col-md-6">
-        <label class="form-label">Nome Operacional <span class="text-danger">*</span></label>
-        <input id="nome" class="form-control" required placeholder="Ex: Silva">
+        <label class="form-label">📄 Nome Completo</label>
+        <input id="nome_completo" class="form-control" placeholder="Ex: FABIO ALVES RIBEIRO">
+        <small class="text-muted">Nome completo do militar (NOME COMPLETO)</small>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">🎖️ Nome Oficial com Identificação</label>
+        <input id="nome_oficial" class="form-control" placeholder="Ex: TEN CEL PM RIBEIRO RGPMMT 882.159">
+        <small class="text-muted">Nome completo formatado (NOME COMPLETO COM IDENTIFICAÇÃO)</small>
+      </div>
+
+      <!-- ========== LINHA 2: Identificação Operacional ========== -->
+      <div class="col-md-3">
+        <label class="form-label">👤 Nome Operacional <span class="text-danger">*</span></label>
+        <input id="nome" class="form-control" required placeholder="Ex: RIBEIRO">
+        <small class="text-muted">Nome curto usado nas operações (NOME IDENT.)</small>
       </div>
 
       <div class="col-md-2">
-        <label class="form-label">Patente <span class="text-danger">*</span></label>
-        <input id="patente" class="form-control" required placeholder="Ex: Soldado">
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Função</label>
-        <input id="funcao" class="form-control" placeholder="Ex: Motorista">
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Setor</label>
-        <input id="setor" class="form-control" placeholder="Ex: Operações">
+        <label class="form-label">🎖️ Patente <span class="text-danger">*</span></label>
+        <input id="patente" class="form-control" required placeholder="Ex: TEN CEL PM">
+        <small class="text-muted">Posto/graduação (POSTO/GRAD)</small>
       </div>
 
       <div class="col-md-2">
-        <label class="form-label">Turno</label>
-        <input id="turno" class="form-control" placeholder="Ex: Diurno">
+        <label class="form-label">📋 RGPM</label>
+        <input id="rgpm" class="form-control" placeholder="Ex: 882159">
+        <small class="text-muted">Registro Geral PM</small>
       </div>
 
       <div class="col-md-3">
-        <label class="form-label">Viatura</label>
+        <label class="form-label">💼 Função/Situação</label>
+        <input id="funcao" class="form-control" placeholder="Ex: COMANDANTE">
+        <small class="text-muted">Função atual (SITUAÇÃO)</small>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">🏢 Setor</label>
+        <input id="setor" class="form-control" placeholder="Ex: COMANDO">
+        <small class="text-muted">Setor de lotação</small>
+      </div>
+
+      <!-- ========== LINHA 3: Dados Operacionais ========== -->
+      <div class="col-md-2">
+        <label class="form-label">🕐 Turno</label>
+        <select id="turno" class="form-control">
+          <option value="">Selecione...</option>
+          <option value="Diurno">Diurno</option>
+          <option value="Noturno">Noturno</option>
+          <option value="Administrativo">Administrativo</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">🚓 Viatura</label>
         <input id="viatura" class="form-control" placeholder="Ex: ROTAM-01">
       </div>
 
-      <div class="col-md-3">
-        <label class="form-label">Placa</label>
+      <div class="col-md-2">
+        <label class="form-label">🚗 Placa</label>
         <input id="placa" class="form-control" placeholder="Ex: ABC-1234">
       </div>
 
       <div class="col-md-2">
-        <label class="form-label">Status</label>
-        <input id="status" class="form-control" placeholder="Disponível / Patrulha / Folga">
+        <label class="form-label">📊 Status</label>
+        <select id="status" class="form-control">
+          <option value="Disponível">Disponível</option>
+          <option value="Patrulha">Patrulha</option>
+          <option value="Folga">Folga</option>
+          <option value="Férias">Férias</option>
+          <option value="Afastado">Afastado</option>
+        </select>
       </div>
 
+      <!-- ========== LINHA 4: Localização ========== -->
       <div class="col-md-2">
-        <label class="form-label">Latitude</label>
+        <label class="form-label">🌍 Latitude</label>
         <input id="latitude" class="form-control" readonly>
       </div>
 
       <div class="col-md-2">
-        <label class="form-label">Longitude</label>
+        <label class="form-label">🌍 Longitude</label>
         <input id="longitude" class="form-control" readonly>
       </div>
 
       <div class="col-md-4">
-        <label class="form-label">Foto</label>
+        <label class="form-label">📸 Foto</label>
         <input id="foto" type="file" accept="image/*" class="form-control">
         <img id="foto-preview" style="display:none;max-height:80px;margin-top:8px;border-radius:6px"/>
       </div>
 
+      <!-- ========== BOTÕES ========== -->
       <div class="col-12 d-flex gap-2 mt-3">
         <button id="btn-salvar" class="btn btn-success flex-grow-1 fw-bold">💾 Salvar</button>
         <button id="btn-cancelar" type="button" class="btn btn-secondary">Cancelar</button>
@@ -108,18 +145,18 @@
     <h3 class="mb-3">👥 Efetivo Cadastrado</h3>
 
     <div class="table-responsive">
-      <table id="tabela-efetivo" class="table table-dark table-striped table-hover align-middle">
+      <table id="tabela-efetivo" class="table table-dark table-striped table-hover align-middle" style="font-size: 0.9rem;">
         <thead class="table-secondary text-dark">
           <tr>
             <th>ID</th>
             <th>Nome</th>
+            <th>Nome Completo</th>
             <th>Patente</th>
+            <th>RGPM</th>
             <th>Função</th>
             <th>Setor</th>
             <th>Turno</th>
-            <th>Viatura</th>
             <th>Status</th>
-            <th>GPS</th>
             <th>Ações</th>
           </tr>
         </thead>
