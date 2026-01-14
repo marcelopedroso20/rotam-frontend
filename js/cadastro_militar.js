@@ -1,7 +1,7 @@
 // ===============================
-// 🪖 ROTAM - Cadastro de Efetivo (v2.4.0)
-// ✅ ATUALIZADO: Suporte ao campo nome_completo
-// Protegido com verificação JWT e envio validado ao backend
+// 🪖 ROTAM - Cadastro de Efetivo (v2.3.5 - TEMPORÁRIA)
+// ⚠️ Versão que funciona SEM o campo nome_completo no banco
+// ✅ Use esta versão até atualizar o backend e banco
 // ===============================
 
 const UI = { form: null, fields: {}, tableBody: null, btnSalvar: null, btnCancelar: null, preview: null };
@@ -40,8 +40,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   UI.btnCancelar = document.getElementById("btn-cancelar");
   UI.preview = document.getElementById("foto-preview");
 
-  // ✅ ATUALIZADO: Adiciona nome_completo na lista de campos
-  ["nome", "nome_completo", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude", "foto"]
+  // ⚠️ REMOVIDO nome_completo temporariamente
+  ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude", "foto"]
     .forEach(id => UI.fields[id] = document.getElementById(id));
 
   if (UI.form) UI.form.addEventListener("submit", onSubmit);
@@ -91,7 +91,7 @@ function preencherGPS() {
 
 // ===============================
 // 📋 Renderiza tabela de efetivo
-// ✅ ATUALIZADO: Exibe nome_completo na tabela
+// ⚠️ SEM coluna nome_completo
 // ===============================
 function renderLista(lista) {
   if (!UI.tableBody) return;
@@ -100,7 +100,6 @@ function renderLista(lista) {
       <tr>
         <td>${i.id}</td>
         <td>${i.nome || "-"}</td>
-        <td>${i.nome_completo || "-"}</td>
         <td>${i.patente || "-"}</td>
         <td>${i.funcao || "-"}</td>
         <td>${i.setor || "-"}</td>
@@ -113,7 +112,7 @@ function renderLista(lista) {
           <button class="btn btn-sm btn-danger" data-del="${i.id}">🗑️ Excluir</button>
         </td>
       </tr>`).join("")
-    : `<tr><td colspan="11" class="text-center">Sem registros.</td></tr>`;
+    : `<tr><td colspan="10" class="text-center">Sem registros.</td></tr>`;
 
   UI.tableBody.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => carregarParaEdicao(Number(b.dataset.edit)));
   UI.tableBody.querySelectorAll("[data-del]").forEach(b => b.onclick = () => deletarRegistro(Number(b.dataset.del)));
@@ -127,16 +126,16 @@ async function carregarLista() {
     const r = await fetch(`${CONFIG.API_BASE}/efetivo`, { headers: CONFIG.authHeaders() });
     if (r.status === 401) throw new Error("Sessão expirada");
     const data = await r.json();
+    console.log("✅ Dados recebidos:", data); // Debug
     renderLista(data);
   } catch (e) {
-    console.error(e);
+    console.error("❌ Erro ao carregar lista:", e);
     renderLista([]);
   }
 }
 
 // ===============================
 // ✏️ Editar registro
-// ✅ ATUALIZADO: Carrega nome_completo para edição
 // ===============================
 async function carregarParaEdicao(id) {
   try {
@@ -146,8 +145,8 @@ async function carregarParaEdicao(id) {
     if (!it) return;
     EDIT_ID = id;
 
-    // ✅ ATUALIZADO: Inclui nome_completo
-    for (const k of ["nome", "nome_completo", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"])
+    // ⚠️ SEM nome_completo
+    for (const k of ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"])
       if (UI.fields[k]) UI.fields[k].value = it[k] ?? "";
 
     if (it.foto && UI.preview) {
@@ -169,9 +168,10 @@ async function deletarRegistro(id) {
   try {
     const r = await fetch(`${CONFIG.API_BASE}/efetivo/${id}`, { method: "DELETE", headers: CONFIG.authHeaders() });
     if (!r.ok) throw 0;
+    alert("✅ Registro excluído com sucesso!");
     await carregarLista();
   } catch {
-    alert("Erro ao excluir registro.");
+    alert("❌ Erro ao excluir registro.");
   }
 }
 
@@ -189,16 +189,15 @@ function resetForm() {
 
 // ===============================
 // 💾 Salvar ou atualizar
-// ✅ ATUALIZADO: Envia nome_completo no payload
-// ✅ CORRIGIDO: Converte strings vazias em null para campos numéricos
+// ✅ CORRIGIDO: Trata campos numéricos vazios como null
 // ===============================
 async function onSubmit(e) {
   e.preventDefault();
 
   const payload = {};
   
-  // ✅ ATUALIZADO: Inclui nome_completo no payload
-  for (const k of ["nome", "nome_completo", "patente", "funcao", "setor", "turno", "viatura", "placa", "status"]) {
+  // Campos de texto
+  for (const k of ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status"]) {
     payload[k] = UI.fields[k]?.value?.trim() || "";
   }
 
@@ -206,7 +205,7 @@ async function onSubmit(e) {
   payload.latitude = UI.fields.latitude?.value?.trim() || null;
   payload.longitude = UI.fields.longitude?.value?.trim() || null;
 
-  // Converte latitude e longitude para número se tiverem valor
+  // Converte para número se houver valor
   if (payload.latitude) payload.latitude = parseFloat(payload.latitude);
   if (payload.longitude) payload.longitude = parseFloat(payload.longitude);
 
@@ -243,43 +242,6 @@ async function onSubmit(e) {
     alert("✅ Registro salvo com sucesso!");
   } catch (e) {
     console.error("❌ Erro ao salvar:", e);
-    alert("Erro ao salvar registro. Veja o console para detalhes.");
-  }
-}
-
-  if (UI.fields.foto?.files?.[0]) {
-    try {
-      payload.foto = await toBase64(UI.fields.foto.files[0]);
-    } catch {
-      payload.foto = "";
-    }
-  }
-
-  console.log("📤 Enviando payload:", payload);
-
-  const url = EDIT_ID ? `${CONFIG.API_BASE}/efetivo/${EDIT_ID}` : `${CONFIG.API_BASE}/efetivo`;
-  const method = EDIT_ID ? "PUT" : "POST";
-
-  try {
-    const r = await fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("token")}`
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const text = await r.text();
-    console.log("📥 Resposta:", text);
-
-    if (!r.ok) throw new Error(`Erro ${r.status}: ${text}`);
-
-    resetForm();
-    await carregarLista();
-    alert("✅ Registro salvo com sucesso!");
-  } catch (e) {
-    console.error("❌ Erro ao salvar:", e);
-    alert("Erro ao salvar registro. Veja o console para detalhes.");
+    alert("❌ Erro ao salvar registro. Veja o console para detalhes.");
   }
 }
