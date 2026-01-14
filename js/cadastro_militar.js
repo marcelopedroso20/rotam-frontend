@@ -1,14 +1,13 @@
 // ===============================
-// 🪖 ROTAM - Cadastro de Efetivo (v2.3.5 - TEMPORÁRIA)
-// ⚠️ Versão que funciona SEM o campo nome_completo no banco
-// ✅ Use esta versão até atualizar o backend e banco
+// 🪖 ROTAM - Cadastro de Efetivo (v3.0.0 - COMPLETO)
+// ✅ Todos os campos da planilha Excel
 // ===============================
 
 const UI = { form: null, fields: {}, tableBody: null, btnSalvar: null, btnCancelar: null, preview: null };
 let EDIT_ID = null;
 
 // ===============================
-// 🔐 Verifica Token JWT antes de tudo
+// 🔐 Verifica Token JWT
 // ===============================
 document.addEventListener("DOMContentLoaded", async () => {
   const token = localStorage.getItem("token");
@@ -40,8 +39,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   UI.btnCancelar = document.getElementById("btn-cancelar");
   UI.preview = document.getElementById("foto-preview");
 
-  // ⚠️ REMOVIDO nome_completo temporariamente
-  ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude", "foto"]
+  // ✅ TODOS OS CAMPOS
+  ["nome", "nome_completo", "nome_oficial", "patente", "rgpm", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude", "foto"]
     .forEach(id => UI.fields[id] = document.getElementById(id));
 
   if (UI.form) UI.form.addEventListener("submit", onSubmit);
@@ -91,7 +90,6 @@ function preencherGPS() {
 
 // ===============================
 // 📋 Renderiza tabela de efetivo
-// ⚠️ SEM coluna nome_completo
 // ===============================
 function renderLista(lista) {
   if (!UI.tableBody) return;
@@ -100,16 +98,16 @@ function renderLista(lista) {
       <tr>
         <td>${i.id}</td>
         <td>${i.nome || "-"}</td>
+        <td>${i.nome_completo || "-"}</td>
         <td>${i.patente || "-"}</td>
+        <td>${i.rgpm || "-"}</td>
         <td>${i.funcao || "-"}</td>
         <td>${i.setor || "-"}</td>
         <td>${i.turno || "-"}</td>
-        <td>${i.viatura || "-"}</td>
         <td>${i.status || "-"}</td>
-        <td>${i.latitude && i.longitude ? `${i.latitude}, ${i.longitude}` : "-"}</td>
         <td>
-          <button class="btn btn-sm btn-primary" data-edit="${i.id}">✏️ Editar</button>
-          <button class="btn btn-sm btn-danger" data-del="${i.id}">🗑️ Excluir</button>
+          <button class="btn btn-sm btn-primary" data-edit="${i.id}">✏️</button>
+          <button class="btn btn-sm btn-danger" data-del="${i.id}">🗑️</button>
         </td>
       </tr>`).join("")
     : `<tr><td colspan="10" class="text-center">Sem registros.</td></tr>`;
@@ -126,10 +124,9 @@ async function carregarLista() {
     const r = await fetch(`${CONFIG.API_BASE}/efetivo`, { headers: CONFIG.authHeaders() });
     if (r.status === 401) throw new Error("Sessão expirada");
     const data = await r.json();
-    console.log("✅ Dados recebidos:", data); // Debug
     renderLista(data);
   } catch (e) {
-    console.error("❌ Erro ao carregar lista:", e);
+    console.error(e);
     renderLista([]);
   }
 }
@@ -145,8 +142,8 @@ async function carregarParaEdicao(id) {
     if (!it) return;
     EDIT_ID = id;
 
-    // ⚠️ SEM nome_completo
-    for (const k of ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"])
+    // ✅ TODOS OS CAMPOS
+    for (const k of ["nome", "nome_completo", "nome_oficial", "patente", "rgpm", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"])
       if (UI.fields[k]) UI.fields[k].value = it[k] ?? "";
 
     if (it.foto && UI.preview) {
@@ -189,23 +186,21 @@ function resetForm() {
 
 // ===============================
 // 💾 Salvar ou atualizar
-// ✅ CORRIGIDO: Trata campos numéricos vazios como null
 // ===============================
 async function onSubmit(e) {
   e.preventDefault();
 
   const payload = {};
   
-  // Campos de texto
-  for (const k of ["nome", "patente", "funcao", "setor", "turno", "viatura", "placa", "status"]) {
+  // ✅ TODOS OS CAMPOS DE TEXTO
+  for (const k of ["nome", "nome_completo", "nome_oficial", "patente", "rgpm", "funcao", "setor", "turno", "viatura", "placa", "status"]) {
     payload[k] = UI.fields[k]?.value?.trim() || "";
   }
 
-  // ✅ CORRIGIDO: Campos numéricos devem ser null se vazios
+  // ✅ CAMPOS NUMÉRICOS (null se vazios)
   payload.latitude = UI.fields.latitude?.value?.trim() || null;
   payload.longitude = UI.fields.longitude?.value?.trim() || null;
 
-  // Converte para número se houver valor
   if (payload.latitude) payload.latitude = parseFloat(payload.latitude);
   if (payload.longitude) payload.longitude = parseFloat(payload.longitude);
 
