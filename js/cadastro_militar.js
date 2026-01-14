@@ -190,6 +190,7 @@ function resetForm() {
 // ===============================
 // 💾 Salvar ou atualizar
 // ✅ ATUALIZADO: Envia nome_completo no payload
+// ✅ CORRIGIDO: Converte strings vazias em null para campos numéricos
 // ===============================
 async function onSubmit(e) {
   e.preventDefault();
@@ -197,9 +198,54 @@ async function onSubmit(e) {
   const payload = {};
   
   // ✅ ATUALIZADO: Inclui nome_completo no payload
-  for (const k of ["nome", "nome_completo", "patente", "funcao", "setor", "turno", "viatura", "placa", "status", "latitude", "longitude"]) {
+  for (const k of ["nome", "nome_completo", "patente", "funcao", "setor", "turno", "viatura", "placa", "status"]) {
     payload[k] = UI.fields[k]?.value?.trim() || "";
   }
+
+  // ✅ CORRIGIDO: Campos numéricos devem ser null se vazios
+  payload.latitude = UI.fields.latitude?.value?.trim() || null;
+  payload.longitude = UI.fields.longitude?.value?.trim() || null;
+
+  // Converte latitude e longitude para número se tiverem valor
+  if (payload.latitude) payload.latitude = parseFloat(payload.latitude);
+  if (payload.longitude) payload.longitude = parseFloat(payload.longitude);
+
+  if (UI.fields.foto?.files?.[0]) {
+    try {
+      payload.foto = await toBase64(UI.fields.foto.files[0]);
+    } catch {
+      payload.foto = "";
+    }
+  }
+
+  console.log("📤 Enviando payload:", payload);
+
+  const url = EDIT_ID ? `${CONFIG.API_BASE}/efetivo/${EDIT_ID}` : `${CONFIG.API_BASE}/efetivo`;
+  const method = EDIT_ID ? "PUT" : "POST";
+
+  try {
+    const r = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const text = await r.text();
+    console.log("📥 Resposta:", text);
+
+    if (!r.ok) throw new Error(`Erro ${r.status}: ${text}`);
+
+    resetForm();
+    await carregarLista();
+    alert("✅ Registro salvo com sucesso!");
+  } catch (e) {
+    console.error("❌ Erro ao salvar:", e);
+    alert("Erro ao salvar registro. Veja o console para detalhes.");
+  }
+}
 
   if (UI.fields.foto?.files?.[0]) {
     try {
