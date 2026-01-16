@@ -31,6 +31,11 @@
           <i class="bi bi-person-badge"></i> Cadastro Efetivo
         </button>
 
+        <!-- ⭐ NOVO: Gerador de Escalas -->
+        <button class="btn btn-warning w-100 mb-2 fw-bold" onclick="window.location.href='escalas.html'">
+          <i class="bi bi-calendar-check"></i> Gerador de Escalas
+        </button>
+
         <button class="btn btn-dark w-100 mb-2" onclick="window.location.href='livro_rt90.html'">
           <i class="bi bi-book"></i> Livro RT90
         </button>
@@ -76,11 +81,29 @@
               <button class="btn btn-outline-dark w-100" onclick="window.location.href='cadastro_militar.html'">Acessar</button>
             </div>
           </div>
+          
+          <!-- ⭐ NOVO: Card Gerador de Escalas -->
+          <div class="col-md-4">
+            <div class="card shadow-sm text-center p-3 border-warning">
+              <h6><i class="bi bi-calendar-check text-warning"></i> Gerador de Escalas</h6>
+              <p class="text-muted">Crie escalas diárias automaticamente e gere PDF.</p>
+              <button class="btn btn-warning w-100 fw-bold" onclick="window.location.href='escalas.html'">Acessar</button>
+            </div>
+          </div>
+          
           <div class="col-md-4">
             <div class="card shadow-sm text-center p-3">
               <h6><i class="bi bi-book"></i> Livro RT90</h6>
               <p class="text-muted">Preencha e gere relatórios diários do serviço.</p>
               <button class="btn btn-outline-dark w-100" onclick="window.location.href='livro_rt90.html'">Acessar</button>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="card shadow-sm text-center p-3">
+              <h6><i class="bi bi-clock-history"></i> Histórico RT90</h6>
+              <p class="text-muted">Consulte o histórico de relatórios anteriores.</p>
+              <button class="btn btn-outline-dark w-100" onclick="window.location.href='historico_rt90.html'">Acessar</button>
             </div>
           </div>
         </div>
