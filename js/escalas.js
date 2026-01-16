@@ -584,14 +584,26 @@ async function gerarPDF() {
     const ph = 297; // page height
     const cw = pw - ml - mr; // content width
 
-    // ========== LOGOS (Simuladas) ==========
-    doc.setFillColor(240, 240, 240);
-    doc.rect(ml, y, 35, 35, 'F');
-    doc.rect(pw - mr - 35, y, 35, 35, 'F');
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text('ROTAM', ml + 17.5, y + 18, { align: 'center' });
-    doc.text('ROTAM', pw - mr - 17.5, y + 18, { align: 'center' });
+    // ========== LOGOS ROTAM ==========
+    // Carrega logo do GitHub
+    const logoUrl = 'https://marcelopedroso20.github.io/rotam-frontend/assets/logo-rotam.png';
+    
+    try {
+      // Adiciona logo esquerda
+      doc.addImage(logoUrl, 'PNG', ml, y, 35, 35);
+      // Adiciona logo direita
+      doc.addImage(logoUrl, 'PNG', pw - mr - 35, y, 35, 35);
+    } catch (e) {
+      console.warn('Erro ao carregar logos:', e);
+      // Fallback: retângulos cinza
+      doc.setFillColor(240, 240, 240);
+      doc.rect(ml, y, 35, 35, 'F');
+      doc.rect(pw - mr - 35, y, 35, 35, 'F');
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('ROTAM', ml + 17.5, y + 18, { align: 'center' });
+      doc.text('ROTAM', pw - mr - 17.5, y + 18, { align: 'center' });
+    }
     
     y += 40;
 
