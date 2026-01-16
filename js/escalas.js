@@ -573,8 +573,25 @@ async function gerarPDF() {
     // Configurações
     let y = 10;
     const marginLeft = 15;
+    const marginRight = 15;
     const pageWidth = 210;
-    const contentWidth = pageWidth - marginLeft - marginLeft;
+    const pageHeight = 297;
+    const contentWidth = pageWidth - marginLeft - marginRight;
+
+    // ========== LOGOS ROTAM (simuladas com retângulos) ==========
+    // Logo esquerda
+    doc.setDrawColor(0);
+    doc.setFillColor(200, 200, 200);
+    doc.rect(marginLeft, y, 30, 30, 'FD');
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ROTAM', marginLeft + 15, y + 15, { align: 'center' });
+    
+    // Logo direita
+    doc.rect(pageWidth - marginRight - 30, y, 30, 30, 'FD');
+    doc.text('ROTAM', pageWidth - marginRight - 15, y + 15, { align: 'center' });
+    
+    y += 35;
 
     // ========== CABEÇALHO ==========
     doc.setFontSize(10);
@@ -595,89 +612,116 @@ async function gerarPDF() {
     doc.text(`CUIABÁ - MT, ${dataFormatada}.`, pageWidth / 2, y, { align: 'center' });
     y += 8;
 
-    // Título da seção
+    // Título da seção (verde)
     doc.setFillColor(0, 128, 0);
     doc.rect(marginLeft, y, contentWidth, 6, 'F');
     doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
     doc.text('ESCALA DE SERVIÇO DIÁRIO', pageWidth / 2, y + 4, { align: 'center' });
     doc.setTextColor(0, 0, 0);
-    y += 10;
+    y += 6;
 
-    // ========== COMANDANTES ==========
-    doc.setFont('helvetica', 'bold');
+    // ========== TABELA DE COMANDANTES ==========
     doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
     
+    // Linha 1: Comandante do Batalhão
+    doc.setDrawColor(0);
+    doc.rect(marginLeft, y, contentWidth * 0.5, 6);
+    doc.rect(marginLeft + contentWidth * 0.5, y, contentWidth * 0.5, 6);
+    doc.text('COMANDANTE DO BATALHÃO ROTAM', marginLeft + 2, y + 4);
+    doc.setFont('helvetica', 'normal');
     if (comandante) {
-      doc.text('COMANDANTE DO BATALHÃO ROTAM', marginLeft, y);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`${comandante.patente} ${comandante.nome}`, marginLeft + 75, y);
-      if (comandante.rgpm) doc.text(`RGPMMT ${comandante.rgpm}`, marginLeft + 130, y);
-      y += 5;
+      doc.text(`${comandante.patente} ${comandante.nome} ${comandante.rgpm ? 'RGPMMT ' + comandante.rgpm : ''}`, marginLeft + contentWidth * 0.5 + 2, y + 4);
     }
+    y += 6;
 
+    // Linha 2: Comandante Adjunto
     doc.setFont('helvetica', 'bold');
+    doc.rect(marginLeft, y, contentWidth * 0.5, 6);
+    doc.rect(marginLeft + contentWidth * 0.5, y, contentWidth * 0.5, 6);
+    doc.text('COMANDANTE ADJUNTO DO BATALHÃO ROTAM', marginLeft + 2, y + 4);
+    doc.setFont('helvetica', 'normal');
     if (fiscal) {
-      doc.text('COMANDANTE ADJUNTO DO BATALHÃO ROTAM', marginLeft, y);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`${fiscal.patente} ${fiscal.nome}`, marginLeft + 75, y);
-      if (fiscal.rgpm) doc.text(`RGPMMT ${fiscal.rgpm}`, marginLeft + 130, y);
-      y += 5;
+      doc.text(`${fiscal.patente} ${fiscal.nome} ${fiscal.rgpm ? 'RGPMMT ' + fiscal.rgpm : ''}`, marginLeft + contentWidth * 0.5 + 2, y + 4);
     }
+    y += 6;
 
+    // Linha 3: Chefe da ALI
     doc.setFont('helvetica', 'bold');
+    doc.rect(marginLeft, y, contentWidth * 0.5, 6);
+    doc.rect(marginLeft + contentWidth * 0.5, y, contentWidth * 0.5, 6);
+    doc.text('CHEFE DA ALI', marginLeft + 2, y + 4);
+    doc.setFont('helvetica', 'normal');
     if (chefe_ali) {
-      doc.text('CHEFE DA ALI', marginLeft, y);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`${chefe_ali.patente} ${chefe_ali.nome}`, marginLeft + 75, y);
-      if (chefe_ali.rgpm) doc.text(`RGPMMT ${chefe_ali.rgpm}`, marginLeft + 130, y);
-      y += 8;
+      doc.text(`${chefe_ali.patente} ${chefe_ali.nome} ${chefe_ali.rgpm ? 'RGPMMT ' + chefe_ali.rgpm : ''}`, marginLeft + contentWidth * 0.5 + 2, y + 4);
     }
+    y += 6;
 
-    // ========== SERVIÇO OPERACIONAL ==========
+    // ========== SERVIÇO OPERACIONAL (azul) ==========
     doc.setFillColor(0, 100, 255);
     doc.rect(marginLeft, y, contentWidth, 6, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.text('SERVIÇO OPERACIONAL', pageWidth / 2, y + 4, { align: 'center' });
     doc.setTextColor(0, 0, 0);
-    y += 10;
+    y += 6;
 
     doc.setFontSize(8);
 
+    // ROTAM Comando - 3 colunas
     if (fiscal) {
       doc.setFont('helvetica', 'bold');
-      doc.text('ROTAM COMANDO (FISCAL DE DIA)', marginLeft, y);
+      doc.rect(marginLeft, y, contentWidth * 0.4, 6);
+      doc.rect(marginLeft + contentWidth * 0.4, y, contentWidth * 0.4, 6);
+      doc.rect(marginLeft + contentWidth * 0.8, y, contentWidth * 0.2, 6);
+      doc.text('ROTAM COMANDO (FISCAL DE DIA)', marginLeft + 2, y + 4);
       doc.setFont('helvetica', 'normal');
-      doc.text(`${fiscal.patente} ${fiscal.nome}`, marginLeft + 70, y);
-      if (fiscal.rgpm) doc.text(`RGPMMT ${fiscal.rgpm}`, marginLeft + 120, y);
-      doc.text('07H00 AS 07H00 – 24H', marginLeft + 160, y);
-      y += 5;
+      doc.text(`${fiscal.patente} ${fiscal.nome} ${fiscal.rgpm ? 'RGPMMT ' + fiscal.rgpm : ''}`, marginLeft + contentWidth * 0.4 + 2, y + 4);
+      doc.text('07H00 AS 07H00 – 24H', marginLeft + contentWidth * 0.8 + 2, y + 4);
+      y += 6;
     }
 
+    // ROTAM 90 (Adjunto)
     if (adjunto) {
       doc.setFont('helvetica', 'bold');
-      doc.text('ROTAM NOVENTA (ADJUNTO DE DIA)', marginLeft, y);
+      doc.rect(marginLeft, y, contentWidth * 0.4, 6);
+      doc.rect(marginLeft + contentWidth * 0.4, y, contentWidth * 0.4, 6);
+      doc.rect(marginLeft + contentWidth * 0.8, y, contentWidth * 0.2, 6);
+      doc.text('ROTAM NOVENTA (ADJUNTO DE DIA)', marginLeft + 2, y + 4);
       doc.setFont('helvetica', 'normal');
-      doc.text(`${adjunto.patente} ${adjunto.nome}`, marginLeft + 70, y);
-      if (adjunto.rgpm) doc.text(`RGPMMT ${adjunto.rgpm}`, marginLeft + 120, y);
-      doc.text('07H00 AS 07H00 – 24H', marginLeft + 160, y);
-      y += 8;
+      doc.text(`${adjunto.patente} ${adjunto.nome} ${adjunto.rgpm ? 'RGPMMT ' + adjunto.rgpm : ''}`, marginLeft + contentWidth * 0.4 + 2, y + 4);
+      doc.text('07H00 AS 07H00 – 24H', marginLeft + contentWidth * 0.8 + 2, y + 4);
+      y += 6;
     }
 
     // ========== GUARDA DO BATALHÃO ==========
     if (guarda.length > 0) {
+      // Cabeçalho da seção
+      const guardaHeight = guarda.length * 4 + 2;
       doc.setFont('helvetica', 'bold');
-      doc.text('GUARDA DO BATALHÃO', marginLeft, y);
-      y += 5;
+      doc.rect(marginLeft, y, contentWidth * 0.4, guardaHeight);
+      doc.rect(marginLeft + contentWidth * 0.4, y, contentWidth * 0.4, guardaHeight);
+      doc.rect(marginLeft + contentWidth * 0.8, y, contentWidth * 0.2, guardaHeight);
+      doc.text('GUARDA DO BATALHÃO', marginLeft + 2, y + 4);
+      
+      // Lista de militares
       doc.setFont('helvetica', 'normal');
-
+      let guardaY = y + 4;
       guarda.forEach((m, idx) => {
-        doc.text(`${m.patente} ${m.nome}`, marginLeft + 5, y);
-        if (m.rgpm) doc.text(`RGPMMT ${m.rgpm}`, marginLeft + 85, y);
-        if (idx === guarda.length - 1) doc.text('07H00 AS 07H00 – 24H', marginLeft + 140, y);
-        y += 4;
+        const texto = `${m.patente} ${m.nome} ${m.rgpm ? '- RGPMMT ' + m.rgpm : ''}`;
+        if (texto.includes('ESTÁGIO')) {
+          doc.text(`${m.patente} ${m.nome} - RGPMMT ${m.rgpm} (ESTÁGIO NIVEL I)`, marginLeft + contentWidth * 0.4 + 2, guardaY);
+        } else {
+          doc.text(`${m.patente} ${m.nome}`, marginLeft + contentWidth * 0.4 + 2, guardaY);
+          if (m.rgpm) doc.text(`RGPMMT ${m.rgpm}`, marginLeft + contentWidth * 0.4 + 50, guardaY);
+        }
+        guardaY += 4;
       });
-      y += 3;
+      
+      // Horário (última linha)
+      doc.text('07H00 AS 07H00 – 24H', marginLeft + contentWidth * 0.8 + 2, y + guardaHeight - 2);
+      y += guardaHeight;
     }
 
     // ========== AUXILIAR OPERACIONAL ==========
@@ -763,6 +807,30 @@ async function gerarPDF() {
       y += 4;
       doc.setFont('helvetica', 'normal');
       doc.text(observacoes, marginLeft + 5, y);
+    }
+
+    // ========== RODAPÉ ==========
+    const rodapeY = pageHeight - 30; // 30mm do final da página
+    
+    // Texto do local e data
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    const dataAtual = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }).toUpperCase();
+    doc.text(`QUARTEL DA ROTAM EM CUIABÁ – MT, ${dataAtual.split(' ')[0]} DE ${dataAtual.split(' ')[2]} DE ${dataAtual.split(' ')[4]}.`, pageWidth / 2, rodapeY, { align: 'center' });
+    
+    // Linha de assinatura
+    doc.setLineWidth(0.3);
+    doc.line(pageWidth / 2 - 50, rodapeY + 15, pageWidth / 2 + 50, rodapeY + 15);
+    
+    // Nome do comandante adjunto (quem assina)
+    doc.setFont('helvetica', 'bold');
+    if (fiscal) {
+      doc.text(`${fiscal.patente} ${fiscal.nome}`, pageWidth / 2, rodapeY + 19, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
+      doc.text('COMANDANTE ADJUNTO DO BATALHÃO ROTAM', pageWidth / 2, rodapeY + 23, { align: 'center' });
+      if (fiscal.rgpm) {
+        doc.text(`RGPMMT ${fiscal.rgpm}`, pageWidth / 2, rodapeY + 27, { align: 'center' });
+      }
     }
 
     // Salva PDF
