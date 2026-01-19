@@ -505,7 +505,7 @@ function limparFormulario() {
 // 📄 Gerar PDF da Escala - VERSÃO DEFINITIVA COM TABELAS
 // ===============================
 // ===============================
-// 📄 Gerar PDF da Escala - VERSÃO DEFINITIVA COM TABELAS
+// 📄 Gerar PDF Completo - 4 PÁGINAS
 // ===============================
 async function gerarPDF() {
   const data = document.getElementById("data-escala").value;
@@ -577,55 +577,65 @@ async function gerarPDF() {
       format: 'a4'
     });
 
-    let y = 10;
     const ml = 15; // margin left
     const mr = 15; // margin right
+    const mt = 10; // margin top
     const pw = 210; // page width
     const ph = 297; // page height
     const cw = pw - ml - mr; // content width
 
-    // ========== LOGOS ROTAM ==========
-    // Carrega logo do GitHub
-    const logoUrl = 'https://marcelopedroso20.github.io/rotam-frontend/assets/logo-rotam.png';
-    
-    try {
-      // Adiciona logo esquerda
-      doc.addImage(logoUrl, 'PNG', ml, y, 35, 35);
-      // Adiciona logo direita
-      doc.addImage(logoUrl, 'PNG', pw - mr - 35, y, 35, 35);
-    } catch (e) {
-      console.warn('Erro ao carregar logos:', e);
-      // Fallback: retângulos cinza
-      doc.setFillColor(240, 240, 240);
-      doc.rect(ml, y, 35, 35, 'F');
-      doc.rect(pw - mr - 35, y, 35, 35, 'F');
+    // ========================================
+    // PÁGINA 1: SERVIÇO OPERACIONAL
+    // ========================================
+    let y = mt;
+
+    // Função para adicionar cabeçalho com logos
+    const addHeader = (pageNum) => {
+      let hy = mt;
+      
+      // Logos
+      const logoUrl = 'https://marcelopedroso20.github.io/rotam-frontend/assets/logo-rotam.png';
+      try {
+        doc.addImage(logoUrl, 'PNG', ml, hy, 35, 35);
+        doc.addImage(logoUrl, 'PNG', pw - mr - 35, hy, 35, 35);
+      } catch (e) {
+        doc.setFillColor(240, 240, 240);
+        doc.rect(ml, hy, 35, 35, 'F');
+        doc.rect(pw - mr - 35, hy, 35, 35, 'F');
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('ROTAM', ml + 17.5, hy + 18, { align: 'center' });
+        doc.text('ROTAM', pw - mr - 17.5, hy + 18, { align: 'center' });
+      }
+      
+      hy += 40;
+
+      // Título da página
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
-      doc.text('ROTAM', ml + 17.5, y + 18, { align: 'center' });
-      doc.text('ROTAM', pw - mr - 17.5, y + 18, { align: 'center' });
-    }
-    
-    y += 40;
+      doc.text(`ESCALA DE ${dia} DE ${mes} DE ${ano} (${diaSemana})`, pw / 2, hy, { align: 'center' });
+      hy += 6;
 
-    // ========== CABEÇALHO ==========
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`ESCALA DE ${dia} DE ${mes} DE ${ano} (${diaSemana})`, pw / 2, y, { align: 'center' });
-    y += 6;
+      if (pageNum === 1) {
+        doc.setFontSize(9);
+        doc.text('ESTADO DE MATO GROSSO', pw / 2, hy, { align: 'center' });
+        hy += 4;
+        doc.text('POLÍCIA MILITAR', pw / 2, hy, { align: 'center' });
+        hy += 4;
+        doc.text('COMANDO ESPECIALIZADO', pw / 2, hy, { align: 'center' });
+        hy += 4;
+        doc.text('BATALHÃO ROTAM', pw / 2, hy, { align: 'center' });
+        hy += 4;
+        doc.text(`CUIABÁ - MT, ${dia} DE ${mes} DE ${ano}.`, pw / 2, hy, { align: 'center' });
+        hy += 8;
+      }
 
-    doc.setFontSize(9);
-    doc.text('ESTADO DE MATO GROSSO', pw / 2, y, { align: 'center' });
-    y += 4;
-    doc.text('POLÍCIA MILITAR', pw / 2, y, { align: 'center' });
-    y += 4;
-    doc.text('COMANDO ESPECIALIZADO', pw / 2, y, { align: 'center' });
-    y += 4;
-    doc.text('BATALHÃO ROTAM', pw / 2, y, { align: 'center' });
-    y += 4;
-    doc.text(`CUIABÁ - MT, ${dia} DE ${mes} DE ${ano}.`, pw / 2, y, { align: 'center' });
-    y += 8;
+      return hy;
+    };
 
-    // ========== TÍTULO VERDE ==========
+    y = addHeader(1);
+
+    // Título Verde
     doc.setFillColor(0, 128, 0);
     doc.rect(ml, y, cw, 6, 'F');
     doc.setTextColor(255, 255, 255);
@@ -633,7 +643,7 @@ async function gerarPDF() {
     doc.setTextColor(0, 0, 0);
     y += 6;
 
-    // ========== TABELA: COMANDANTES ==========
+    // Funções auxiliares para tabelas
     doc.setFontSize(8);
     doc.setDrawColor(0);
     doc.setLineWidth(0.1);
@@ -650,25 +660,6 @@ async function gerarPDF() {
       y += height;
     };
 
-    drawTableRow('COMANDANTE DO BATALHÃO ROTAM', 
-      comandante ? `${comandante.patente} ${comandante.nome} ${comandante.rgpm ? 'RGPMMT ' + comandante.rgpm : ''}` : '');
-    
-    drawTableRow('COMANDANTE ADJUNTO DO BATALHÃO ROTAM',
-      fiscal ? `${fiscal.patente} ${fiscal.nome} ${fiscal.rgpm ? 'RGPMMT ' + fiscal.rgpm : ''}` : '');
-    
-    drawTableRow('CHEFE DA ALI',
-      chefe_ali ? `${chefe_ali.patente} ${chefe_ali.nome} ${chefe_ali.rgpm ? 'RGPMMT ' + chefe_ali.rgpm : ''}` : '');
-
-    // ========== TÍTULO AZUL ==========
-    doc.setFillColor(0, 100, 255);
-    doc.rect(ml, y, cw, 6, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('helvetica', 'bold');
-    doc.text('SERVIÇO OPERACIONAL', pw / 2, y + 4, { align: 'center' });
-    doc.setTextColor(0, 0, 0);
-    y += 6;
-
-    // ========== TABELA: SERVIÇO OPERACIONAL (3 colunas) ==========
     const drawTableRow3Col = (col1, col2, col3, height = 6) => {
       doc.setFont('helvetica', 'bold');
       doc.rect(ml, y, cw * 0.35, height);
@@ -684,6 +675,25 @@ async function gerarPDF() {
       y += height;
     };
 
+    // Comandantes
+    drawTableRow('COMANDANTE DO BATALHÃO ROTAM', 
+      comandante ? `${comandante.patente} ${comandante.nome} ${comandante.rgpm ? 'RGPMMT ' + comandante.rgpm : ''}` : '');
+    
+    drawTableRow('COMANDANTE ADJUNTO DO BATALHÃO ROTAM',
+      fiscal ? `${fiscal.patente} ${fiscal.nome} ${fiscal.rgpm ? 'RGPMMT ' + fiscal.rgpm : ''}` : '');
+    
+    drawTableRow('CHEFE DA ALI',
+      chefe_ali ? `${chefe_ali.patente} ${chefe_ali.nome} ${chefe_ali.rgpm ? 'RGPMMT ' + chefe_ali.rgpm : ''}` : '');
+
+    // Título Azul
+    doc.setFillColor(0, 100, 255);
+    doc.rect(ml, y, cw, 6, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.text('SERVIÇO OPERACIONAL', pw / 2, y + 4, { align: 'center' });
+    doc.setTextColor(0, 0, 0);
+    y += 6;
+
     if (fiscal) {
       drawTableRow3Col('ROTAM COMANDO (FISCAL DE DIA)',
         `${fiscal.patente} ${fiscal.nome} ${fiscal.rgpm ? 'RGPMMT ' + fiscal.rgpm : ''}`,
@@ -696,7 +706,7 @@ async function gerarPDF() {
         '07H00 AS 07H00 – 24H');
     }
 
-    // ========== GUARDA DO BATALHÃO ==========
+    // Guarda do Batalhão
     if (guarda.length > 0) {
       const guardaHeight = guarda.length * 4 + 2;
       
@@ -719,7 +729,7 @@ async function gerarPDF() {
       y += guardaHeight;
     }
 
-    // ========== AUXILIAR OPERACIONAL ==========
+    // Auxiliar Operacional
     if (auxiliares.length > 0) {
       const auxHeight = auxiliares.length * 4 + 2;
       
@@ -742,7 +752,7 @@ async function gerarPDF() {
       y += auxHeight;
     }
 
-    // ========== 1º PELOTÃO ==========
+    // 1º Pelotão
     y += 5;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
@@ -800,35 +810,201 @@ async function gerarPDF() {
       });
     }
 
-    // ========== RODAPÉ ==========
-    const ry = ph - 30;
-    
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    const dataAtual = new Date();
-    const diaAtual = dataAtual.getDate();
-    const mesAtual = meses[dataAtual.getMonth()];
-    const anoAtual = dataAtual.getFullYear();
-    
-    doc.text(`QUARTEL DA ROTAM EM CUIABÁ – MT, ${diaAtual} DE ${mesAtual} DE ${anoAtual}.`, pw / 2, ry, { align: 'center' });
-    
-    doc.setLineWidth(0.3);
-    doc.line(pw / 2 - 50, ry + 15, pw / 2 + 50, ry + 15);
-    
+    // ========================================
+    // PÁGINA 2: ATIVIDADES E EXPEDIENTE
+    // ========================================
+    doc.addPage();
+    y = addHeader(2);
+
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    if (fiscal) {
-      doc.text(`${fiscal.patente} ${fiscal.nome}`, pw / 2, ry + 19, { align: 'center' });
+    doc.text('ATIVIDADES (DETERMINAÇÕES)', ml, y);
+    y += 6;
+
+    // Tabela de Atividades
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.rect(ml, y, cw * 0.25, 5);
+    doc.text('EVENTO', ml + 2, y + 3.5);
+    doc.rect(ml + cw * 0.25, y, cw * 0.25, 5);
+    doc.text('LOCAL', ml + cw * 0.25 + 2, y + 3.5);
+    doc.rect(ml + cw * 0.5, y, cw * 0.2, 5);
+    doc.text('HORÁRIO', ml + cw * 0.5 + 2, y + 3.5);
+    doc.rect(ml + cw * 0.7, y, cw * 0.3, 5);
+    doc.text('POLICIAIS ESCALADOS', ml + cw * 0.7 + 2, y + 3.5);
+    y += 5;
+
+    // Atividades padrão
+    const atividades = [
+      { evento: 'EDUCAÇÃO FISICA MILITAR', local: 'ROTAM', horario: '07H00', policiais: 'EQUIPES DE SERVIÇO' },
+      { evento: 'TAF - COR', local: '44º BIMTZ', horario: '07H00 AS 14H00', policiais: 'CONFORME PORTARIA DO ADF' }
+    ];
+
+    doc.setFont('helvetica', 'normal');
+    atividades.forEach(atv => {
+      doc.rect(ml, y, cw * 0.25, 5);
+      doc.text(atv.evento, ml + 2, y + 3.5);
+      doc.rect(ml + cw * 0.25, y, cw * 0.25, 5);
+      doc.text(atv.local, ml + cw * 0.25 + 2, y + 3.5);
+      doc.rect(ml + cw * 0.5, y, cw * 0.2, 5);
+      doc.text(atv.horario, ml + cw * 0.5 + 2, y + 3.5);
+      doc.rect(ml + cw * 0.7, y, cw * 0.3, 5);
+      doc.text(atv.policiais, ml + cw * 0.7 + 2, y + 3.5);
+      y += 5;
+    });
+
+    y += 5;
+
+    // Expediente Administrativo
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('EXPEDIENTE ADMINISTRATIVO', ml, y);
+    y += 4;
+    doc.setFont('helvetica', 'normal');
+    doc.text('08H00 ÀS 12H00 E 14H00 ÀS 18H00', ml, y);
+    y += 6;
+
+    // Seções administrativas (dados padrão)
+    const secoes = [
+      { nome: 'SEÇÃO DE PESSOAL – P1', auxiliares: ['AUXILIAR'] },
+      { nome: 'SEÇÃO DE PLANEJAMENTO E OPERAÇÕES – P3', auxiliares: ['AUXILIAR'] },
+      { nome: 'SEÇÃO DE LOGÍSTICA E PATRIMÔNIO – P4', auxiliares: ['AUXILIAR'] },
+      { nome: 'SEÇÃO DE MARKETING INSTITUCIONAL – P5', auxiliares: ['AUXILIAR'] },
+      { nome: 'SEÇÃO DE JUSTIÇA E DISCIPLINA – SJD', auxiliares: ['GERENTE SUBALTERNO', 'AUXILIAR'] }
+    ];
+
+    doc.setFontSize(7);
+    secoes.forEach(sec => {
+      doc.setFont('helvetica', 'bold');
+      doc.text(sec.nome, ml, y);
+      y += 4;
       doc.setFont('helvetica', 'normal');
-      doc.text('COMANDANTE ADJUNTO DO BATALHÃO ROTAM', pw / 2, ry + 23, { align: 'center' });
-      if (fiscal.rgpm) {
-        doc.text(`RGPMMT ${fiscal.rgpm}`, pw / 2, ry + 27, { align: 'center' });
+      sec.auxiliares.forEach(aux => {
+        doc.text(aux, ml + 5, y);
+        y += 3;
+      });
+      y += 2;
+    });
+
+    // ========================================
+    // PÁGINA 3: FÉRIAS E APRESENTAÇÕES
+    // ========================================
+    doc.addPage();
+    y = addHeader(3);
+
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('FÉRIAS', ml, y);
+    y += 5;
+
+    // Tabela de Férias (exemplo com dados padrão)
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.text('(Nenhum militar em férias neste período)', ml + 5, y);
+    y += 8;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('LP (LICENÇA PRÊMIO)', ml, y);
+    y += 5;
+    doc.setFont('helvetica', 'normal');
+    doc.text('(Nenhum militar em licença prêmio neste período)', ml + 5, y);
+    y += 8;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('LICENÇA PARA TRATAMENTO DE SAÚDE – LTS', ml, y);
+    y += 5;
+    doc.setFont('helvetica', 'normal');
+    doc.text('(Nenhum militar em LTS neste período)', ml + 5, y);
+    y += 10;
+
+    // Apresentações Judiciais
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('JUSTIÇA E DISCIPLINA', ml, y);
+    y += 4;
+    doc.text('RELAÇÃO DE POLICIAIS MILITARES PARA APRESENTAÇÃO', ml, y);
+    y += 4;
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.text('ENTRAR EM CONTATO COM A SEÇÃO DE PESSOAL ANTES DA DATA', ml, y);
+    y += 6;
+
+    // Cabeçalho da tabela de apresentações
+    doc.setFont('helvetica', 'bold');
+    doc.rect(ml, y, cw * 0.3, 5);
+    doc.text('NOME', ml + 2, y + 3.5);
+    doc.rect(ml + cw * 0.3, y, cw * 0.25, 5);
+    doc.text('EVENTO', ml + cw * 0.3 + 2, y + 3.5);
+    doc.rect(ml + cw * 0.55, y, cw * 0.25, 5);
+    doc.text('LOCAL', ml + cw * 0.55 + 2, y + 3.5);
+    doc.rect(ml + cw * 0.8, y, cw * 0.2, 5);
+    doc.text('DATA/HORÁRIO', ml + cw * 0.8 + 2, y + 3.5);
+    y += 5;
+
+    doc.setFont('helvetica', 'normal');
+    doc.text('(Nenhuma apresentação judicial agendada)', ml + 5, y + 3);
+
+    // ========================================
+    // PÁGINA 4: CUSTODIADOS E ASSINATURA
+    // ========================================
+    doc.addPage();
+    y = addHeader(4);
+
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('CUSTODIADOS NESTA UPM', ml, y);
+    y += 5;
+
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.text('(Nenhum militar custodiado)', ml + 5, y);
+    y += 10;
+
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('MANUTENÇÃO DO BATALHÃO', ml, y);
+    y += 5;
+
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.text('08H00 AS 12H00 E DAS 14H00 AS 18H00', ml + 5, y);
+    y += 4;
+    doc.text('DISPOSIÇÃO DO GERENTE ADJUNTO DE MANUTENÇÃO', ml + 5, y);
+    y += 4;
+    doc.text('REFEIÇÕES (DESJEJUM, ALMOÇO E JANTAR)', ml + 5, y);
+
+    // Rodapé com assinatura em todas as páginas
+    for (let i = 1; i <= 4; i++) {
+      doc.setPage(i);
+      const ry = ph - 30;
+      
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      const dataAtual = new Date();
+      const diaAtual = dataAtual.getDate();
+      const mesAtual = meses[dataAtual.getMonth()];
+      const anoAtual = dataAtual.getFullYear();
+      
+      doc.text(`QUARTEL DA ROTAM EM CUIABÁ – MT, ${diaAtual} DE ${mesAtual} DE ${anoAtual}.`, pw / 2, ry, { align: 'center' });
+      
+      doc.setLineWidth(0.3);
+      doc.line(pw / 2 - 50, ry + 15, pw / 2 + 50, ry + 15);
+      
+      doc.setFont('helvetica', 'bold');
+      if (fiscal) {
+        doc.text(`${fiscal.patente} ${fiscal.nome}`, pw / 2, ry + 19, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+        doc.text('COMANDANTE ADJUNTO DO BATALHÃO ROTAM', pw / 2, ry + 23, { align: 'center' });
+        if (fiscal.rgpm) {
+          doc.text(`RGPMMT ${fiscal.rgpm}`, pw / 2, ry + 27, { align: 'center' });
+        }
       }
     }
 
-    const nomeArquivo = `ESCALA_ROTAM_${data.replace(/-/g, '_')}_${turno}.pdf`;
+    const nomeArquivo = `ESCALA_ROTAM_${data.replace(/-/g, '_')}_${turno}_4PAGINAS.pdf`;
     doc.save(nomeArquivo);
 
-    alert("✅ PDF gerado com sucesso!");
+    alert("✅ PDF de 4 páginas gerado com sucesso!");
 
   } catch (e) {
     console.error("❌ Erro ao gerar PDF:", e);
