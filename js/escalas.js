@@ -515,6 +515,7 @@ async function gerarPDF() {
 
   const turno = document.getElementById("turno-escala").value;
   const observacoes = document.getElementById("obs-escala").value;
+  const assinante_id = document.getElementById("assinante-doc").value;
 
   const comandante_id = document.getElementById("comandante-dia").value;
   const fiscal_id = document.getElementById("fiscal-dia").value;
@@ -527,6 +528,9 @@ async function gerarPDF() {
   const fiscal = getMilitar(fiscal_id);
   const adjunto = getMilitar(adjunto_id);
   const chefe_ali = getMilitar(chefe_ali_id);
+  
+  // Assinante: usa o selecionado ou fiscal como padrão
+  const assinante = assinante_id ? getMilitar(assinante_id) : fiscal;
 
   const guarda = [];
   document.querySelectorAll('.guarda-item select').forEach(select => {
@@ -973,31 +977,29 @@ async function gerarPDF() {
     y += 4;
     doc.text('REFEIÇÕES (DESJEJUM, ALMOÇO E JANTAR)', ml + 5, y);
 
-    // Rodapé com assinatura em todas as páginas
-    for (let i = 1; i <= 4; i++) {
-      doc.setPage(i);
-      const ry = ph - 30;
-      
-      doc.setFontSize(8);
+    // Rodapé com assinatura APENAS na página 4
+    doc.setPage(4);
+    const ry = ph - 30;
+    
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    const dataAtual = new Date();
+    const diaAtual = dataAtual.getDate();
+    const mesAtual = meses[dataAtual.getMonth()];
+    const anoAtual = dataAtual.getFullYear();
+    
+    doc.text(`QUARTEL DA ROTAM EM CUIABÁ – MT, ${diaAtual} DE ${mesAtual} DE ${anoAtual}.`, pw / 2, ry, { align: 'center' });
+    
+    doc.setLineWidth(0.3);
+    doc.line(pw / 2 - 50, ry + 15, pw / 2 + 50, ry + 15);
+    
+    doc.setFont('helvetica', 'bold');
+    if (assinante) {
+      doc.text(`${assinante.patente} ${assinante.nome}`, pw / 2, ry + 19, { align: 'center' });
       doc.setFont('helvetica', 'normal');
-      const dataAtual = new Date();
-      const diaAtual = dataAtual.getDate();
-      const mesAtual = meses[dataAtual.getMonth()];
-      const anoAtual = dataAtual.getFullYear();
-      
-      doc.text(`QUARTEL DA ROTAM EM CUIABÁ – MT, ${diaAtual} DE ${mesAtual} DE ${anoAtual}.`, pw / 2, ry, { align: 'center' });
-      
-      doc.setLineWidth(0.3);
-      doc.line(pw / 2 - 50, ry + 15, pw / 2 + 50, ry + 15);
-      
-      doc.setFont('helvetica', 'bold');
-      if (fiscal) {
-        doc.text(`${fiscal.patente} ${fiscal.nome}`, pw / 2, ry + 19, { align: 'center' });
-        doc.setFont('helvetica', 'normal');
-        doc.text('COMANDANTE ADJUNTO DO BATALHÃO ROTAM', pw / 2, ry + 23, { align: 'center' });
-        if (fiscal.rgpm) {
-          doc.text(`RGPMMT ${fiscal.rgpm}`, pw / 2, ry + 27, { align: 'center' });
-        }
+      doc.text('COMANDANTE ADJUNTO DO BATALHÃO ROTAM', pw / 2, ry + 23, { align: 'center' });
+      if (assinante.rgpm) {
+        doc.text(`RGPMMT ${assinante.rgpm}`, pw / 2, ry + 27, { align: 'center' });
       }
     }
 
