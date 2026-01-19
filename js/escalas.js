@@ -8,6 +8,7 @@ let escalaEditando = null;
 let contadorGuarda = 0;
 let contadorRotam90 = 0;
 let contadorRotam02 = 0;
+let contadorAtividades = 0;
 
 // ===============================
 // 🌐 Inicialização
@@ -26,6 +27,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Carrega militares
   await carregarMilitares();
+  
+  // Adiciona 2 atividades padrão
+  setTimeout(() => {
+    adicionarAtividadePadrao('EDUCAÇÃO FISICA MILITAR', 'ROTAM', '07H00', 'EQUIPES DE SERVIÇO');
+    adicionarAtividadePadrao('TAF - COR', '44º BIMTZ', '07H00 AS 14H00', 'CONFORME PORTARIA DO ADF');
+  }, 100);
 
   // Carrega escalas existentes
   await carregarListaEscalas();
@@ -154,6 +161,94 @@ function adicionarViatura(viatura) {
 function removerItem(btn, tipo) {
   const item = btn.closest(`.${tipo}-item`);
   item.remove();
+}
+
+// ===============================
+// 📅 Adiciona Atividade (Página 2)
+// ===============================
+function adicionarAtividade() {
+  const container = document.getElementById('atividades-container');
+  contadorAtividades++;
+  
+  const div = document.createElement("div");
+  div.className = "atividade-item border border-warning rounded p-3 mb-3";
+  div.dataset.id = contadorAtividades;
+  div.innerHTML = `
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="text-warning mb-0">Atividade ${contadorAtividades}</h6>
+      <button type="button" class="btn btn-sm btn-danger" onclick="removerItem(this, 'atividade')">
+        🗑️ Remover
+      </button>
+    </div>
+    <div class="row g-2">
+      <div class="col-md-4">
+        <label class="form-label small">Evento</label>
+        <input type="text" class="form-control form-control-sm atividade-evento" 
+               placeholder="Ex: Educação Física Militar">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small">Local</label>
+        <input type="text" class="form-control form-control-sm atividade-local" 
+               placeholder="Ex: ROTAM">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label small">Horário</label>
+        <input type="text" class="form-control form-control-sm atividade-horario" 
+               placeholder="Ex: 07H00">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small">Policiais Escalados</label>
+        <input type="text" class="form-control form-control-sm atividade-policiais" 
+               placeholder="Ex: Equipes de serviço">
+      </div>
+    </div>
+  `;
+  
+  container.appendChild(div);
+}
+
+// ===============================
+// 📅 Adiciona Atividade com dados padrão
+// ===============================
+function adicionarAtividadePadrao(evento, local, horario, policiais) {
+  const container = document.getElementById('atividades-container');
+  contadorAtividades++;
+  
+  const div = document.createElement("div");
+  div.className = "atividade-item border border-warning rounded p-3 mb-3";
+  div.dataset.id = contadorAtividades;
+  div.innerHTML = `
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="text-warning mb-0">Atividade ${contadorAtividades}</h6>
+      <button type="button" class="btn btn-sm btn-danger" onclick="removerItem(this, 'atividade')">
+        🗑️ Remover
+      </button>
+    </div>
+    <div class="row g-2">
+      <div class="col-md-4">
+        <label class="form-label small">Evento</label>
+        <input type="text" class="form-control form-control-sm atividade-evento" 
+               value="${evento}" placeholder="Ex: Educação Física Militar">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small">Local</label>
+        <input type="text" class="form-control form-control-sm atividade-local" 
+               value="${local}" placeholder="Ex: ROTAM">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label small">Horário</label>
+        <input type="text" class="form-control form-control-sm atividade-horario" 
+               value="${horario}" placeholder="Ex: 07H00">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small">Policiais Escalados</label>
+        <input type="text" class="form-control form-control-sm atividade-policiais" 
+               value="${policiais}" placeholder="Ex: Equipes de serviço">
+      </div>
+    </div>
+  `;
+  
+  container.appendChild(div);
 }
 
 // ===============================
@@ -825,6 +920,27 @@ async function gerarPDF() {
     doc.text('ATIVIDADES (DETERMINAÇÕES)', ml, y);
     y += 6;
 
+    // Coleta atividades do formulário
+    const atividades = [];
+    document.querySelectorAll('.atividade-item').forEach(item => {
+      const evento = item.querySelector('.atividade-evento').value;
+      const local = item.querySelector('.atividade-local').value;
+      const horario = item.querySelector('.atividade-horario').value;
+      const policiais = item.querySelector('.atividade-policiais').value;
+      
+      if (evento || local || horario || policiais) {
+        atividades.push({ evento, local, horario, policiais });
+      }
+    });
+
+    // Se não tiver atividades, usa padrão
+    if (atividades.length === 0) {
+      atividades.push(
+        { evento: 'EDUCAÇÃO FISICA MILITAR', local: 'ROTAM', horario: '07H00', policiais: 'EQUIPES DE SERVIÇO' },
+        { evento: 'TAF - COR', local: '44º BIMTZ', horario: '07H00 AS 14H00', policiais: 'CONFORME PORTARIA DO ADF' }
+      );
+    }
+
     // Tabela de Atividades
     doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
@@ -838,22 +954,16 @@ async function gerarPDF() {
     doc.text('POLICIAIS ESCALADOS', ml + cw * 0.7 + 2, y + 3.5);
     y += 5;
 
-    // Atividades padrão
-    const atividades = [
-      { evento: 'EDUCAÇÃO FISICA MILITAR', local: 'ROTAM', horario: '07H00', policiais: 'EQUIPES DE SERVIÇO' },
-      { evento: 'TAF - COR', local: '44º BIMTZ', horario: '07H00 AS 14H00', policiais: 'CONFORME PORTARIA DO ADF' }
-    ];
-
     doc.setFont('helvetica', 'normal');
     atividades.forEach(atv => {
       doc.rect(ml, y, cw * 0.25, 5);
-      doc.text(atv.evento, ml + 2, y + 3.5);
+      doc.text(atv.evento.toUpperCase(), ml + 2, y + 3.5);
       doc.rect(ml + cw * 0.25, y, cw * 0.25, 5);
-      doc.text(atv.local, ml + cw * 0.25 + 2, y + 3.5);
+      doc.text(atv.local.toUpperCase(), ml + cw * 0.25 + 2, y + 3.5);
       doc.rect(ml + cw * 0.5, y, cw * 0.2, 5);
-      doc.text(atv.horario, ml + cw * 0.5 + 2, y + 3.5);
+      doc.text(atv.horario.toUpperCase(), ml + cw * 0.5 + 2, y + 3.5);
       doc.rect(ml + cw * 0.7, y, cw * 0.3, 5);
-      doc.text(atv.policiais, ml + cw * 0.7 + 2, y + 3.5);
+      doc.text(atv.policiais.toUpperCase(), ml + cw * 0.7 + 2, y + 3.5);
       y += 5;
     });
 
@@ -864,18 +974,32 @@ async function gerarPDF() {
     doc.setFont('helvetica', 'bold');
     doc.text('EXPEDIENTE ADMINISTRATIVO', ml, y);
     y += 4;
+    
+    const horarioExpediente = document.getElementById('horario-expediente').value || '08H00 ÀS 12H00 E 14H00 ÀS 18H00';
     doc.setFont('helvetica', 'normal');
-    doc.text('08H00 ÀS 12H00 E 14H00 ÀS 18H00', ml, y);
+    doc.text(horarioExpediente, ml, y);
     y += 6;
 
-    // Seções administrativas (dados padrão)
-    const secoes = [
-      { nome: 'SEÇÃO DE PESSOAL – P1', auxiliares: ['AUXILIAR'] },
-      { nome: 'SEÇÃO DE PLANEJAMENTO E OPERAÇÕES – P3', auxiliares: ['AUXILIAR'] },
-      { nome: 'SEÇÃO DE LOGÍSTICA E PATRIMÔNIO – P4', auxiliares: ['AUXILIAR'] },
-      { nome: 'SEÇÃO DE MARKETING INSTITUCIONAL – P5', auxiliares: ['AUXILIAR'] },
-      { nome: 'SEÇÃO DE JUSTIÇA E DISCIPLINA – SJD', auxiliares: ['GERENTE SUBALTERNO', 'AUXILIAR'] }
-    ];
+    // Seções administrativas (coleta do formulário)
+    const secoes = [];
+    if (document.getElementById('secao-p1').checked) {
+      secoes.push({ nome: 'SEÇÃO DE PESSOAL – P1', auxiliares: ['AUXILIAR'] });
+    }
+    if (document.getElementById('secao-p3').checked) {
+      secoes.push({ nome: 'SEÇÃO DE PLANEJAMENTO E OPERAÇÕES – P3', auxiliares: ['AUXILIAR'] });
+    }
+    if (document.getElementById('secao-p4').checked) {
+      secoes.push({ nome: 'SEÇÃO DE LOGÍSTICA E PATRIMÔNIO – P4', auxiliares: ['AUXILIAR'] });
+    }
+    if (document.getElementById('secao-p5').checked) {
+      secoes.push({ nome: 'SEÇÃO DE MARKETING INSTITUCIONAL – P5', auxiliares: ['AUXILIAR'] });
+    }
+    if (document.getElementById('secao-sjd').checked) {
+      secoes.push({ nome: 'SEÇÃO DE JUSTIÇA E DISCIPLINA – SJD', auxiliares: ['GERENTE SUBALTERNO', 'AUXILIAR'] });
+    }
+    if (document.getElementById('secao-comun').checked) {
+      secoes.push({ nome: 'SEÇÃO DE COMUNICAÇÃO SOCIAL', auxiliares: ['AUXILIAR'] });
+    }
 
     doc.setFontSize(7);
     secoes.forEach(sec => {
