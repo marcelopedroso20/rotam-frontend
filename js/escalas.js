@@ -9,6 +9,8 @@ let contadorGuarda = 0;
 let contadorRotam90 = 0;
 let contadorRotam02 = 0;
 let contadorAtividades = 0;
+let contadorViagens = 0;
+let contadorResidentes = 0;
 
 // ===============================
 // 🌐 Inicialização
@@ -245,6 +247,102 @@ function adicionarAtividadePadrao(evento, local, horario, policiais) {
         <input type="text" class="form-control form-control-sm atividade-policiais" 
                value="${policiais}" placeholder="Ex: Equipes de serviço">
       </div>
+    </div>
+  `;
+  
+  container.appendChild(div);
+}
+
+// ===============================
+// 🚗 Adiciona Viagem/Operação no Interior
+// ===============================
+function adicionarViagem() {
+  const container = document.getElementById('viagens-container');
+  contadorViagens++;
+  
+  const div = document.createElement("div");
+  div.className = "viagem-item border border-warning rounded p-3 mb-3 bg-dark";
+  div.dataset.id = contadorViagens;
+  div.innerHTML = `
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="text-warning mb-0">Operação/Viagem ${contadorViagens}</h6>
+      <button type="button" class="btn btn-sm btn-danger" onclick="removerItem(this, 'viagem')">
+        🗑️ Remover
+      </button>
+    </div>
+    <div class="row g-2 mb-2">
+      <div class="col-md-6">
+        <label class="form-label small">Nome da Operação/Destino</label>
+        <input type="text" class="form-control form-control-sm viagem-nome" 
+               placeholder="Ex: OPERAÇÃO TOLERÂNCIA ZERO – CÁCERES/MT">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small">Data Início</label>
+        <input type="date" class="form-control form-control-sm viagem-inicio">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small">Data Fim</label>
+        <input type="date" class="form-control form-control-sm viagem-fim">
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="form-label small">Militares Escalados (um por linha)</label>
+      <textarea class="form-control form-control-sm viagem-militares" rows="3" 
+                placeholder="Ex:
+2º SGT PM RENE RGPMMT 882.643
+3º SGT PM CARDOSO RGPMMT 884.628"></textarea>
+    </div>
+  `;
+  
+  container.appendChild(div);
+}
+
+// ===============================
+// 👥 Adiciona Militar em Seção Administrativa
+// ===============================
+function adicionarMilitarSecao(secao) {
+  const container = document.getElementById(`${secao}-militares-container`);
+  
+  const div = document.createElement("div");
+  div.className = "row g-2 mb-2 militar-secao-item";
+  div.innerHTML = `
+    <div class="col-md-10">
+      <select class="form-select form-select-sm militar-secao-select">
+        <option value="">-- Selecionar Militar --</option>
+        ${militares.map(m => `<option value="${m.id}">${m.patente} ${m.nome} - RGPMMT ${m.rgpm}</option>`).join('')}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-sm btn-danger w-100" onclick="removerItem(this, 'militar-secao')">
+        🗑️
+      </button>
+    </div>
+  `;
+  
+  container.appendChild(div);
+}
+
+// ===============================
+// 📚 Adiciona Residente/Estagiário
+// ===============================
+function adicionarResidente() {
+  const container = document.getElementById('residentes-container');
+  contadorResidentes++;
+  
+  const div = document.createElement("div");
+  div.className = "residente-item row g-2 mb-2";
+  div.dataset.id = contadorResidentes;
+  div.innerHTML = `
+    <div class="col-md-10">
+      <select class="form-select form-select-sm residente-select">
+        <option value="">-- Selecionar Militar --</option>
+        ${militares.map(m => `<option value="${m.id}">${m.patente} ${m.nome} - RGPMMT ${m.rgpm}</option>`).join('')}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-sm btn-danger w-100" onclick="removerItem(this, 'residente')">
+        🗑️
+      </button>
     </div>
   `;
   
@@ -969,6 +1067,72 @@ async function gerarPDF() {
 
     y += 5;
 
+    // Viagens / Operações no Interior
+    const viagens = [];
+    document.querySelectorAll('.viagem-item').forEach(item => {
+      const nome = item.querySelector('.viagem-nome').value;
+      const inicio = item.querySelector('.viagem-inicio').value;
+      const fim = item.querySelector('.viagem-fim').value;
+      const militares_text = item.querySelector('.viagem-militares').value;
+      
+      if (nome && militares_text) {
+        // Formata datas
+        let periodo = '';
+        if (inicio && fim) {
+          const dtInicio = new Date(inicio + 'T12:00:00');
+          const dtFim = new Date(fim + 'T12:00:00');
+          periodo = `${String(dtInicio.getDate()).padStart(2,'0')}.${String(dtInicio.getMonth()+1).padStart(2,'0')}.${String(dtInicio.getFullYear()).slice(2)} A ${String(dtFim.getDate()).padStart(2,'0')}.${String(dtFim.getMonth()+1).padStart(2,'0')}.${String(dtFim.getFullYear()).slice(2)}`;
+        }
+        viagens.push({ nome, militares: militares_text.split('\n').filter(l => l.trim()), periodo });
+      }
+    });
+
+    if (viagens.length > 0) {
+      // Título da seção amarela
+      doc.setFillColor(255, 215, 0);
+      doc.rect(ml, y, cw, 5, 'F');
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'bold');
+      doc.text('VIAGENS / OPERAÇÕES NO INTERIOR DO ESTADO', ml + 2, y + 3.5);
+      doc.setTextColor(0, 0, 0);
+      y += 5;
+
+      viagens.forEach(viagem => {
+        // Nome da operação
+        doc.setFillColor(255, 215, 0);
+        doc.rect(ml, y, cw, 4, 'F');
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'bold');
+        doc.text(viagem.nome.toUpperCase(), ml + 2, y + 3);
+        doc.setTextColor(0, 0, 0);
+        y += 4;
+
+        // Militares e período
+        const maxMilitares = Math.ceil(viagem.militares.length / 2);
+        doc.setFont('helvetica', 'normal');
+        
+        for (let i = 0; i < maxMilitares; i++) {
+          const mil1 = viagem.militares[i];
+          const mil2 = viagem.militares[i + maxMilitares];
+          
+          doc.rect(ml, y, cw * 0.5, 4);
+          if (mil1) doc.text(mil1.toUpperCase(), ml + 2, y + 3);
+          
+          doc.rect(ml + cw * 0.5, y, cw * 0.5, 4);
+          if (mil2) {
+            doc.text(mil2.toUpperCase(), ml + cw * 0.5 + 2, y + 3);
+          } else if (i === maxMilitares - 1 && viagem.periodo) {
+            // Última linha - adiciona período
+            doc.text(viagem.periodo, ml + cw * 0.5 + 2, y + 3);
+          }
+          
+          y += 4;
+        }
+      });
+
+      y += 3;
+    }
+
     // Expediente Administrativo
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
@@ -980,39 +1144,68 @@ async function gerarPDF() {
     doc.text(horarioExpediente, ml, y);
     y += 6;
 
-    // Seções administrativas (coleta do formulário)
-    const secoes = [];
-    if (document.getElementById('secao-p1').checked) {
-      secoes.push({ nome: 'SEÇÃO DE PESSOAL – P1', auxiliares: ['AUXILIAR'] });
-    }
-    if (document.getElementById('secao-p3').checked) {
-      secoes.push({ nome: 'SEÇÃO DE PLANEJAMENTO E OPERAÇÕES – P3', auxiliares: ['AUXILIAR'] });
-    }
-    if (document.getElementById('secao-p4').checked) {
-      secoes.push({ nome: 'SEÇÃO DE LOGÍSTICA E PATRIMÔNIO – P4', auxiliares: ['AUXILIAR'] });
-    }
-    if (document.getElementById('secao-p5').checked) {
-      secoes.push({ nome: 'SEÇÃO DE MARKETING INSTITUCIONAL – P5', auxiliares: ['AUXILIAR'] });
-    }
-    if (document.getElementById('secao-sjd').checked) {
-      secoes.push({ nome: 'SEÇÃO DE JUSTIÇA E DISCIPLINA – SJD', auxiliares: ['GERENTE SUBALTERNO', 'AUXILIAR'] });
-    }
-    if (document.getElementById('secao-comun').checked) {
-      secoes.push({ nome: 'SEÇÃO DE COMUNICAÇÃO SOCIAL', auxiliares: ['AUXILIAR'] });
-    }
+    // Seções administrativas (coleta do formulário com militares específicos)
+    const secoesMap = {
+      'p1': { nome: 'SEÇÃO DE PESSOAL – P1', checked: document.getElementById('secao-p1').checked },
+      'p3': { nome: 'SEÇÃO DE PLANEJAMENTO E OPERAÇÕES – P3', checked: document.getElementById('secao-p3').checked },
+      'p4': { nome: 'SEÇÃO DE LOGÍSTICA E PATRIMÔNIO – P4', checked: document.getElementById('secao-p4').checked },
+      'p5': { nome: 'SEÇÃO DE MARKETING INSTITUCIONAL – P5', checked: document.getElementById('secao-p5').checked },
+      'sjd': { nome: 'SEÇÃO DE JUSTIÇA E DISCIPLINA – SJD', checked: document.getElementById('secao-sjd').checked },
+      'comun': { nome: 'SEÇÃO DE COMUNICAÇÃO SOCIAL', checked: document.getElementById('secao-comun').checked }
+    };
 
     doc.setFontSize(7);
-    secoes.forEach(sec => {
+    Object.keys(secoesMap).forEach(key => {
+      const secao = secoesMap[key];
+      if (!secao.checked) return;
+      
+      // Coleta militares desta seção
+      const militaresSecao = [];
+      document.querySelectorAll(`#${key}-militares-container .militar-secao-select`).forEach(select => {
+        if (select.value) {
+          const m = getMilitar(select.value);
+          if (m) militaresSecao.push(`${m.patente} ${m.nome} ${m.rgpm ? 'RGPMMT ' + m.rgpm : ''}`);
+        }
+      });
+      
+      // Se não tiver militares, usa AUXILIAR padrão
+      if (militaresSecao.length === 0) {
+        militaresSecao.push('AUXILIAR');
+        if (key === 'sjd') militaresSecao.unshift('GERENTE SUBALTERNO');
+      }
+      
       doc.setFont('helvetica', 'bold');
-      doc.text(sec.nome, ml, y);
+      doc.text(secao.nome, ml, y);
       y += 4;
       doc.setFont('helvetica', 'normal');
-      sec.auxiliares.forEach(aux => {
-        doc.text(aux, ml + 5, y);
+      militaresSecao.forEach(aux => {
+        doc.text(aux.toUpperCase(), ml + 5, y);
         y += 3;
       });
       y += 2;
     });
+
+    // Residentes e Estagiários
+    const residentes = [];
+    document.querySelectorAll('.residente-select').forEach(select => {
+      if (select.value) {
+        const m = getMilitar(select.value);
+        if (m) residentes.push(`${m.patente} ${m.nome} ${m.rgpm ? 'RGPMMT ' + m.rgpm : ''}`);
+      }
+    });
+
+    if (residentes.length > 0) {
+      y += 3;
+      const horarioResidentes = document.getElementById('horario-residentes').value || '13H00 AS 18H00';
+      doc.setFont('helvetica', 'bold');
+      doc.text(`RESIDENTES E ESTAGIÁRIOS – ${horarioResidentes}`, ml, y);
+      y += 4;
+      doc.setFont('helvetica', 'normal');
+      residentes.forEach(res => {
+        doc.text(res.toUpperCase(), ml + 5, y);
+        y += 3;
+      });
+    }
 
     // ========================================
     // PÁGINA 3: FÉRIAS E APRESENTAÇÕES
