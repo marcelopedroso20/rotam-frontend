@@ -157,6 +157,13 @@
                 ➕ Adicionar Atividade
               </button>
 
+              <!-- Viagens / Operações no Interior -->
+              <h6 class="text-warning mb-3">🚗 VIAGENS / OPERAÇÕES NO INTERIOR DO ESTADO</h6>
+              <div id="viagens-container"></div>
+              <button type="button" class="btn btn-sm btn-outline-warning mb-4" onclick="adicionarViagem()">
+                ➕ Adicionar Operação/Viagem
+              </button>
+
               <!-- Expediente Administrativo -->
               <h6 class="text-warning mb-3">🏢 EXPEDIENTE ADMINISTRATIVO</h6>
               <div class="row g-3 mb-3">
@@ -167,56 +174,103 @@
                 </div>
               </div>
 
-              <div class="row g-2">
-                <div class="col-md-6">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="secao-p1" checked>
-                    <label class="form-check-label" for="secao-p1">
-                      SEÇÃO DE PESSOAL – P1
-                    </label>
-                  </div>
+              <!-- P1 - Seção de Pessoal -->
+              <div class="border border-secondary rounded p-2 mb-2">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="secao-p1" checked>
+                  <label class="form-check-label fw-bold" for="secao-p1">
+                    SEÇÃO DE PESSOAL – P1
+                  </label>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="secao-p3" checked>
-                    <label class="form-check-label" for="secao-p3">
-                      SEÇÃO DE PLANEJAMENTO E OPERAÇÕES – P3
-                    </label>
-                  </div>
+                <div id="p1-militares-container" class="ms-3"></div>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-3" onclick="adicionarMilitarSecao('p1')">
+                  ➕ Adicionar Militar
+                </button>
+              </div>
+
+              <!-- P3 - Planejamento -->
+              <div class="border border-secondary rounded p-2 mb-2">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="secao-p3" checked>
+                  <label class="form-check-label fw-bold" for="secao-p3">
+                    SEÇÃO DE PLANEJAMENTO E OPERAÇÕES – P3
+                  </label>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="secao-p4" checked>
-                    <label class="form-check-label" for="secao-p4">
-                      SEÇÃO DE LOGÍSTICA E PATRIMÔNIO – P4
-                    </label>
-                  </div>
+                <div id="p3-militares-container" class="ms-3"></div>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-3" onclick="adicionarMilitarSecao('p3')">
+                  ➕ Adicionar Militar
+                </button>
+              </div>
+
+              <!-- P4 - Logística -->
+              <div class="border border-secondary rounded p-2 mb-2">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="secao-p4" checked>
+                  <label class="form-check-label fw-bold" for="secao-p4">
+                    SEÇÃO DE LOGÍSTICA E PATRIMÔNIO – P4
+                  </label>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="secao-p5" checked>
-                    <label class="form-check-label" for="secao-p5">
-                      SEÇÃO DE MARKETING INSTITUCIONAL – P5
-                    </label>
-                  </div>
+                <div id="p4-militares-container" class="ms-3"></div>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-3" onclick="adicionarMilitarSecao('p4')">
+                  ➕ Adicionar Militar
+                </button>
+              </div>
+
+              <!-- P5 - Marketing -->
+              <div class="border border-secondary rounded p-2 mb-2">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="secao-p5" checked>
+                  <label class="form-check-label fw-bold" for="secao-p5">
+                    SEÇÃO DE MARKETING INSTITUCIONAL – P5
+                  </label>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="secao-sjd" checked>
-                    <label class="form-check-label" for="secao-sjd">
-                      SEÇÃO DE JUSTIÇA E DISCIPLINA – SJD
-                    </label>
-                  </div>
+                <div id="p5-militares-container" class="ms-3"></div>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-3" onclick="adicionarMilitarSecao('p5')">
+                  ➕ Adicionar Militar
+                </button>
+              </div>
+
+              <!-- SJD - Justiça e Disciplina -->
+              <div class="border border-secondary rounded p-2 mb-2">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="secao-sjd" checked>
+                  <label class="form-check-label fw-bold" for="secao-sjd">
+                    SEÇÃO DE JUSTIÇA E DISCIPLINA – SJD
+                  </label>
                 </div>
+                <div id="sjd-militares-container" class="ms-3"></div>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-3" onclick="adicionarMilitarSecao('sjd')">
+                  ➕ Adicionar Militar
+                </button>
+              </div>
+
+              <!-- Comunicação Social -->
+              <div class="border border-secondary rounded p-2 mb-2">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="secao-comun" checked>
+                  <label class="form-check-label fw-bold" for="secao-comun">
+                    SEÇÃO DE COMUNICAÇÃO SOCIAL
+                  </label>
+                </div>
+                <div id="comun-militares-container" class="ms-3"></div>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-3" onclick="adicionarMilitarSecao('comun')">
+                  ➕ Adicionar Militar
+                </button>
+              </div>
+
+              <!-- Residentes e Estagiários -->
+              <h6 class="text-warning mb-3 mt-4">📚 RESIDENTES E ESTAGIÁRIOS</h6>
+              <div class="row g-3 mb-2">
                 <div class="col-md-6">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="secao-comun" checked>
-                    <label class="form-check-label" for="secao-comun">
-                      SEÇÃO DE COMUNICAÇÃO SOCIAL
-                    </label>
-                  </div>
+                  <label class="form-label small">Horário</label>
+                  <input type="text" id="horario-residentes" class="form-control" 
+                         value="13H00 AS 18H00">
                 </div>
               </div>
+              <div id="residentes-container"></div>
+              <button type="button" class="btn btn-sm btn-outline-warning mb-3" onclick="adicionarResidente()">
+                ➕ Adicionar Residente/Estagiário
+              </button>
             </div>
           </div>
 
