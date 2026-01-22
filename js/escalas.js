@@ -462,24 +462,37 @@ async function carregarListaEscalas() {
     const tbody = document.getElementById("lista-escalas");
 
     if (escalas.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhuma escala criada ainda</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhuma escala criada ainda</td></tr>';
       return;
     }
 
-    tbody.innerHTML = escalas.map(e => `
+    tbody.innerHTML = escalas.map(e => {
+      // Formata data/hora de modificação
+      const dataModificacao = e.updated_at ? new Date(e.updated_at) : new Date(e.created_at);
+      const dataModificacaoFormatada = dataModificacao.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      return `
       <tr>
         <td>${new Date(e.data).toLocaleDateString('pt-BR')}</td>
         <td>${e.turno}</td>
         <td>${e.fiscal_nome ? `${e.fiscal_patente} ${e.fiscal_nome}` : '-'}</td>
         <td>${e.adjunto_nome ? `${e.adjunto_patente} ${e.adjunto_nome}` : '-'}</td>
         <td>${e.criado_por || '-'}</td>
+        <td class="small">${dataModificacaoFormatada}</td>
         <td>
           <button class="btn btn-sm btn-info" onclick="visualizarEscala(${e.id})" title="Visualizar">👁️</button>
           <button class="btn btn-sm btn-primary" onclick="editarEscala(${e.id})" title="Editar">✏️</button>
           <button class="btn btn-sm btn-danger" onclick="excluirEscala(${e.id})" title="Excluir">🗑️</button>
         </td>
       </tr>
-    `).join('');
+    `;
+    }).join('');
 
   } catch (e) {
     console.error("Erro ao carregar escalas:", e);
@@ -607,6 +620,7 @@ async function editarEscala(id) {
     document.getElementById("data-escala").value = escala.data;
     document.getElementById("turno-escala").value = escala.turno;
     document.getElementById("obs-escala").value = escala.observacoes || '';
+    document.getElementById("assinante-doc").value = escala.assinante_id || '';
     document.getElementById("comandante-dia").value = escala.comandante_dia || '';
     document.getElementById("fiscal-dia").value = escala.fiscal_dia || '';
     document.getElementById("adjunto-dia").value = escala.adjunto_dia || '';
@@ -616,6 +630,28 @@ async function editarEscala(id) {
     document.getElementById("guarda-container").innerHTML = '';
     document.getElementById("rotam90-container").innerHTML = '';
     document.getElementById("rotam02-container").innerHTML = '';
+    
+    // Limpa containers da Página 2
+    document.getElementById("atividades-container").innerHTML = '';
+    document.getElementById("viagens-container").innerHTML = '';
+    document.getElementById("residentes-container").innerHTML = '';
+    
+    // Limpa militares das seções
+    ['p1', 'p3', 'p4', 'p5', 'sjd', 'comun'].forEach(secao => {
+      const container = document.getElementById(`${secao}-militares-container`);
+      if (container) container.innerHTML = '';
+    });
+    
+    // Reseta contadores
+    contadorAtividades = 0;
+    contadorViagens = 0;
+    contadorResidentes = 0;
+    
+    // Adiciona atividades padrão
+    setTimeout(() => {
+      adicionarAtividadePadrao('EDUCAÇÃO FISICA MILITAR', 'ROTAM', '07H00', 'EQUIPES DE SERVIÇO');
+      adicionarAtividadePadrao('TAF - COR', '44º BIMTZ', '07H00 AS 14H00', 'CONFORME PORTARIA DO ADF');
+    }, 100);
 
     // Preenche guarda
     escala.alocacoes.filter(a => a.tipo_alocacao === 'guarda').forEach(() => {
@@ -647,7 +683,7 @@ async function editarEscala(id) {
     // Muda para aba de nova escala
     document.getElementById("nova-tab").click();
 
-    alert("✏️ Escala carregada para edição!\n\n💡 Se você mudar a DATA, será criada uma NOVA escala.");
+    alert("✏️ Escala carregada para edição!\n\n⚠️ IMPORTANTE:\n• Dados da PÁGINA 1 foram carregados\n• Dados da PÁGINA 2 precisam ser preenchidos novamente\n\n💡 Se você mudar a DATA, será criada uma NOVA escala.");
 
   } catch (e) {
     console.error("Erro ao editar escala:", e);
@@ -684,14 +720,38 @@ async function excluirEscala(id) {
 function limparFormulario() {
   document.getElementById("form-escala").reset();
   document.getElementById("data-escala").valueAsDate = new Date();
+  
+  // Limpa Página 1
   document.getElementById("guarda-container").innerHTML = '';
   document.getElementById("rotam90-container").innerHTML = '';
   document.getElementById("rotam02-container").innerHTML = '';
   
+  // Limpa Página 2
+  document.getElementById("atividades-container").innerHTML = '';
+  document.getElementById("viagens-container").innerHTML = '';
+  document.getElementById("residentes-container").innerHTML = '';
+  
+  // Limpa militares das seções
+  ['p1', 'p3', 'p4', 'p5', 'sjd', 'comun'].forEach(secao => {
+    const container = document.getElementById(`${secao}-militares-container`);
+    if (container) container.innerHTML = '';
+  });
+  
+  // Reseta contadores
   contadorGuarda = 0;
   contadorRotam90 = 0;
   contadorRotam02 = 0;
+  contadorAtividades = 0;
+  contadorViagens = 0;
+  contadorResidentes = 0;
+  
   escalaEditando = null;
+  
+  // Adiciona atividades padrão
+  setTimeout(() => {
+    adicionarAtividadePadrao('EDUCAÇÃO FISICA MILITAR', 'ROTAM', '07H00', 'EQUIPES DE SERVIÇO');
+    adicionarAtividadePadrao('TAF - COR', '44º BIMTZ', '07H00 AS 14H00', 'CONFORME PORTARIA DO ADF');
+  }, 100);
 }
 
 // ===============================
