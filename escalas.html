@@ -113,13 +113,120 @@
             </div>
           </div>
 
+          <!-- ALI - Agência Local de Inteligência -->
+          <div class="card bg-secondary text-light mb-3">
+            <div class="card-header fw-bold">🔍 AGÊNCIA LOCAL DE INTELIGÊNCIA (ALI)</div>
+            <div class="card-body">
+              <div class="row g-3 mb-2">
+                <div class="col-md-6">
+                  <label class="form-label small">Número da Célula</label>
+                  <input type="text" id="ali-celula" class="form-control form-control-sm" 
+                         placeholder="Ex: CEL: 65-99923-1245" value="CEL: 65-99923-1245">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small">Horário ALI</label>
+                  <input type="text" id="ali-horario" class="form-control form-control-sm" 
+                         value="07H00 AS 21H00">
+                </div>
+              </div>
+              <div id="ali-container"></div>
+              <button type="button" class="btn btn-sm btn-outline-warning mt-2" onclick="adicionarALI()">
+                ➕ Adicionar Militar ALI
+              </button>
+            </div>
+          </div>
+
           <!-- Guarda do Batalhão -->
           <div class="card bg-secondary text-light mb-3">
             <div class="card-header fw-bold">🏢 Guarda do Batalhão</div>
             <div class="card-body">
+              <div class="row g-3 mb-2">
+                <div class="col-md-6">
+                  <label class="form-label small">Horário Principal</label>
+                  <input type="text" id="guarda-horario1" class="form-control form-control-sm" 
+                         value="07H00 AS 19H00">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small">Horário Alternativo</label>
+                  <input type="text" id="guarda-horario2" class="form-control form-control-sm" 
+                         value="19H00 AS 07H00">
+                </div>
+              </div>
               <div id="guarda-container"></div>
               <button type="button" class="btn btn-sm btn-outline-light mt-2" onclick="adicionarGuarda()">
                 ➕ Adicionar Militar
+              </button>
+            </div>
+          </div>
+
+          <!-- Reserva de Armamento -->
+          <div class="card bg-secondary text-light mb-3">
+            <div class="card-header fw-bold">🔫 Reserva de Armamento</div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Militar</label>
+                  <select id="reserva-armamento" class="form-select militar-select"></select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Horário</label>
+                  <input type="text" id="reserva-horario" class="form-control" 
+                         value="05H30 AS 05H30">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gerente Adj. de Manutenção -->
+          <div class="card bg-secondary text-light mb-3">
+            <div class="card-header fw-bold">🔧 Gerente Adj. de Manutenção</div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Militar</label>
+                  <select id="gerente-manutencao" class="form-select militar-select"></select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Horário</label>
+                  <input type="text" id="gerente-horario" class="form-control" 
+                         value="08H00 AS 12H00 E 14H00 AS 18H00">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Motorista do CMTE -->
+          <div class="card bg-secondary text-light mb-3">
+            <div class="card-header fw-bold">🚗 Motorista do CMTE</div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Militar</label>
+                  <select id="motorista-cmte" class="form-select militar-select"></select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Horário</label>
+                  <input type="text" id="motorista-horario" class="form-control" 
+                         value="07H00 AS 19H00">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Auxiliar Operacional -->
+          <div class="card bg-secondary text-light mb-3">
+            <div class="card-header fw-bold">👥 Auxiliar Operacional</div>
+            <div class="card-body">
+              <div class="row g-3 mb-2">
+                <div class="col-md-6">
+                  <label class="form-label small">Horário</label>
+                  <input type="text" id="auxiliar-horario" class="form-control form-control-sm" 
+                         value="07H00 AS 07H00 – 24H">
+                </div>
+              </div>
+              <div id="auxiliar-container"></div>
+              <button type="button" class="btn btn-sm btn-outline-light mt-2" onclick="adicionarAuxiliar()">
+                ➕ Adicionar Auxiliar
               </button>
             </div>
           </div>
