@@ -11,6 +11,8 @@ let contadorRotam02 = 0;
 let contadorAtividades = 0;
 let contadorViagens = 0;
 let contadorResidentes = 0;
+let contadorALI = 0;
+let contadorAuxiliar = 0;
 
 // ===============================
 // 🌐 Inicialização
@@ -109,6 +111,60 @@ function adicionarGuarda() {
     </div>
     <div class="col-md-2">
       <button type="button" class="btn btn-danger w-100" onclick="removerItem(this, 'guarda')">
+        🗑️
+      </button>
+    </div>
+  `;
+  
+  container.appendChild(div);
+}
+
+// ===============================
+// 🔍 Adiciona Militar ALI
+// ===============================
+function adicionarALI() {
+  const container = document.getElementById('ali-container');
+  contadorALI++;
+  
+  const div = document.createElement("div");
+  div.className = "row g-2 mb-2 ali-item";
+  div.dataset.id = contadorALI;
+  div.innerHTML = `
+    <div class="col-md-10">
+      <select class="form-select form-select-sm ali-select">
+        <option value="">-- Selecionar Militar --</option>
+        ${militares.map(m => `<option value="${m.id}">${m.patente} ${m.nome} - RGPMMT ${m.rgpm}</option>`).join('')}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-sm btn-danger w-100" onclick="removerItem(this, 'ali')">
+        🗑️
+      </button>
+    </div>
+  `;
+  
+  container.appendChild(div);
+}
+
+// ===============================
+// 👥 Adiciona Auxiliar Operacional
+// ===============================
+function adicionarAuxiliar() {
+  const container = document.getElementById('auxiliar-container');
+  contadorAuxiliar++;
+  
+  const div = document.createElement("div");
+  div.className = "row g-2 mb-2 auxiliar-item";
+  div.dataset.id = contadorAuxiliar;
+  div.innerHTML = `
+    <div class="col-md-10">
+      <select class="form-select form-select-sm auxiliar-select">
+        <option value="">-- Selecionar Militar --</option>
+        ${militares.map(m => `<option value="${m.id}">${m.patente} ${m.nome} - RGPMMT ${m.rgpm}</option>`).join('')}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-sm btn-danger w-100" onclick="removerItem(this, 'auxiliar')">
         🗑️
       </button>
     </div>
@@ -630,6 +686,8 @@ async function editarEscala(id) {
     document.getElementById("guarda-container").innerHTML = '';
     document.getElementById("rotam90-container").innerHTML = '';
     document.getElementById("rotam02-container").innerHTML = '';
+    document.getElementById("ali-container").innerHTML = '';
+    document.getElementById("auxiliar-container").innerHTML = '';
     
     // Limpa containers da Página 2
     document.getElementById("atividades-container").innerHTML = '';
@@ -725,6 +783,8 @@ function limparFormulario() {
   document.getElementById("guarda-container").innerHTML = '';
   document.getElementById("rotam90-container").innerHTML = '';
   document.getElementById("rotam02-container").innerHTML = '';
+  document.getElementById("ali-container").innerHTML = '';
+  document.getElementById("auxiliar-container").innerHTML = '';
   
   // Limpa Página 2
   document.getElementById("atividades-container").innerHTML = '';
@@ -744,6 +804,8 @@ function limparFormulario() {
   contadorAtividades = 0;
   contadorViagens = 0;
   contadorResidentes = 0;
+  contadorALI = 0;
+  contadorAuxiliar = 0;
   
   escalaEditando = null;
   
@@ -810,7 +872,7 @@ async function gerarPDF() {
   });
 
   const auxiliares = [];
-  document.querySelectorAll('.viatura-item select').forEach(select => {
+  document.querySelectorAll('.auxiliar-select').forEach(select => {
     if (select.value) {
       const m = getMilitar(select.value);
       if (m && !auxiliares.find(a => a.id === m.id)) {
@@ -818,6 +880,39 @@ async function gerarPDF() {
       }
     }
   });
+
+  // ALI - Agência Local de Inteligência
+  const ali = [];
+  document.querySelectorAll('.ali-select').forEach(select => {
+    if (select.value) {
+      const m = getMilitar(select.value);
+      if (m) ali.push(m);
+    }
+  });
+  const aliCelula = document.getElementById('ali-celula').value || 'CEL: 65-99923-1245';
+  const aliHorario = document.getElementById('ali-horario').value || '07H00 AS 21H00';
+
+  // Reserva de Armamento
+  const reserva_id = document.getElementById('reserva-armamento').value;
+  const reserva = getMilitar(reserva_id);
+  const reservaHorario = document.getElementById('reserva-horario').value || '05H30 AS 05H30';
+
+  // Gerente de Manutenção
+  const gerente_id = document.getElementById('gerente-manutencao').value;
+  const gerente = getMilitar(gerente_id);
+  const gerenteHorario = document.getElementById('gerente-horario').value || '08H00 AS 12H00 E 14H00 AS 18H00';
+
+  // Motorista do CMTE
+  const motorista_id = document.getElementById('motorista-cmte').value;
+  const motorista = getMilitar(motorista_id);
+  const motoristaHorario = document.getElementById('motorista-horario').value || '07H00 AS 19H00';
+
+  // Horários da Guarda
+  const guardaHorario1 = document.getElementById('guarda-horario1').value || '07H00 AS 19H00';
+  const guardaHorario2 = document.getElementById('guarda-horario2').value || '19H00 AS 07H00';
+  
+  // Horário Auxiliar
+  const auxiliarHorario = document.getElementById('auxiliar-horario').value || '07H00 AS 07H00 – 24H';
 
   const dataObj = new Date(data + "T12:00:00");
   const diaSemana = ["DOMINGO", "SEGUNDA-FEIRA", "TERÇA-FEIRA", "QUARTA-FEIRA", "QUINTA-FEIRA", "SEXTA-FEIRA", "SÁBADO"][dataObj.getDay()];
@@ -963,9 +1058,40 @@ async function gerarPDF() {
         '07H00 AS 07H00 – 24H');
     }
 
+    // ALI - Agência Local de Inteligência
+    if (ali.length > 0) {
+      const aliHeight = ali.length * 4 + 6;
+      
+      doc.setFont('helvetica', 'bold');
+      doc.rect(ml, y, cw * 0.35, aliHeight);
+      doc.text('AGÊNCIA LOCAL DE INTELIGÊNCIA (ALI)', ml + 2, y + 4);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6);
+      doc.text(`(${aliCelula})`, ml + 2, y + 7.5);
+      doc.setFontSize(8);
+      
+      doc.rect(ml + cw * 0.35, y, cw * 0.45, aliHeight);
+      
+      let aliy = y + 4;
+      ali.forEach(m => {
+        doc.text(`${m.patente} ${m.nome} ${m.rgpm ? 'RGPMMT ' + m.rgpm : ''}`, ml + cw * 0.35 + 2, aliy);
+        aliy += 4;
+      });
+      
+      doc.rect(ml + cw * 0.8, y, cw * 0.2, aliHeight);
+      doc.text(aliHorario, ml + cw * 0.8 + 2, y + aliHeight - 2);
+      
+      y += aliHeight;
+    }
+
     // Guarda do Batalhão
     if (guarda.length > 0) {
-      const guardaHeight = guarda.length * 4 + 2;
+      // Divide guarda em dois turnos se tiver mais de 3 militares
+      const metade = Math.ceil(guarda.length / 2);
+      const guarda1 = guarda.slice(0, metade);
+      const guarda2 = guarda.slice(metade);
+      
+      const guardaHeight = Math.max(guarda1.length, guarda2.length) * 4 + 2;
       
       doc.setFont('helvetica', 'bold');
       doc.rect(ml, y, cw * 0.35, guardaHeight);
@@ -981,9 +1107,38 @@ async function gerarPDF() {
       });
       
       doc.rect(ml + cw * 0.8, y, cw * 0.2, guardaHeight);
-      doc.text('07H00 AS 07H00 – 24H', ml + cw * 0.8 + 2, y + guardaHeight - 2);
+      // Se tiver dois grupos, mostra os dois horários
+      if (guarda.length > 3) {
+        doc.setFontSize(7);
+        doc.text(guardaHorario1, ml + cw * 0.8 + 2, y + 4);
+        doc.text(guardaHorario2, ml + cw * 0.8 + 2, y + guardaHeight - 2);
+        doc.setFontSize(8);
+      } else {
+        doc.text(guardaHorario1, ml + cw * 0.8 + 2, y + guardaHeight - 2);
+      }
       
       y += guardaHeight;
+    }
+
+    // Reserva de Armamento
+    if (reserva) {
+      drawTableRow3Col('RESERVA DE ARMAMENTO',
+        `${reserva.patente} ${reserva.nome} ${reserva.rgpm ? 'RGPMMT ' + reserva.rgpm : ''}`,
+        reservaHorario);
+    }
+
+    // Gerente Adj. de Manutenção
+    if (gerente) {
+      drawTableRow3Col('GERENTE ADJ. DE MANUTENÇÃO',
+        `${gerente.patente} ${gerente.nome} ${gerente.rgpm ? 'RGPMMT ' + gerente.rgpm : ''}`,
+        gerenteHorario);
+    }
+
+    // Motorista do CMTE
+    if (motorista) {
+      drawTableRow3Col('MOTORISTA DO CMTE',
+        `${motorista.patente} ${motorista.nome} ${motorista.rgpm ? 'RGPMMT ' + motorista.rgpm : ''}`,
+        motoristaHorario);
     }
 
     // Auxiliar Operacional
@@ -1004,7 +1159,7 @@ async function gerarPDF() {
       });
       
       doc.rect(ml + cw * 0.8, y, cw * 0.2, auxHeight);
-      doc.text('07H00 AS 07H00 – 24H', ml + cw * 0.8 + 2, y + auxHeight - 2);
+      doc.text(auxiliarHorario, ml + cw * 0.8 + 2, y + auxHeight - 2);
       
       y += auxHeight;
     }
